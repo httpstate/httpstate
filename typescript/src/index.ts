@@ -85,6 +85,8 @@ if(
   && typeof window !== 'undefined'
 ) {
   console.log('we do some magic ...');
+  console.log('-', globalThis === window);
+  console.log('-', (globalThis as any).httpstate);
 
   if(
        globalThis === window
@@ -100,4 +102,3 @@ if(
 
   window.addEventListener('load', load);
 }
-

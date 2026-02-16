@@ -17,8 +17,6 @@ export const load:() => Promise<void> = async ():Promise<void> => {
   for(const node of document.querySelectorAll('[httpState],[httpstate]')) {
     const uuid:null|string = node.getAttribute('httpState')||node.getAttribute('httpstate');
 
-    console.log('node.uuid', uuid);
-
     const ui:HttpState = (globalThis as any).httpState(uuid)
       .on('change', (e:Event&{ data:string }) => node.innerHTML = e.data);
 

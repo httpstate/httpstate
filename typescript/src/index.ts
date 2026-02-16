@@ -19,14 +19,10 @@ export const load:() => Promise<void> = async ():Promise<void> => {
 
     console.log('node.uuid', uuid);
 
-    const ui:HttpState = (globalThis as any).httpState(uuid);
+    const ui:HttpState = (globalThis as any).httpState(uuid)
+      .on('change', (e:Event&{ data:string }) => node.innerHTML = e.data);
 
-    console.log(ui);
-
-    // const ui = httpState(uuid)
-    //   .on('change', e => node.innerHTML = e.data);
-
-    // ui.et.dispatchEvent(Object.assign(new Event('change'), { data:await ui.get() }));
+    ui.et.dispatchEvent(Object.assign(new Event('change'), { data:await ui.get() }));
   }
 };
 
@@ -52,6 +48,7 @@ type HttpState = {
   removeEventListener(type:string, callback:null|EventListenerOrEventListenerObject):void;
   set(data:string):Promise<number>;
   write(data:string):Promise<number>;
+  ws:WebSocket;
 };
 
 const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
@@ -74,7 +71,7 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
     removeEventListener:(type:string, callback:null|EventListenerOrEventListenerObject) => _.et.removeEventListener(type, callback),
     set:async (data:string):Promise<number> => set(uuid, data),
     write:async (data:string):Promise<number> => write(uuid, data),
-    // ws:new WebSocket('wss://httpstate.com/' + uuid)
+    ws:new WebSocket('wss://httpstate.com/' + uuid)
   };
 
   // ...

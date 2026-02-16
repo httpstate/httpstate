@@ -6,16 +6,64 @@
 // General Public License as published by the Free Software Foundation, either
 // version 3 of the License, or (at your option) any later version.
 
-export default () => { //TYPE
-  return Object.assign(
-    (uuid:string) => {
-      console.log('uuid', uuid);
+export const get = async (uuid:string):Promise<undefined|string> => {
+  const response:Response = await fetch('https://httpstate.com/' + uuid);
 
-      return uuid;
-    },
-    {
-      get:() => {}
-      // ...
-    }
-  );
+  if(response.status === 200)
+    return await response.text();
 };
+
+export const load = async ():Promise<void> => {
+  for(const node of document.querySelectorAll('[httpState],[httpstate]')) {
+    const uuid:null|string = node.getAttribute('httpState')||node.getAttribute('httpstate');
+
+    console.log('node.uuid', uuid);
+
+    // const ui = httpState(uuid)
+    //   .on('change', e => node.innerHTML = e.data);
+
+    // ui.et.dispatchEvent(Object.assign(new Event('change'), { data:await ui.get() }));
+  }
+};
+
+export const read = async (uuid:string):Promise<undefined|string> => get(uuid);
+
+export const set = async (uuid:string, data:string):Promise<number> => {
+  const response:Response = await fetch('https://httpstate.com/' + uuid, { body:data, method:'POST' });
+
+  return response.status;
+};
+
+export const write = async (uuid:string, data:string):Promise<number> => set(uuid, data);
+
+// httpState
+
+const httpState = (uuid:string) => {
+  const _ = {
+    addEventListener:(type:string, callback:null|EventListenerOrEventListenerObject) => _.et.addEventListener(type, callback),
+    data:undefined,
+    et:new EventTarget(),
+    get:async ():Promise<undefined|string> => get(uuid),
+    off:(type:string, callback:null|EventListenerOrEventListenerObject) => {
+      _.removeEventListener(type, callback);
+
+      return _;
+    },
+    on:(type:string, callback:null|EventListenerOrEventListenerObject) => {
+      _.addEventListener(type, callback);
+
+      return _;
+    },
+    read:async ():Promise<undefined|string> => read(uuid),
+    removeEventListener:(type:string, callback:null|EventListenerOrEventListenerObject) => _.et.removeEventListener(type, callback),
+    set:async (data:string):Promise<number> => set(uuid, data),
+    write:async (data:string):Promise<number> => write(uuid, data),
+    // ws:new WebSocket('wss://httpstate.com/' + uuid)
+  };
+
+  // ...
+
+  return _;
+};
+
+export default httpState;

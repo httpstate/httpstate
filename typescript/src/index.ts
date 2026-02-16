@@ -6,14 +6,14 @@
 // General Public License as published by the Free Software Foundation, either
 // version 3 of the License, or (at your option) any later version.
 
-export const get = async (uuid:string):Promise<undefined|string> => {
+export const get:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => {
   const response:Response = await fetch('https://httpstate.com/' + uuid);
 
   if(response.status === 200)
     return await response.text();
 };
 
-export const load = async ():Promise<void> => {
+export const load:() => Promise<void> = async ():Promise<void> => {
   for(const node of document.querySelectorAll('[httpState],[httpstate]')) {
     const uuid:null|string = node.getAttribute('httpState')||node.getAttribute('httpstate');
 
@@ -26,20 +26,32 @@ export const load = async ():Promise<void> => {
   }
 };
 
-export const read = async (uuid:string):Promise<undefined|string> => get(uuid);
+export const read:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => get(uuid);
 
-export const set = async (uuid:string, data:string):Promise<number> => {
+export const set:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => {
   const response:Response = await fetch('https://httpstate.com/' + uuid, { body:data, method:'POST' });
 
   return response.status;
 };
 
-export const write = async (uuid:string, data:string):Promise<number> => set(uuid, data);
+export const write:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => set(uuid, data);
 
 // httpState
+type HttpState = {
+  addEventListener(type:string, callback:null|EventListenerOrEventListenerObject):void;
+  data?:undefined|string;
+  et:EventTarget;
+  get():Promise<undefined|string>;
+  off(type:string, callback:null|EventListenerOrEventListenerObject):HttpState;
+  on(type:string, callback:null|EventListenerOrEventListenerObject):HttpState;
+  read():Promise<undefined|string>;
+  removeEventListener(type:string, callback:null|EventListenerOrEventListenerObject):void;
+  set(data:string):Promise<number>;
+  write(data:string):Promise<number>;
+};
 
-const httpState = (uuid:string) => {
-  const _ = {
+const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
+  const _:HttpState = {
     addEventListener:(type:string, callback:null|EventListenerOrEventListenerObject) => _.et.addEventListener(type, callback),
     data:undefined,
     et:new EventTarget(),
@@ -67,3 +79,25 @@ const httpState = (uuid:string) => {
 };
 
 export default httpState;
+
+if(
+     typeof document !== 'undefined'
+  && typeof window !== 'undefined'
+) {
+  console.log('we do some magic ...');
+
+  if(
+       globalThis === window
+    && (globalThis as any).httpstate
+  ) {
+    console.log('do the binding yo ...');
+
+    (globalThis as any).httpstate = Object.assign(
+      (globalThis as any).httpstate.default,
+      (globalThis as any).httpstate
+    );
+  }
+
+  window.addEventListener('load', load);
+}
+

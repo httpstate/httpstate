@@ -1,0 +1,27 @@
+{
+  "author": "Alex Morales, HTTP State",
+  "description": "HTTP State",
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "license": "AGPL-3.0",
+  "main": "dist/index.esm.js",
+  "name": "@httpstate/typescript",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/httpstate/httpstate.git"
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "version": "0.0.17"
+}

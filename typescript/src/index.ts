@@ -88,17 +88,18 @@ if(
   console.log('-', globalThis === window);
   console.log('-', (globalThis as any).httpstate);
 
-  if(
-       globalThis === window
-    && (globalThis as any).httpstate
-  ) {
-    console.log('do the binding yo ...');
+  if(globalThis === window) {
+    globalThis.addEventListener('load', async () => {
+      if((globalThis as any).httpstate) {
+        console.log('do the binding yo ...');
 
-    (globalThis as any).httpstate = Object.assign(
-      (globalThis as any).httpstate.default,
-      (globalThis as any).httpstate
-    );
+        (globalThis as any).httpstate = Object.assign(
+          (globalThis as any).httpstate.default,
+          (globalThis as any).httpstate
+        );
+      }
+
+      await load();
+    }, { once:true });
   }
-
-  window.addEventListener('load', load);
 }

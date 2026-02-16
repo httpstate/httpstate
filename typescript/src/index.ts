@@ -74,7 +74,14 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
     ws:new WebSocket('wss://httpstate.com/' + uuid)
   };
 
-  // ...
+  // _.ws.addEventListener('close', () => console.log('close'));
+  // _.ws.addEventListener('error', () => console.log('error'));
+  _.ws.addEventListener('message', async e => {
+    _.data = await e.data.text();
+
+    _.et.dispatchEvent(Object.assign(new Event('change'), { data:_.data }));
+  });
+  _.ws.addEventListener('open', () => _.ws.send(JSON.stringify(['open', uuid])));
 
   return _;
 };
@@ -84,23 +91,14 @@ export default httpState;
 if(
      typeof document !== 'undefined'
   && typeof window !== 'undefined'
-) {
-  console.log('we do some magic ...');
-  console.log('-', globalThis === window);
-  console.log('-', (globalThis as any).httpstate);
+  && globalThis === window
+)
+  globalThis.addEventListener('load', async () => {
+    if((globalThis as any).httpstate)
+      (globalThis as any).httpState = (globalThis as any).httpstate = Object.assign(
+        (globalThis as any).httpstate.default,
+        (globalThis as any).httpstate
+      );
 
-  if(globalThis === window) {
-    globalThis.addEventListener('load', async () => {
-      if((globalThis as any).httpstate) {
-        console.log('do the binding yo ...');
-
-        (globalThis as any).httpState = (globalThis as any).httpstate = Object.assign(
-          (globalThis as any).httpstate.default,
-          (globalThis as any).httpstate
-        );
-      }
-
-      await load();
-    }, { once:true });
-  }
-}
+    await load();
+  }, { once:true });

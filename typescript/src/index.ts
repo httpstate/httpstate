@@ -19,6 +19,10 @@ export const load:() => Promise<void> = async ():Promise<void> => {
 
     console.log('node.uuid', uuid);
 
+    const ui:HttpState = (globalThis as any).httpState(uuid);
+
+    console.log(ui);
+
     // const ui = httpState(uuid)
     //   .on('change', e => node.innerHTML = e.data);
 
@@ -93,7 +97,7 @@ if(
       if((globalThis as any).httpstate) {
         console.log('do the binding yo ...');
 
-        (globalThis as any).httpstate = Object.assign(
+        (globalThis as any).httpState = (globalThis as any).httpstate = Object.assign(
           (globalThis as any).httpstate.default,
           (globalThis as any).httpstate
         );

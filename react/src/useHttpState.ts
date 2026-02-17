@@ -1,6 +1,6 @@
 // HTTP State, https://httpstate.com/
 // Copyright (C) Alex Morales, 2026
-// 
+//
 // Unless otherwise stated in particular files or directories, this software is free software.
 // You can redistribute it and/or modify it under the terms of the GNU Affero
 // General Public License as published by the Free Software Foundation, either
@@ -20,7 +20,7 @@ export const useHttpState:(uuid:string) => undefined|[undefined|string, (data:st
       const _ = httpState(uuid)
         .on('change', (e:Event&{ data?:string }) => setState(e.data));
 
-      _.et.dispatchEvent(Object.assign(new Event('change'), { data:await _.get() }));
+      _.emit(await _.get());
     })();
 
     return () => {

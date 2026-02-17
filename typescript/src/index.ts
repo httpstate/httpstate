@@ -72,7 +72,7 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
     ws:new WebSocket('wss://httpstate.com/' + uuid)
   };
 
-  // _.ws.addEventListener('close', () => console.log('close'));
+  _.ws.addEventListener('close', e => console.log('close', e));
   // _.ws.addEventListener('error', () => console.log('error'));
   _.ws.addEventListener('message', async e => {
     _.data = await e.data.text();

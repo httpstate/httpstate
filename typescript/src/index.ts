@@ -1,6 +1,6 @@
 // HTTP State, https://httpstate.com/
 // Copyright (C) Alex Morales, 2026
-// 
+//
 // Unless otherwise stated in particular files or directories, this software is free software.
 // You can redistribute it and/or modify it under the terms of the GNU Affero
 // General Public License as published by the Free Software Foundation, either
@@ -20,7 +20,7 @@ export const load:() => Promise<void> = async ():Promise<void> => {
     const state:HttpState = (globalThis as any).httpState(uuid)
       .on('change', (e:Event&{ data:string }) => node.innerHTML = e.data);
 
-    state.et.dispatchEvent(Object.assign(new Event('change'), { data:await state.get() }));
+    state.emit(await state.get());
   }
 };
 
@@ -38,6 +38,7 @@ export const write:(uuid:string, data:string) => Promise<number> = async (uuid:s
 export type HttpState = {
   addEventListener(type:string, callback:null|EventListenerOrEventListenerObject):void;
   data?:undefined|string;
+  emit(data:undefined|string):HttpState;
   et:EventTarget;
   get():Promise<undefined|string>;
   off(type:string, callback:null|EventListenerOrEventListenerObject):HttpState;
@@ -53,6 +54,11 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
   const _:HttpState = {
     addEventListener:(type:string, callback:null|EventListenerOrEventListenerObject) => _.et.addEventListener(type, callback),
     data:undefined,
+    emit:(data:string) => {
+      _.et.dispatchEvent(Object.assign(new Event('change'), { data }));
+
+      return _;
+    },
     et:new EventTarget(),
     get:async ():Promise<undefined|string> => get(uuid),
     off:(type:string, callback:null|EventListenerOrEventListenerObject) => {
@@ -77,7 +83,7 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
   _.ws.addEventListener('message', async e => {
     _.data = await e.data.text();
 
-    _.et.dispatchEvent(Object.assign(new Event('change'), { data:_.data }));
+    _.emit(_.data);
   });
   _.ws.addEventListener('open', () => _.ws.send(JSON.stringify(['open', uuid])));
 

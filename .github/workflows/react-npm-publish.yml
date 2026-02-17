@@ -1,11 +1,11 @@
-name: typescript npm publish
+name: react npm publish
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'typescript/**'
+      - 'react/**'
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
           npm version patch
           npm run build
           npm publish --access public
-        working-directory: typescript
+        working-directory: react
       
       - name: git push
         run: |

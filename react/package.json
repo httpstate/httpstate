@@ -1,0 +1,33 @@
+{
+  "author": "Alex Morales, HTTP State",
+  "description": "HTTP State",
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "react": "^19.2.4",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "license": "AGPL-3.0",
+  "main": "dist/useHttpState.js",
+  "name": "@httpstate/react",
+  "peerDependencies": {
+    "@httpstate/typescript": "^0.0.10",
+    "react": "^19.2.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/httpstate/httpstate.git"
+  },
+  "scripts": {
+    "build": "tsup src/useHttpState.ts --format cjs,esm --dts --minify",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "type": "module",
+  "types": "dist/useHttpState.d.ts",
+  "version": "0.0.4"
+}

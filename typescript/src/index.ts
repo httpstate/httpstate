@@ -17,10 +17,10 @@ export const load:() => Promise<void> = async ():Promise<void> => {
   for(const node of document.querySelectorAll('[httpState],[httpstate]')) {
     const uuid:null|string = node.getAttribute('httpState')||node.getAttribute('httpstate');
 
-    const ui:HttpState = (globalThis as any).httpState(uuid)
+    const state:HttpState = (globalThis as any).httpState(uuid)
       .on('change', (e:Event&{ data:string }) => node.innerHTML = e.data);
 
-    ui.et.dispatchEvent(Object.assign(new Event('change'), { data:await ui.get() }));
+    state.et.dispatchEvent(Object.assign(new Event('change'), { data:await state.get() }));
   }
 };
 
@@ -35,7 +35,7 @@ export const set:(uuid:string, data:string) => Promise<number> = async (uuid:str
 export const write:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => set(uuid, data);
 
 // httpState
-type HttpState = {
+export type HttpState = {
   addEventListener(type:string, callback:null|EventListenerOrEventListenerObject):void;
   data?:undefined|string;
   et:EventTarget;

@@ -87,11 +87,6 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
   _.ws.addEventListener('message', async e => {
     _.data = await e.data.text();
 
-    console.log('uuid', _.data?.substring(0, 32));
-    console.log('timestamp', _.data?.substring(32, 45));
-    console.log('mimeType', _.data?.substring(45, 46));
-    console.log('data', _.data?.substring(46));
-
     if(
          _.data
       && _.data.length > 32

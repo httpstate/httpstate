@@ -87,19 +87,13 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
   _.ws.addEventListener('message', async e => {
     _.data = await e.data.text();
 
-    console.log('_.data', _.data);
-
-    if(_.data && _.data.length > 32) {
-      console.log('uuid', JSON.stringify(_.data.substring(0, 32)));
-      console.log('mimeType', JSON.stringify(_.data.substring(33, 1)));
-      console.log('data', JSON.stringify(_.data.substring(34)));
-
-      if(
-           _.data.substring(0, 32) === uuid
-        && _.data.substring(33, 1) === '1'
-      )
-        _.emit(_.data.substring(34));
-    }
+    if(
+         _.data
+      && _.data.length > 32
+      && _.data.substring(0, 32) === uuid
+      && _.data.substring(32, 33) === '1'
+    )
+      _.emit(_.data.substring(33));
   });
   _.ws.addEventListener('open', () => _.ws.send(JSON.stringify({ open:uuid })));
 

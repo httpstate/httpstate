@@ -20,7 +20,7 @@ export const load:() => Promise<void> = async ():Promise<void> => {
     const state:HttpState = (globalThis as any).httpState(uuid)
       .on('change', (e:Event&{ data:string }) => node.innerHTML = e.data);
 
-    state.emit(await state.get());
+    state.emit('change', await state.get());
   }
 };
 
@@ -42,7 +42,7 @@ export const write:(uuid:string, data:string) => Promise<number> = async (uuid:s
 export type HttpState = {
   addEventListener(type:string, callback:null|EventListenerOrEventListenerObject):void;
   data?:undefined|string;
-  emit(data:undefined|string):HttpState;
+  emit(type:string, data:undefined|string):HttpState;
   et:EventTarget;
   get():Promise<undefined|string>;
   off(type:string, callback:null|EventListenerOrEventListenerObject):HttpState;
@@ -50,6 +50,7 @@ export type HttpState = {
   read():Promise<undefined|string>;
   removeEventListener(type:string, callback:null|EventListenerOrEventListenerObject):void;
   set(data:string):Promise<number>;
+  uuid:string;
   write(data:string):Promise<number>;
   ws:WebSocket;
 };
@@ -58,13 +59,13 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
   const _:HttpState = {
     addEventListener:(type:string, callback:null|EventListenerOrEventListenerObject) => _.et.addEventListener(type, callback),
     data:undefined,
-    emit:(data:string) => {
-      _.et.dispatchEvent(Object.assign(new Event('change'), { data }));
+    emit:(type:string, data:string) => {
+      _.et.dispatchEvent(Object.assign(new Event(type), { data }));
 
       return _;
     },
     et:new EventTarget(),
-    get:async ():Promise<undefined|string> => get(uuid),
+    get:async ():Promise<undefined|string> => get(_.uuid),
     off:(type:string, callback:null|EventListenerOrEventListenerObject) => {
       _.removeEventListener(type, callback);
 
@@ -75,10 +76,11 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
 
       return _;
     },
-    read:async ():Promise<undefined|string> => read(uuid),
+    read:async ():Promise<undefined|string> => read(_.uuid),
     removeEventListener:(type:string, callback:null|EventListenerOrEventListenerObject) => _.et.removeEventListener(type, callback),
-    set:async (data:string):Promise<number> => set(uuid, data),
-    write:async (data:string):Promise<number> => write(uuid, data),
+    set:async (data:string):Promise<number> => set(_.uuid, data),
+    uuid,
+    write:async (data:string):Promise<number> => write(_.uuid, data),
     ws:new WebSocket('wss://httpstate.com/' + uuid)
   };
 
@@ -90,12 +92,12 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
     if(
          _.data
       && _.data.length > 32
-      && _.data.substring(0, 32) === uuid
+      && _.data.substring(0, 32) === _.uuid
       && _.data.substring(45, 46) === '1'
     )
-      _.emit(_.data.substring(46));
+      _.emit('change', _.data.substring(46));
   });
-  _.ws.addEventListener('open', () => _.ws.send(JSON.stringify({ open:uuid })));
+  _.ws.addEventListener('open', () => _.ws.send(JSON.stringify({ open:_.uuid })));
 
   (_.ws as any).interval = setInterval(() => _.ws.send('0'), 1024*32);
 

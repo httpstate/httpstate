@@ -27,14 +27,18 @@ export const load:() => Promise<void> = async ():Promise<void> => {
 export const read:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => get(uuid);
 
 export const set:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => {
-  const response:Response = await fetch('https://httpstate.com/' + uuid, { body:data, method:'POST' });
+  const response:Response = await fetch('https://httpstate.com/' + uuid, {
+    body:data,
+    headers:{ 'Content-Type':'text/plain;charset=UTF-8' },
+    method:'POST'
+  });
 
   return response.status;
 };
 
 export const write:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => set(uuid, data);
 
-// httpState
+// HTTP State
 export type HttpState = {
   addEventListener(type:string, callback:null|EventListenerOrEventListenerObject):void;
   data?:undefined|string;
@@ -83,11 +87,13 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
   _.ws.addEventListener('message', async e => {
     _.data = await e.data.text();
 
+    console.log('_.data', _.data);
+
     _.emit(_.data);
   });
-  _.ws.addEventListener('open', () => _.ws.send(JSON.stringify(['open', uuid])));
+  _.ws.addEventListener('open', () => _.ws.send(JSON.stringify({ open:uuid })));
 
-  (_.ws as any).interval = setInterval(() => _.ws.send(JSON.stringify(['ping'])), 1024*32);
+  (_.ws as any).interval = setInterval(() => _.ws.send('0'), 1024*32);
 
   return _;
 };

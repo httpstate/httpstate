@@ -8,7 +8,9 @@
   "files": [
     "dist"
   ],
-  "keywords": ["httpstate"],
+  "keywords": [
+    "httpstate"
+  ],
   "license": "AGPL-3.0",
   "main": "dist/index.esm.js",
   "name": "@httpstate/typescript",
@@ -23,5 +25,5 @@
   },
   "type": "module",
   "types": "dist/index.d.ts",
-  "version": "0.0.20"
+  "version": "0.0.21"
 }

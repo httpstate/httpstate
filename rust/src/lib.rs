@@ -52,3 +52,9 @@ pub struct HttpState {
   pub et:std::collections::HashMap<String, Vec<Box<dyn Fn(Option<String>)>>>,
   pub uuid:String
 }
+
+imp HttpState {
+  fn new(uuid:&str) -> Self {
+    // ...
+  }
+}

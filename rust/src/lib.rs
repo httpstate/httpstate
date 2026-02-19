@@ -53,7 +53,7 @@ pub struct HttpState {
   pub uuid:String
 }
 
-imp HttpState {
+impl HttpState {
   fn new(uuid:&str) -> Self {
     // ...
   }

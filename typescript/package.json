@@ -1,6 +1,6 @@
 {
   "author": "Alex Morales, HTTP State",
-  "description": "HTTP State",
+  "description": "HTTP State, httpstate.com",
   "devDependencies": {
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"

@@ -34,12 +34,12 @@ pub async fn set(uuid:&str, data:&str) -> Option<u16> {
   let response = reqwest::Client::new()
     .post(&url)
     .header(reqwest::header::CONTENT_TYPE, "text/plain;charset=UTF-8")
-    .body(data.to_string())
+    .body(String::from(data))
     .send()
     .await
     .ok()?;
 
-  Some(response.status().as_u16())
+  Some(response.status().into())
 }
 
 pub async fn write(uuid:&str, data:&str) -> Option<u16> {
@@ -55,6 +55,10 @@ pub struct HttpState {
 
 impl HttpState {
   fn new(uuid:&str) -> Self {
-    // ...
+    Self {
+      data:None,
+      et:HashMap::new(),
+      uuid:String::from(uuid)
+    }
   }
 }

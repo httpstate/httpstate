@@ -1,7 +1,11 @@
 [package]
-name = "httpstate"
-version = "0.0.1"
+authors = ["Alex Morales, HTTP State <alex@httpstate.com>"]
+description = "HTTP State, httpstate.com"
 edition = "2024"
+license = "AGPL-3.0"
+name = "httpstate"
+repository = "https://github.com/httpstate/httpstate"
+version = "0.0.1"
 
 [dependencies]
 reqwest = "0.13.2"

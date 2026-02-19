@@ -54,11 +54,27 @@ pub struct HttpState {
 }
 
 impl HttpState {
-  fn new(uuid:&str) -> Self {
+  pub fn new(uuid:&str) -> Self {
     Self {
       data:None,
       et:std::collections::HashMap::new(),
       uuid:String::from(uuid)
     }
+  }
+
+  pub async fn get(&self) -> Option<String> {
+    get(&self.uuid).await
+  }
+
+  pub async fn read(&self) -> Option<String> {
+    read(&self.uuid).await
+  }
+
+  pub async fn set(&self, data:&str) -> Option<u16> {
+    set(&self.uuid, data).await
+  }
+
+  pub async fn write(&self, data:&str) -> Option<u16> {
+    write(&self.uuid, data).await
   }
 }

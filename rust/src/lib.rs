@@ -57,7 +57,7 @@ impl HttpState {
   fn new(uuid:&str) -> Self {
     Self {
       data:None,
-      et:HashMap::new(),
+      et:std::collections::HashMap::new(),
       uuid:String::from(uuid)
     }
   }

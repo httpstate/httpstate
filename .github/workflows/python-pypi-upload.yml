@@ -16,24 +16,26 @@ jobs:
         uses: actions/checkout@v6
       
       - name: setup-python
-      - uses: actions/setup-python@v6
+        uses: actions/setup-python@v6
         with:
           python-version: '3.10'
 
-      - name: pip build twin
+      - name: pip build twine
         run: |
           python3 -m pip install --upgrade pip
           pip3 install build twine
         working-directory: python
       
       - name: build
-        run: |
-          python3 -m build
+        run: python3 -m build
         working-directory: python
       
       - name: twine upload
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-        run: |
-          python3 -m twine upload dist/*
+        run: python3 -m twine upload dist/*
+        working-directory: python
+
+permissions:
+  contents: read

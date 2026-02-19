@@ -1,0 +1,10 @@
+[package]
+name = "httpstate"
+version = "0.0.1"
+edition = "2024"
+
+[dependencies]
+reqwest = "0.13.2"
+tokio = { features=["macros", "rt-multi-thread"], version="1.49.0" }
+tungstenite = "0.28.0"
+url = "2.5.8"

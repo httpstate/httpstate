@@ -63,25 +63,25 @@ class HttpState:
     await self.ws.send(f'{{"open":"{self.uuid}"}}')
 
     async for data in self.ws:
-      data = data if isinstance(data, str) else data.decode()
+      self.data = data.decode()
 
       if(
-            data
-        and len(data) > 32
-        and data[:32] == self.uuid
-        and data[45] == '1'
+            self.data
+        and len(self.data) > 32
+        and self.data[:32] == self.uuid
+        and self.data[45] == '1'
       ):
-          self.emit('change', data[46:])
-  
+          self.emit('change', self.data[46:])
+
   def emit(self, type:str, data:None|str) -> None:
     for callback in self.et.get(type, []):
       callback(data)
 
     return self
-  
+
   def get(self) -> None|str:
     return get(self.uuid)
-  
+
   def off(self, type:str, callback:Callable[[None|str], None]):
     if type in self.et:
       try:
@@ -93,7 +93,7 @@ class HttpState:
         del self.et[type]
 
     return self
-  
+
   def on(self, type:str, callback:Callable[[None|str], None]) -> None:
     if type not in self.et:
       self.et[type] = []
@@ -101,12 +101,12 @@ class HttpState:
     self.et[type].append(callback)
 
     return self
-  
+
   def read(self) -> None|str:
     return read(self.uuid)
-  
+
   def set(self, data:str) -> None|int:
     return set(self.uuid, data)
-  
+
   def write(self, data:str) -> None|int:
     return write(self.uuid, data)

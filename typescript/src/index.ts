@@ -99,7 +99,12 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
   });
   _.ws.addEventListener('open', () => _.ws.send(JSON.stringify({ open:_.uuid })));
 
-  (_.ws as any).interval = setInterval(() => _.ws.send('0'), 1024*32);
+  (_.ws as any).interval = setInterval(() => {
+    if(_.ws.readyState === WebSocket.OPEN)
+      _.ws.send('0');
+    else
+      clearInterval((_.ws as any).interval);
+  }, 1000*32); // 32 SECONDS
 
   return _;
 };

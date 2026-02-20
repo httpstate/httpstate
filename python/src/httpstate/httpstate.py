@@ -62,6 +62,17 @@ class HttpState:
 
     await self.ws.send(f'{{"open":"{self.uuid}"}}')
 
+    async def interval():
+      while True:
+        try:
+          await self.ws.send("0")
+
+          await asyncio.sleep(32) # 32 SECONDS
+        except websockets.ConnectionClosed:
+          break
+
+    asyncio.create_task(interval())
+
     async for data in self.ws:
       self.data = data.decode()
 
@@ -71,7 +82,7 @@ class HttpState:
         and self.data[:32] == self.uuid
         and self.data[45] == '1'
       ):
-          self.emit('change', self.data[46:])
+        self.emit('change', self.data[46:])
 
   def emit(self, type:str, data:None|str) -> None:
     for callback in self.et.get(type, []):

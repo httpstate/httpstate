@@ -1,5 +1,5 @@
 package httpstate
 
-func get() string {
+func Get() string {
 	return "1234"
 }

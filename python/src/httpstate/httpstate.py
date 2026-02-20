@@ -65,9 +65,9 @@ class HttpState:
     async def interval():
       while True:
         try:
-          await self.ws.send("0")
+          await self.ws.ping()
 
-          await asyncio.sleep(32) # 32 SECONDS
+          await asyncio.sleep(30) # 30 SECONDS
         except websockets.ConnectionClosed:
           break
 

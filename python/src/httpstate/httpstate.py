@@ -23,6 +23,8 @@ def get(uuid:str) -> None|str:
       return None
   except urllib.error.HTTPError:
     return None
+  except Exception:
+    return None
 
 def read(uuid:str) -> None|str:
   return get(uuid)
@@ -38,7 +40,9 @@ def set(uuid:str, data:str) -> None|int:
   try:
     with urllib.request.urlopen(req) as f:
       return f.status
-  except urllib.error.HTTPError:
+  except urllib.error.HTTPError as e:
+    return e.code
+  except Exception:
     return None
 
 def write(uuid:str, data:str) -> None|int:

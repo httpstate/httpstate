@@ -7,17 +7,21 @@
 
   <p>Create interactive experiences with a couple lines of code.</p>
 
+  <p>Learn more at <a href="https://httpstate.com" target="_blank">httpstate.com</a>.</p>
+</div>
+
+### Quick Start (browser)
+
+Install
+
 ```bash
 npm install httpstate
 ```
 
 ```js
-httpstate.get('my-uuid')
 httpstate.set('my-uuid', 'hello')
+httpstate.get('my-uuid')
 ```
-
-<p>Docs and more examples at <a href="https://httpstate.com" target="_blank">httpstate.com</a>.</p>
-</div>
 
 ## Pick your favorite language
 
@@ -25,31 +29,31 @@ httpstate.set('my-uuid', 'hello')
 
 Browser and server (node.js, deno, bun) compatible clients.
 
-[Quick Start](./typescript)
+[API and Documentation](./typescript)
 
 ### React ([react](./react))
 
 `useHttpState()` is a drop-in replacement to `useState()`
 
-[Quick Start](./react)
+[API and Documentation](./react)
 
 ### Go ([go](./go))
 
 ...
 
-[Quick Start](./go)
+[API and Documentation](./go)
 
 ### Python ([python](./python))
 
 ...
 
-[Quick Start](./python)
+[API and Documentation](./python)
 
 ### Rust ([rust](./rust))
 
 ...
 
-[Quick Start](./rust)
+[API and Documentation](./rust)
 
 ## Learn
 

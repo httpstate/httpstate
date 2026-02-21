@@ -1,11 +1,15 @@
 <div align="center">
   <img alt="httpstate mascot" height="256" src="assets/mascot.256x256.png" width="256">
 
-  <h1>httpstate [httpstate.com](https://httpstate.com)</h1>
+  <h1>httpstate</h1>
 
   <p>The missing reactive layer for your applications.</p>
 
   <p>Create interactive experiences with a couple lines of code.</p>
+
+  <p>Write a three line example ...</p>
+
+  <p>More examples at [httpstate.com](https://httpstate.com).</p>
 </div>
 
 ## Pick your favorite language

@@ -35,7 +35,17 @@ httpstate.set('45fb3654-0e92-44da-aa21-ca409c6bdab3', 'Hi! 👋🏻')
 Retrieve it with:
 
 ```js
-httpstate.get('my-uuid')
+httpstate.get('45fb3654-0e92-44da-aa21-ca409c6bdab3')
+```
+
+Real-time updates:
+
+```js
+const hs = httpstate('45fb3654-0e92-44da-aa21-ca409c6bdab3');
+
+hs.on('change', data => {
+  console.log('This will change everytime a new value is set', data);
+});
 ```
 
 That's it! 🐙

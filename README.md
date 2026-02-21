@@ -7,9 +7,16 @@
 
   <p>Create interactive experiences with a couple lines of code.</p>
 
-  <p>Write a three line example ...</p>
+```bash
+npm install httpstate
+```
 
-  <p>Docs and examples at <a href="https://httpstate.com" target="_blank">httpstate.com</a>.</p>
+```js
+httpstate.get('my-uuid')
+httpstate.set('my-uuid', 'hello')
+```
+
+<p>Docs and more examples at <a href="https://httpstate.com" target="_blank">httpstate.com</a>.</p>
 </div>
 
 ## Pick your favorite language

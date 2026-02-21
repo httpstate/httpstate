@@ -9,7 +9,7 @@
 
   <p>Write a three line example ...</p>
 
-  <p>More examples at [httpstate.com](https://httpstate.com).</p>
+  <p>More examples at <a href="https://httpstate.com" target="_blank">httpstate.com</a>.</p>
 </div>
 
 ## Pick your favorite language

@@ -21,7 +21,7 @@ Install from CDN
 or from npm
 
 ```bash
-npm install httpstate
+npm install @httpstate/typescript
 ```
 
 Pick any valid UUID v4. You can [generate one here](https://www.uuidgenerator.net/version4).
@@ -58,9 +58,17 @@ That's it! 🐙
 
 Browser and server (node.js, deno, bun) compatible clients.
 
+```bash
+npm install @httpstate/typescript
+```
+
 [API and Docs](./typescript)
 
 ### React ([react](./react))
+
+```bash
+npm install @httpstate/react
+```
 
 `useHttpState()` is a drop-in replacement to `useState()`
 
@@ -68,19 +76,25 @@ Browser and server (node.js, deno, bun) compatible clients.
 
 ### Go ([go](./go))
 
-...
+```bash
+go get github.com/httpstate/httpstate/go
+```
 
 [API and Docs](./go)
 
 ### Python ([python](./python))
 
-...
+```bash
+pip install httpstate
+```
 
 [API and Docs](./python)
 
 ### Rust ([rust](./rust))
 
-...
+```bash
+cargo add httpstate
+```
 
 [API and Docs](./rust)
 

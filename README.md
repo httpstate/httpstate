@@ -10,17 +10,23 @@
 
 ## Pick your favorite language
 
+### [Go](./go)
+
+...
+
+[Quick Start with Go](./typescript)
+
 ### [Javascript / Typescript](./typescript)
 
-Browser and server (node.js) implementations.
+Browser and server (node.js, deno, bun) compatible clients.
 
-[Quick Start](./typescript)
+[Quick Start with Javascript / Typescript](./typescript)
 
 ### [React](./react)
 
 `useHttpState()` is a drop-in replacement to `useState`
 
-[Quick Start](./react)
+[Quick Start with React](./react)
 
 ## Learn
 

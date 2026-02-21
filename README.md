@@ -16,7 +16,7 @@
 
 [Quick Start](./typescript)
 
-### [Javascript / Typescript](./typescript)
+### Javascript / Typescript ([typescript/](./typescript))
 
 Browser and server (node.js, deno, bun) compatible clients.
 

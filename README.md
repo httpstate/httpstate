@@ -7,7 +7,7 @@
 
   <p>Create interactive experiences with a couple lines of code.</p>
 
-  <p>Learn more at <a href="https://httpstate.com" target="_blank">httpstate.com</a>.</p>
+  <p>More at <a href="https://httpstate.com" target="_blank">httpstate.com</a>.</p>
 </div>
 
 ## Quick Start (browser, node.js)
@@ -46,7 +46,7 @@ You can also get real-time updates
 const hs = httpstate('45fb36540e9244daaa21ca409c6bdab3');
 
 hs.on('change', data => {
-  console.log('This will change everytime data is set', data);
+  console.log(`This will change everytime data is set [${data}].`);
 });
 ```
 

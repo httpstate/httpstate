@@ -1,7 +1,7 @@
 <div align="center">
   <img alt="httpstate mascot" height="256" src="assets/mascot.256x256.png" width="256">
 
-  <h1>httpstate</h1>
+  <h1>httpstate [httpstate.com](https://httpstate.com)</h1>
 
   <p>The missing reactive layer for your applications.</p>
 
@@ -18,7 +18,7 @@ Browser and server (node.js, deno, bun) compatible clients.
 
 ### React ([react](./react))
 
-`useHttpState()` is a drop-in replacement to `useState`
+`useHttpState()` is a drop-in replacement to `useState()`
 
 [Quick Start](./react)
 

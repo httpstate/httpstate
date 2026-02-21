@@ -24,7 +24,7 @@ or from npm
 npm install @httpstate/typescript
 ```
 
-Import (only if you installed the package)
+Import (not needed if you use the CDN)
 
 ```bash
 import httpstate from '@httpstate/typescript';

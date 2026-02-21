@@ -56,13 +56,13 @@ Cookbook: Refer to [...]
 
 ## About
 
-Alex @ [moralestapia.com](https://moralestapia.com)
+alex @ [moralestapia.com](https://moralestapia.com)
 
 Copyright &copy; Alex Morales, 2026
 
 ## Contact
 
-Comments, feature requests, etc. are welcome at [inbox@httpstate.com](mailto:inbox@httpstate.com)
+Comments, feature requests, etc. are welcome at [inbox @ httpstate.com](mailto:inbox@httpstate.com)
 
 ## License
 

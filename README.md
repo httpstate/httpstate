@@ -28,24 +28,24 @@ Pick any valid UUID v4.
 
 We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3`.
 
-You can remove the dashes and use `45fb36540e9244daaa21ca409c6bdab3` instead.
+You can remove the dashes and use `45fb36540e9244daaa21ca409c6bdab3` if you prefer.
 
 Store some data with
 
 ```js
-httpstate.set('45fb3654-0e92-44da-aa21-ca409c6bdab3', 'Hi! 👋🏻');
+httpstate.set('45fb36540e9244daaa21ca409c6bdab3', 'Hi! 👋🏻');
 ```
 
 and retrieve it with
 
 ```js
-const data = await httpstate.get('45fb3654-0e92-44da-aa21-ca409c6bdab3');
+const data = await httpstate.get('45fb36540e9244daaa21ca409c6bdab3');
 ```
 
 You can also get real-time updates
 
 ```js
-const hs = httpstate('45fb3654-0e92-44da-aa21-ca409c6bdab3');
+const hs = httpstate('45fb36540e9244daaa21ca409c6bdab3');
 
 hs.on('change', data => {
   console.log('This will change everytime data is set', data);

@@ -1,11 +1,5 @@
 # httpstate (python)
 
-## Install
-
-```bash
-pip install httpstate
-```
-
 ## Quick Start
 
 Install
@@ -92,7 +86,7 @@ Copyright &copy; Alex Morales, 2026
 
 ## Contact
 
-Comments, feature requests, etc. are welcome at **inbox @ httpstate.com**
+Comments, feature requests, etc. are welcome at **inbox @ httpstate.com**.
 
 ## License
 

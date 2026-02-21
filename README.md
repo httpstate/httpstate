@@ -10,17 +10,17 @@
 
 ## Choose your favorite language
 
-### Javascript / Typescript
+### [Javascript / Typescript](./typescript)
 
 Browser and server (node.js) implementations.
 
-[Go to typescript/](./typescript)
+[Quick Start](./typescript)
 
 ### React
 
 `useHttpState()` as you would normally use `useState`
 
-[Go to react/](./react)
+[Quick Start](./react)
 
 ## Learn
 

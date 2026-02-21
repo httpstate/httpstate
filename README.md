@@ -10,50 +10,67 @@
   <p>Learn more at <a href="https://httpstate.com" target="_blank">httpstate.com</a>.</p>
 </div>
 
-### Quick Start (browser)
+## Quick Start (browser)
 
-Install
+Install from CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@httpstate/typescript/dist/index.global.js" type="text/javascript"></script>
+```
+
+or use npm
 
 ```bash
 npm install httpstate
 ```
 
+Pick any valid UUID v4, we'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3`.
+
+Store data with:
+
 ```js
-httpstate.set('my-uuid', 'hello')
+httpstate.set('45fb3654-0e92-44da-aa21-ca409c6bdab3', 'Hi! 👋🏻')
+```
+
+Retrieve it with:
+
+```js
 httpstate.get('my-uuid')
 ```
 
-## Pick your favorite language
+That's it! 🐙
+
+## or choose your favorite language
 
 ### Javascript / Typescript ([typescript](./typescript))
 
 Browser and server (node.js, deno, bun) compatible clients.
 
-[API and Documentation](./typescript)
+[API and Docs](./typescript)
 
 ### React ([react](./react))
 
 `useHttpState()` is a drop-in replacement to `useState()`
 
-[API and Documentation](./react)
+[API and Docs](./react)
 
 ### Go ([go](./go))
 
 ...
 
-[API and Documentation](./go)
+[API and Docs](./go)
 
 ### Python ([python](./python))
 
 ...
 
-[API and Documentation](./python)
+[API and Docs](./python)
 
 ### Rust ([rust](./rust))
 
 ...
 
-[API and Documentation](./rust)
+[API and Docs](./rust)
 
 ## Learn
 

@@ -56,7 +56,7 @@ Cookbook: Refer to [...]
 
 ## About
 
-Alex Morales, [https://moralestapia.com](https://moralestapia.com)
+Alex @ [moralestapia.com](https://moralestapia.com)
 
 Copyright &copy; Alex Morales, 2026
 

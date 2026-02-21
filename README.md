@@ -24,7 +24,7 @@ or from npm
 npm install httpstate
 ```
 
-Pick any valid UUID v4.
+Pick any valid UUID v4. You can [generate one here](https://www.uuidgenerator.net/version4).
 
 We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3` or `45fb36540e9244daaa21ca409c6bdab3` (without dashes).
 

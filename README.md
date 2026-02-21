@@ -8,7 +8,7 @@
   <p>Create interactive experiences with a couple lines of code.</p>
 </div>
 
-## Choose your favorite language
+## Pick your favorite language
 
 ### [Javascript / Typescript](./typescript)
 
@@ -16,9 +16,9 @@ Browser and server (node.js) implementations.
 
 [Quick Start](./typescript)
 
-### React
+### [React](./react)
 
-`useHttpState()` as you would normally use `useState`
+`useHttpState()` is a drop-in replacement to `useState`
 
 [Quick Start](./react)
 

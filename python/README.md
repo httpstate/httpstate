@@ -45,25 +45,36 @@ That's it! 🐙
 ### Functions
 
 - `get(uuid)`  
-  Get state of UUIDv4
+  Get state of UUIDv4.
 
 - `read(uuid)`  
-  Alias for `get`
+  Alias for `get`.
 
-- `set(uuid, data)` - Set state of UUIDv4
+- `set(uuid, data)`  
+  Set state of UUIDv4.
 
-- `write(uuid, data)` - Alias for `set`
+- `write(uuid, data)`  
+  Alias for `set`.
 
 ### HttpState Class
 
-- `HttpState(uuid)` - Create a reactive state instance of UUIDv4
-- `state.get()` - Get state
-- `state.read()` - Alias for `get`
-- `state.set(data)` - Set state
-- `state.write(data)` - Alias for `set`
+- `HttpState(uuid)`  
+  Create a reactive state instance of UUIDv4.
+- `<HttpState>.get()`  
+  Get state.
+- `<HttpState>.read()`  
+  Alias for `get`.
+- `<HttpState>.set(data)`  
+  Set state.
+- `<HttpState>.write(data)`  
+  Alias for `set`.
 
-- `state.off(event, callback)` - Unsubscribe from real-time updates
-- `state.on(event, callback)` - Subscribe to real-time updates (`change`)
+<br>
+
+- `<HttpState>.off(type, callback)`  
+  Unsubscribe from real-time updates.
+- `<HttpState>.on(type, callback)`  
+  Subscribe to real-time updates (type = `change`).
 
 ---
 

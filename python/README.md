@@ -60,6 +60,9 @@ That's it! 🐙
 
 - `HttpState(uuid)`  
   Create a reactive state instance of UUIDv4.
+
+<br>
+
 - `<HttpState>.get()`  
   Get state.
 - `<HttpState>.read()`  

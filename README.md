@@ -3,7 +3,7 @@
 
   <h1>httpstate</h1>
 
-  <p>The missing reactive layer for your applications.</p>
+  <p>The missing reactive layer for all your applications.</p>
 
   <p>Create interactive experiences with a couple lines of code.</p>
 
@@ -60,9 +60,9 @@ That's it! 🐙
 
 ## httpstate in your favorite language
 
-### Javascript / Typescript ([typescript](./typescript))
-
 Browser and server (node.js, deno, bun) compatible clients.
+
+### Javascript / Typescript ([typescript](./typescript))
 
 ```bash
 npm install @httpstate/typescript

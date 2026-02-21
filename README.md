@@ -44,7 +44,7 @@ You can also get real-time updates
 const hs = httpstate('45fb3654-0e92-44da-aa21-ca409c6bdab3');
 
 hs.on('change', data => {
-  console.log('This will change everytime a new value is set', data);
+  console.log('This will change everytime data is set', data);
 });
 ```
 

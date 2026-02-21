@@ -65,7 +65,16 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
       return _;
     },
     et:new EventTarget(),
-    get:async ():Promise<undefined|string> => get(_.uuid),
+    get:async ():Promise<undefined|string> => {
+      const data = await get(_.uuid);
+
+      if(data !== _.data)
+        setTimeout(() => _.emit('change', _.data), 0);
+      
+      _.data = data;
+
+      return _.data;
+    },
     off:(type:string, callback:null|EventListenerOrEventListenerObject) => {
       _.removeEventListener(type, callback);
 
@@ -87,15 +96,18 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
   _.ws.addEventListener('close', e => console.log('close', e));
   _.ws.addEventListener('error', e => console.log('error', e));
   _.ws.addEventListener('message', async e => {
-    _.data = await e.data.text();
+    const data = await e.data.text();
 
     if(
-         _.data
-      && _.data.length > 32
-      && _.data.substring(0, 32) === _.uuid
-      && _.data.substring(45, 46) === '1'
-    )
-      _.emit('change', _.data.substring(46));
+         data
+      && data.length > 32
+      && data.substring(0, 32) === _.uuid
+      && data.substring(45, 46) === '1'
+    ) {
+      _.data = data;
+
+      _.emit('change', _.data);
+    }
   });
   _.ws.addEventListener('open', () => _.ws.send(JSON.stringify({ open:_.uuid })));
 

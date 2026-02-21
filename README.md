@@ -1,7 +1,5 @@
 <div align="center">
-  <p>
-    <img alt="httpstate mascot" height="256" src="assets/mascot.256x256.png" width="256">
-  </p>
+  <img alt="httpstate mascot" height="256" src="assets/mascot.256x256.png" width="256">
 
   <h1>httpstate</h1>
 
@@ -12,8 +10,17 @@
 
 ## Choose your favorite language
 
-* [react](./react)
-* [typescript](./typescript)
+### Javascript / Typescript
+
+Browser and server (node.js) implementations.
+
+[TypeScript](./typescript)
+
+### React
+
+`useHttpState()` as you would normally use `useState`
+
+[React](./react)
 
 ## Learn
 

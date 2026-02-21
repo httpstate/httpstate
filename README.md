@@ -1,6 +1,39 @@
-## Author
+<div align="center">
+  <p>
+    <img alt="httpstate mascot" height="256" src="assets/mascot.256x256.png" width="256">
+  </p>
+
+  <h1>httpstate</h1>
+
+  <p>The missing reactive layer for your applications.</p>
+
+  <p>Create interactive experiences with a couple lines of code.</p>
+</div>
+
+## Choose your favorite language
+
+* [react](./react)
+* [typescript](./typescript)
+
+## Learn
+
+Basics: [...]
+
+Community: [...]
+
+Cookbook: Refer to [...]
+
+---
+
+## About
+
+Alex Morales, [https://moralestapia.com](https://moralestapia.com)
 
 Copyright &copy; Alex Morales, 2026
+
+## Contact
+
+Comments, feature requests, etc. are welcome at [inbox@httpstate.com](mailto:inbox@httpstate.com)
 
 ## License
 

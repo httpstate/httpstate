@@ -46,9 +46,12 @@ That's it! 🐙
 
 - `get(uuid)`
   Get state of UUIDv4
+
 - `read(uuid)`
   Alias for `get`
+
 - `set(uuid, data)` - Set state of UUIDv4
+
 - `write(uuid, data)` - Alias for `set`
 
 ### HttpState Class

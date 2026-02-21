@@ -10,19 +10,19 @@
 
 ## Pick your favorite language
 
-### Go [go/](./go)
+### Go (see [go/](./go))
 
 ...
 
 [Quick Start](./typescript)
 
-### Javascript / Typescript ([typescript/](./typescript))
+### Javascript / Typescript (see [typescript/](./typescript))
 
 Browser and server (node.js, deno, bun) compatible clients.
 
 [Quick Start](./typescript)
 
-### React [react/](./react)
+### React (see [react/](./react))
 
 `useHttpState()` is a drop-in replacement to `useState`
 

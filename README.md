@@ -104,6 +104,8 @@ cargo add httpstate
 
 [API and Docs](./rust)
 
+---
+
 ## Learn
 
 Community: [...]
@@ -120,7 +122,7 @@ Copyright &copy; Alex Morales, 2026
 
 ## Contact
 
-Comments, feature requests, etc. are welcome at **inbox @ httpstate.com**
+Comments, feature requests, etc. are welcome at **inbox @ httpstate.com**.
 
 ## License
 

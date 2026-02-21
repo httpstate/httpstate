@@ -86,8 +86,6 @@ Browser and server (node.js, deno, bun) compatible clients.
 
 ## Learn
 
-Basics: [...]
-
 Community: [...]
 
 Cookbook: Refer to [...]

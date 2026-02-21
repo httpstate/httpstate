@@ -26,7 +26,9 @@ npm install httpstate
 
 Pick any valid UUID v4.
 
-We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3`, you can remove the dashes and use `45fb36540e9244daaa21ca409c6bdab3` instead.
+We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3`.
+
+You can remove the dashes and use `45fb36540e9244daaa21ca409c6bdab3` instead.
 
 Store some data with
 

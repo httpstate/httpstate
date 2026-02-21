@@ -18,7 +18,7 @@ Install from CDN
 <script src="https://cdn.jsdelivr.net/npm/@httpstate/typescript/dist/index.global.js" type="text/javascript"></script>
 ```
 
-or use npm
+or from npm
 
 ```bash
 npm install httpstate
@@ -26,19 +26,19 @@ npm install httpstate
 
 Pick any valid UUID v4, we'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3`.
 
-Store some data with:
+Store some data with
 
 ```js
-httpstate.set('45fb3654-0e92-44da-aa21-ca409c6bdab3', 'Hi! 👋🏻')
+httpstate.set('45fb3654-0e92-44da-aa21-ca409c6bdab3', 'Hi! 👋🏻');
 ```
 
-then retrieve it with:
+and retrieve it with
 
 ```js
-httpstate.get('45fb3654-0e92-44da-aa21-ca409c6bdab3')
+const data = await httpstate.get('45fb3654-0e92-44da-aa21-ca409c6bdab3');
 ```
 
-You can also get real-time updates:
+You can also get real-time updates
 
 ```js
 const hs = httpstate('45fb3654-0e92-44da-aa21-ca409c6bdab3');
@@ -50,7 +50,7 @@ hs.on('change', data => {
 
 That's it! 🐙
 
-## or choose your favorite language
+## httpstate in your favorite language
 
 ### Javascript / Typescript ([typescript](./typescript))
 

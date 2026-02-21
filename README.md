@@ -14,13 +14,13 @@
 
 Browser and server (node.js) implementations.
 
-[TypeScript](./typescript)
+[Go to typescript/](./typescript)
 
 ### React
 
 `useHttpState()` as you would normally use `useState`
 
-[React](./react)
+[Go to react/](./react)
 
 ## Learn
 

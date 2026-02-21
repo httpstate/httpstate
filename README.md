@@ -10,7 +10,7 @@
   <p>Learn more at <a href="https://httpstate.com" target="_blank">httpstate.com</a>.</p>
 </div>
 
-## Quick Start (browser)
+## Quick Start (browser, node.js)
 
 Install from CDN
 
@@ -26,19 +26,19 @@ npm install httpstate
 
 Pick any valid UUID v4, we'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3`.
 
-Store data with:
+Store some data with:
 
 ```js
 httpstate.set('45fb3654-0e92-44da-aa21-ca409c6bdab3', 'Hi! 👋🏻')
 ```
 
-Retrieve it with:
+then retrieve it with:
 
 ```js
 httpstate.get('45fb3654-0e92-44da-aa21-ca409c6bdab3')
 ```
 
-Real-time updates:
+You can also get real-time updates:
 
 ```js
 const hs = httpstate('45fb3654-0e92-44da-aa21-ca409c6bdab3');

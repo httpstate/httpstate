@@ -78,7 +78,7 @@ npm install @httpstate/typescript
 npm install @httpstate/react
 ```
 
-`useHttpState()` is a drop-in replacement to `useState()`
+`useHttpState(uuid)` instead of `useState()`
 
 [API and Docs](./react)
 

@@ -73,7 +73,7 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       if(data !== _.data)
         setTimeout(() => {
           console.log('change');
-          
+
           _.emit('change', _.data);
         }, 0);
       
@@ -124,7 +124,7 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       clearInterval((_.ws as any).interval);
   }, 1000*30); // 30 SECONDS
 
-  setTimeout(get, 0);
+  setTimeout(_.get, 0);
 
   return _;
 };

@@ -66,10 +66,16 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
     },
     et:new EventTarget(),
     get:async ():Promise<undefined|string> => {
+      console.log('get');
+
       const data = await get(_.uuid);
 
       if(data !== _.data)
-        setTimeout(() => _.emit('change', _.data), 0);
+        setTimeout(() => {
+          console.log('change');
+          
+          _.emit('change', _.data);
+        }, 0);
       
       _.data = data;
 

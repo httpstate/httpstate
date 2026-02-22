@@ -100,7 +100,7 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
 
     if(
          data
-      && data.length > 32
+      && data.length > 30
       && data.substring(0, 32) === _.uuid
       && data.substring(45, 46) === '1'
     ) {
@@ -116,7 +116,9 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
       _.ws.send('0');
     else
       clearInterval((_.ws as any).interval);
-  }, 1000*32); // 32 SECONDS
+  }, 1000*30); // 30 SECONDS
+
+  setTimeout(get, 0);
 
   return _;
 };

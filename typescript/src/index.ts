@@ -124,7 +124,11 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       clearInterval((_.ws as any).interval);
   }, 1000*30); // 30 SECONDS
 
-  setTimeout(_.get, 0);
+  setTimeout(() => {
+    console.log('_.get');
+
+    _.get();
+  }, 0);
 
   return _;
 };

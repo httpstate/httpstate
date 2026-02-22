@@ -40,45 +40,64 @@ export const write:(uuid:string, data:string) => Promise<number> = async (uuid:s
 
 // HTTP State
 export type HttpState = {
-  addEventListener(type:string, callback:(data:undefined|string) => void):void;
   data?:undefined|string;
-  emit(type:string, data:undefined|string):HttpState;
-  et:{ [type:string]:((data:undefined|string) => void)[] };
+  et?:undefined|{ [type:string]:((data?:undefined|string) => void)[] };
+  uuid?:undefined|string;
+  ws?:undefined|WebSocket;
+
+  addEventListener(type:string, callback:(data?:undefined|string) => void):void;
+  destroy():void;
+  emit(type:string, data?:undefined|string):HttpState;
   get():Promise<undefined|string>;
-  off(type:string, callback:(data:undefined|string) => void):HttpState;
-  on(type:string, callback:(data:undefined|string) => void):HttpState;
+  off(type:string, callback:(data?:undefined|string) => void):HttpState;
+  on(type:string, callback:(data?:undefined|string) => void):HttpState;
   read():Promise<undefined|string>;
-  removeEventListener(type:string, callback:(data:undefined|string) => void):void;
-  set(data:string):Promise<number>;
-  uuid:string;
-  write(data:string):Promise<number>;
-  ws:WebSocket;
+  removeEventListener(type:string, callback:(data?:undefined|string) => void):void;
+  set(data:string):Promise<undefined|number>;
+  write(data:string):Promise<undefined|number>;
 };
 
 const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
   const _:HttpState = {
-    addEventListener:(type:string, callback:(data:undefined|string) => void) => _.on(type, callback),
     data:undefined,
-    emit:(type:string, data:string) => {
-      if(_.et[type])
+    et:{},
+    uuid,
+    ws:new WebSocket('wss://httpstate.com/' + uuid),
+
+    addEventListener:(type:string, callback:(data?:undefined|string) => void) => _.on(type, callback),
+    destroy:() => {
+      clearInterval((_.ws as any).interval);
+      _.ws?.close(1000);
+
+      delete _.data;
+      delete _.et;
+      delete _.uuid;
+      delete _.ws;
+    },
+    emit:(type:string, data?:undefined|string) => {
+      if(_.et?.[type])
         for(const callback of _.et[type])
-          callback.call(_, data);
+          if(data === undefined)
+            callback.call(_);
+          else
+            callback.call(_, data);
 
       return _;
     },
-    et:{},
     get:async ():Promise<undefined|string> => {
-      const data = await get(_.uuid);
+      if(_.uuid) {
+        const data = await get(_.uuid);
 
-      if(data !== _.data)
-        setTimeout(() => _.emit('change', _.data), 0);
-      
-      _.data = data;
+        if(data !== _.data)
+          setTimeout(() => _.emit('change', _.data), 0);
+        
+        _.data = data;
 
-      return _.data;
+        return _.data;
+      }
     },
-    off:(type:string, callback:(data:undefined|string) => void) => {
-      if(_.et[type]) {
+    off:(type:string, callback:(data?:undefined|string) => void) => {
+      if(_.et?.[type]) {
         _.et[type] = _.et[type].filter(_callback => _callback !== callback);
 
         if(!_.et[type].length)
@@ -87,25 +106,34 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
 
       return _;
     },
-    on:(type:string, callback:(data:undefined|string) => void) => {
-      if(!_.et[type])
-        _.et[type] = [];
+    on:(type:string, callback:(data?:undefined|string) => void) => {
+      if(_.et) {
+        if(!_.et[type])
+          _.et[type] = [];
 
-      _.et[type].push(callback);
+        _.et[type].push(callback);
+      }
 
       return _;
     },
-    read:async ():Promise<undefined|string> => read(_.uuid),
-    removeEventListener:(type:string, callback:(data:undefined|string) => void) => _.off(type, callback),
-    set:async (data:string):Promise<number> => set(_.uuid, data),
-    uuid,
-    write:async (data:string):Promise<number> => write(_.uuid, data),
-    ws:new WebSocket('wss://httpstate.com/' + uuid)
+    read:async ():Promise<undefined|string> => {
+      if(_.uuid)
+        return read(_.uuid);
+    },
+    removeEventListener:(type:string, callback:(data?:undefined|string) => void) => _.off(type, callback),
+    set:async (data:string):Promise<undefined|number> => {
+      if(_.uuid)
+        return set(_.uuid, data);
+    },
+    write:async (data:string):Promise<undefined|number> => {
+      if(_.uuid)
+        return write(_.uuid, data);
+    }
   };
 
-  _.ws.addEventListener('close', e => console.log('close', e));
-  _.ws.addEventListener('error', e => console.log('error', e));
-  _.ws.addEventListener('message', async e => {
+  _.ws?.addEventListener('close', e => console.log('close', e));
+  _.ws?.addEventListener('error', e => console.log('error', e));
+  _.ws?.addEventListener('message', async e => {
     const data = await e.data.text();
 
     if(
@@ -119,11 +147,15 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       _.emit('change', _.data);
     }
   });
-  _.ws.addEventListener('open', () => _.ws.send(JSON.stringify({ open:_.uuid })));
+  _.ws?.addEventListener('open', () => {
+    _.emit('open');
+
+    _.ws?.send(JSON.stringify({ open:_.uuid }));
+  });
 
   (_.ws as any).interval = setInterval(() => {
-    if(_.ws.readyState === WebSocket.OPEN)
-      _.ws.send('0');
+    if(_.ws?.readyState === WebSocket.OPEN)
+      _.ws?.send('0');
     else
       clearInterval((_.ws as any).interval);
   }, 1000*30); // 30 SECONDS

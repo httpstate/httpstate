@@ -88,7 +88,7 @@ class HttpState:
       ):
         self.emit('change', self.data[46:])
 
-  def emit(self, type:str, data:None|str) -> None:
+  def emit(self, type:str, data:None|str):
     for callback in self.et.get(type, []):
       callback(data)
 
@@ -109,7 +109,7 @@ class HttpState:
 
     return self
 
-  def on(self, type:str, callback:Callable[[None|str], None]) -> None:
+  def on(self, type:str, callback:Callable[[None|str], None]):
     if type not in self.et:
       self.et[type] = []
 

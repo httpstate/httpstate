@@ -49,6 +49,8 @@ const data = await httpstate.get('45fb36540e9244daaa21ca409c6bdab3');
 You can also get real-time updates
 
 ```js
+import httpstate from '@httpstate/typescript';
+
 const hs = httpstate('45fb36540e9244daaa21ca409c6bdab3');
 
 hs.on('change', data => {

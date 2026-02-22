@@ -40,15 +40,15 @@ export const write:(uuid:string, data:string) => Promise<number> = async (uuid:s
 
 // HTTP State
 export type HttpState = {
-  addEventListener(type:string, callback:null|EventListenerOrEventListenerObject):void;
+  addEventListener(type:string, callback:(data:undefined|string) => void):void;
   data?:undefined|string;
   emit(type:string, data:undefined|string):HttpState;
-  et:EventTarget;
+  et:{ [type:string]:((data:undefined|string) => void)[] };
   get():Promise<undefined|string>;
-  off(type:string, callback:null|EventListenerOrEventListenerObject):HttpState;
-  on(type:string, callback:null|EventListenerOrEventListenerObject):HttpState;
+  off(type:string, callback:(data:undefined|string) => void):HttpState;
+  on(type:string, callback:(data:undefined|string) => void):HttpState;
   read():Promise<undefined|string>;
-  removeEventListener(type:string, callback:null|EventListenerOrEventListenerObject):void;
+  removeEventListener(type:string, callback:(data:undefined|string) => void):void;
   set(data:string):Promise<number>;
   uuid:string;
   write(data:string):Promise<number>;
@@ -57,42 +57,46 @@ export type HttpState = {
 
 const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
   const _:HttpState = {
-    addEventListener:(type:string, callback:null|EventListenerOrEventListenerObject) => _.et.addEventListener(type, callback),
+    addEventListener:(type:string, callback:(data:undefined|string) => void) => _.on(type, callback),
     data:undefined,
     emit:(type:string, data:string) => {
-      _.et.dispatchEvent(Object.assign(new Event(type), { data }));
+      if(_.et[type])
+        for(const callback of _.et[type])
+          callback.call(_, data);
 
       return _;
     },
-    et:new EventTarget(),
+    et:{},
     get:async ():Promise<undefined|string> => {
-      console.log('get');
-
       const data = await get(_.uuid);
 
       if(data !== _.data)
-        setTimeout(() => {
-          console.log('change');
-
-          _.emit('change', _.data);
-        }, 0);
+        setTimeout(() => _.emit('change', _.data), 0);
       
       _.data = data;
 
       return _.data;
     },
-    off:(type:string, callback:null|EventListenerOrEventListenerObject) => {
-      _.removeEventListener(type, callback);
+    off:(type:string, callback:(data:undefined|string) => void) => {
+      if(_.et[type]) {
+        _.et[type] = _.et[type].filter(_callback => _callback !== callback);
+
+        if(!_.et[type].length)
+          delete _.et[type];
+      }
 
       return _;
     },
-    on:(type:string, callback:null|EventListenerOrEventListenerObject) => {
-      _.addEventListener(type, callback);
+    on:(type:string, callback:(data:undefined|string) => void) => {
+      if(!_.et[type])
+        _.et[type] = [];
+
+      _.et[type].push(callback);
 
       return _;
     },
     read:async ():Promise<undefined|string> => read(_.uuid),
-    removeEventListener:(type:string, callback:null|EventListenerOrEventListenerObject) => _.et.removeEventListener(type, callback),
+    removeEventListener:(type:string, callback:(data:undefined|string) => void) => _.off(type, callback),
     set:async (data:string):Promise<number> => set(_.uuid, data),
     uuid,
     write:async (data:string):Promise<number> => write(_.uuid, data),
@@ -110,7 +114,7 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       && data.substring(0, 32) === _.uuid
       && data.substring(45, 46) === '1'
     ) {
-      _.data = data;
+      _.data = data.substring(46);
 
       _.emit('change', _.data);
     }
@@ -124,11 +128,7 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       clearInterval((_.ws as any).interval);
   }, 1000*30); // 30 SECONDS
 
-  setTimeout(() => {
-    console.log('_.get');
-
-    _.get();
-  }, 0);
+  setTimeout(_.get, 0);
 
   return _;
 };

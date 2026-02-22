@@ -27,7 +27,7 @@ npm install @httpstate/typescript
 Import (not needed if you use the CDN)
 
 ```bash
-import httpstate from '@httpstate/typescript';
+import * as httpstate from '@httpstate/typescript';
 ```
 
 Pick any valid UUID v4. You can [generate one here](https://www.uuidgenerator.net/version4).

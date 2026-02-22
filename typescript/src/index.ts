@@ -116,7 +116,7 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
     },
     read:async ():Promise<undefined|string> => {
       if(_.uuid)
-        return read(_.uuid);
+        return get(_.uuid);
     },
     removeEventListener:(type:string, callback:(data?:undefined|string) => void) => _.off(type, callback),
     set:async (data:string):Promise<undefined|number> => {
@@ -125,7 +125,7 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
     },
     write:async (data:string):Promise<undefined|number> => {
       if(_.uuid)
-        return write(_.uuid, data);
+        return set(_.uuid, data);
     }
   };
 

@@ -14,10 +14,10 @@ export const get:(uuid:string) => Promise<undefined|string> = async (uuid:string
 };
 
 export const load:() => Promise<void> = async ():Promise<void> => {
-  for(const node of document.querySelectorAll('[httpState],[httpstate]')) {
-    const uuid:null|string = node.getAttribute('httpState')||node.getAttribute('httpstate');
+  for(const node of document.querySelectorAll('[httpstate]')) {
+    const uuid:null|string = node.getAttribute('httpstate');
 
-    const state:HttpState = (globalThis as any).httpState(uuid)
+    const state:HttpState = (globalThis as any).httpstate(uuid)
       .on('change', (e:Event&{ data:string }) => node.innerHTML = e.data);
 
     state.emit('change', await state.get());
@@ -55,7 +55,7 @@ export type HttpState = {
   ws:WebSocket;
 };
 
-const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
+const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
   const _:HttpState = {
     addEventListener:(type:string, callback:null|EventListenerOrEventListenerObject) => _.et.addEventListener(type, callback),
     data:undefined,
@@ -123,7 +123,7 @@ const httpState:(uuid:string) => HttpState = (uuid:string):HttpState => {
   return _;
 };
 
-export default httpState;
+export default httpstate;
 
 if(
      typeof document !== 'undefined'
@@ -132,7 +132,7 @@ if(
 )
   globalThis.addEventListener('load', async () => {
     if((globalThis as any).httpstate)
-      (globalThis as any).httpState = (globalThis as any).httpstate = Object.assign(
+      (globalThis as any).httpstate = Object.assign(
         (globalThis as any).httpstate.default,
         (globalThis as any).httpstate
       );

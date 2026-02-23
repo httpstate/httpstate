@@ -52,19 +52,51 @@ def write(uuid:str, data:str) -> None|int:
 class HttpState:
   def __init__(self, uuid:str):
     self.data:None|str = None
+    self.el:None|asyncio.AbstractEventLoop = None
     self.et:Dict[str, List[Callable[[None|str], None]]] = {}
     self.uuid:str = uuid
     self.ws:None|websockets.WebSocketClientProtocol = None
 
     threading.Thread(
       daemon=True,
+      target=self._el
+    ).start()
+
+    threading.Thread(
+      daemon=True,
       target=lambda : asyncio.run(self._ws())
     ).start()
+  
+  def _el(self):
+    self.el = asyncio.new_event_loop()
+    
+    asyncio.set_event_loop(self.el)
+    
+    self.el.call_soon_threadsafe(lambda : self.get())
+
+    self.el.run_forever()
 
   async def _ws(self):
     self.ws = await websockets.connect(f"wss://httpstate.com/{self.uuid}")
 
     await self.ws.send(f'{{"open":"{self.uuid}"}}')
+    self.emit('open')
+
+    async def data():
+      async for data in self.ws:
+        data = data.decode()
+
+        if(
+              data
+          and len(data) > 32
+          and data[:32] == self.uuid
+          and data[45] == '1'
+        ):
+          self.data = data[46:]
+
+          self.emit('change', self.data)
+    
+    asyncio.create_task(data())
 
     async def interval():
       while True:
@@ -76,26 +108,30 @@ class HttpState:
           break
 
     asyncio.create_task(interval())
+    
+    await asyncio.Event().wait()
+  
+  def destroy(self):
+    pass
 
-    async for data in self.ws:
-      self.data = data.decode()
-
-      if(
-            self.data
-        and len(self.data) > 32
-        and self.data[:32] == self.uuid
-        and self.data[45] == '1'
-      ):
-        self.emit('change', self.data[46:])
-
-  def emit(self, type:str, data:None|str):
+  def emit(self, type:str, data:None|str = None):
     for callback in self.et.get(type, []):
-      callback(data)
+      if(data is None):
+        callback()
+      else:
+        callback(data)
 
     return self
 
   def get(self) -> None|str:
-    return get(self.uuid)
+    data = get(self.uuid)
+
+    if(data != self.data):
+      self.el.call_soon_threadsafe(lambda : self.emit('change', self.data))
+
+    self.data = data
+
+    return self.data
 
   def off(self, type:str, callback:Callable[[None|str], None]):
     if type in self.et:
@@ -118,10 +154,10 @@ class HttpState:
     return self
 
   def read(self) -> None|str:
-    return read(self.uuid)
+    return self.get()
 
   def set(self, data:str) -> None|int:
     return set(self.uuid, data)
 
   def write(self, data:str) -> None|int:
-    return write(self.uuid, data)
+    return self.set(data)

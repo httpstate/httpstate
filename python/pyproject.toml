@@ -16,7 +16,7 @@ license-files = ["LICEN[CS]E*"]
 name = "httpstate"
 readme = "README.md"
 requires-python = ">=3.10"
-version = "0.0.12"
+version = "0.0.13"
 
 [project.url]
 Homepage = "https://httpstate.com"

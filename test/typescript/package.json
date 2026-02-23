@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@httpstate/typescript": "^0.0.32"
+  }
+}

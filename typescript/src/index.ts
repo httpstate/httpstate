@@ -114,19 +114,13 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
 
       return _;
     },
-    read:async ():Promise<undefined|string> => {
-      if(_.uuid)
-        return get(_.uuid);
-    },
+    read:async ():Promise<undefined|string> => _.get(),
     removeEventListener:(type:string, callback:(data?:undefined|string) => void) => _.off(type, callback),
     set:async (data:string):Promise<undefined|number> => {
       if(_.uuid)
         return set(_.uuid, data);
     },
-    write:async (data:string):Promise<undefined|number> => {
-      if(_.uuid)
-        return set(_.uuid, data);
-    }
+    write:async (data:string):Promise<undefined|number> => _.set(data)
   };
 
   _.ws?.addEventListener('close', e => console.log('close', e));
@@ -136,7 +130,7 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
 
     if(
          data
-      && data.length > 30
+      && data.length > 32
       && data.substring(0, 32) === _.uuid
       && data.substring(45, 46) === '1'
     ) {
@@ -146,9 +140,9 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
     }
   });
   _.ws?.addEventListener('open', () => {
-    _.emit('open');
-
     _.ws?.send(JSON.stringify({ open:_.uuid }));
+
+    _.emit('open');
   });
 
   (_.ws as any).interval = setInterval(() => {

@@ -18,7 +18,7 @@ export const useHttpState:(uuid:string) => undefined|[undefined|string, (data:st
   useEffect(() => {
     (async() => {
       const _ = httpState(uuid)
-        .on('change', (e:Event&{ data?:string }) => setState(e.data));
+        .on('change', (data?:undefined|string) => setState(data));
 
       _.emit('change', await _.get());
     })();

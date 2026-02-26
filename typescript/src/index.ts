@@ -18,7 +18,7 @@ export const load:() => Promise<void> = async ():Promise<void> => {
     const uuid:null|string = node.getAttribute('httpstate');
 
     (globalThis as any).httpstate(uuid)
-      .on('change', (e:Event&{ data:string }) => node.innerHTML = e.data);
+      .on('change', (data:undefined|string) => node.innerHTML = String(data));
   }
 };
 
@@ -41,10 +41,9 @@ export type HttpState = {
   data?:undefined|string;
   et?:undefined|{ [type:string]:((data?:undefined|string) => void)[] };
   uuid?:undefined|string;
-  ws?:undefined|WebSocket;
 
   addEventListener(type:string, callback:(data?:undefined|string) => void):void;
-  destroy():void;
+  delete():void;
   emit(type:string, data?:undefined|string):HttpState;
   get():Promise<undefined|string>;
   off(type:string, callback:(data?:undefined|string) => void):HttpState;
@@ -53,6 +52,12 @@ export type HttpState = {
   removeEventListener(type:string, callback:(data?:undefined|string) => void):void;
   set(data:string):Promise<undefined|number>;
   write(data:string):Promise<undefined|number>;
+  ws:{
+    _?:undefined|WebSocket,
+    delete:() => void,
+    interval?:undefined|number,
+    new:() => void
+  };
 };
 
 const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
@@ -60,17 +65,14 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
     data:undefined,
     et:{},
     uuid,
-    ws:new WebSocket('wss://httpstate.com/' + uuid),
 
     addEventListener:(type:string, callback:(data?:undefined|string) => void) => _.on(type, callback),
-    destroy:() => {
-      clearInterval((_.ws as any).interval);
-      _.ws?.close(1000);
-
+    delete:() => {
       delete _.data;
       delete _.et;
       delete _.uuid;
-      delete _.ws;
+
+      _.ws.delete();
     },
     emit:(type:string, data?:undefined|string) => {
       if(_.et?.[type])
@@ -84,7 +86,7 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
     },
     get:async ():Promise<undefined|string> => {
       if(_.uuid) {
-        const data = await get(_.uuid);
+        const data:undefined|string = await get(_.uuid);
 
         if(data !== _.data)
           setTimeout(() => _.emit('change', _.data), 0);
@@ -120,37 +122,78 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       if(_.uuid)
         return set(_.uuid, data);
     },
-    write:async (data:string):Promise<undefined|number> => _.set(data)
+    write:async (data:string):Promise<undefined|number> => _.set(data),
+    ws:{
+      _:undefined,
+      delete:():void => {
+        if(_.ws._) {
+          clearInterval(_.ws.interval);
+          _.ws._.close(1000);
+
+          delete _.ws._;
+        }
+      },
+      interval:undefined,
+      new:():void => {
+        _.ws.delete();
+
+        _.ws._ = new WebSocket('wss://httpstate.com/' + uuid);
+
+        _.ws._.addEventListener('open', () => {
+          if(_.ws._) {
+            _.ws._.addEventListener('close', e => {
+              _.ws.delete();
+
+              (function ᓇ(ms) { setTimeout(() => {
+                _.ws.new();
+
+                const onClose:() => void = ():void => ᓇ(Math.min(ms*2, 1024*32));
+
+                if(_.ws._) {
+                  _.ws._.addEventListener('close', onClose, { once:true });
+                  _.ws._.addEventListener('open', () => {
+                    if(_.ws._)
+                      _.ws._.removeEventListener('close', onClose);
+                  }, { once:true });
+                }
+              }, ms); })(1024);
+            });
+            _.ws._.addEventListener('error', e => console.log('error', e));
+            _.ws._.addEventListener('message', async e => {
+              const data:string = String(await e.data.text());
+
+              if(
+                   data
+                && data.length > 32
+                && data.substring(0, 32) === _.uuid
+                && data.substring(45, 46) === '1'
+              ) {
+                _.data = data.substring(46);
+
+                _.emit('change', _.data);
+              }
+            });
+
+            _.ws._.send(JSON.stringify({ open:_.uuid }));
+
+            _.emit('open');
+
+            _.ws.interval = setInterval(() => {
+              if(
+                   _.ws._
+                && _.ws._.readyState === WebSocket.OPEN
+              )
+                _.ws._.send('0');
+              else
+                clearInterval(_.ws.interval);
+            }, 1000*30); // 30 SECONDS
+          }
+        });
+      }
+    }
   };
 
-  _.ws?.addEventListener('close', e => console.log('close', e));
-  _.ws?.addEventListener('error', e => console.log('error', e));
-  _.ws?.addEventListener('message', async e => {
-    const data = await e.data.text();
-
-    if(
-         data
-      && data.length > 32
-      && data.substring(0, 32) === _.uuid
-      && data.substring(45, 46) === '1'
-    ) {
-      _.data = data.substring(46);
-
-      _.emit('change', _.data);
-    }
-  });
-  _.ws?.addEventListener('open', () => {
-    _.ws?.send(JSON.stringify({ open:_.uuid }));
-
-    _.emit('open');
-  });
-
-  (_.ws as any).interval = setInterval(() => {
-    if(_.ws?.readyState === WebSocket.OPEN)
-      _.ws?.send('0');
-    else
-      clearInterval((_.ws as any).interval);
-  }, 1000*30); // 30 SECONDS
+  _.ws.new();
 
   setTimeout(_.get, 0);
 

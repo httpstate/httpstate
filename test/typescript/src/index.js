@@ -30,7 +30,7 @@ await new Promise(async resolve => {
       if(this.data === data) {
         console.log(new Date().toISOString(), '@httpstate/typescript', uuid, '(instance.load)  data', '✅');
 
-        this.destroy();
+        this.delete();
 
         resolve();
       }

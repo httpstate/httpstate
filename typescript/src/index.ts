@@ -38,11 +38,7 @@ export const load:() => Promise<void> = async ():Promise<void> => {
       && !(load as any)._[uuid]
     )
       (load as any)._[uuid] = httpstate(uuid)
-        .on('change', (data:undefined|string) => {
-          console.log('on.change', data);
-
-          node.innerHTML = String(data);
-        });
+        .on('change', (data:undefined|string) => node.innerHTML = String(data));
   }
 };
 
@@ -164,26 +160,16 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
 
         _.ws._ = new WebSocket('wss://httpstate.com/' + uuid);
 
+        _.ws._.addEventListener('close', e => {
+          let timeout = (_.ws.new as any).timeout||0;
+          (_.ws.new as any).timeout = Math.min(Math.max(1024, timeout*2), 1024*60); // ~1 SECOND TO ~1 MINUTE
+
+          setTimeout(_.ws.new, (_.ws.new as any).timeout);
+        }, { once:true });
+        _.ws._.addEventListener('error', e => console.log('error', e));
         _.ws._.addEventListener('open', () => {
           if(_.ws._) {
-            _.ws._.addEventListener('close', e => {
-              _.ws.delete();
-
-              (function ᓇ(ms) { setTimeout(() => {
-                _.ws.new();
-
-                const onClose:() => void = ():void => ᓇ(Math.min(ms*2, 1024*32));
-
-                if(_.ws._) {
-                  _.ws._.addEventListener('close', onClose, { once:true });
-                  _.ws._.addEventListener('open', () => {
-                    if(_.ws._)
-                      _.ws._.removeEventListener('close', onClose);
-                  }, { once:true });
-                }
-              }, ms); })(1024);
-            }, { once:true });
-            _.ws._.addEventListener('error', e => console.log('error', e));
+            _.ws._.addEventListener('message', () => delete (_.ws.new as any).timeout, { once:true });
             _.ws._.addEventListener('message', async e => {
               const data:string = String(await e.data.text());
 

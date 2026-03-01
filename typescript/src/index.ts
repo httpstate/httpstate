@@ -6,6 +6,19 @@
 // General Public License as published by the Free Software Foundation, either
 // version 3 of the License, or (at your option) any later version.
 
+const UUIDV4:{ short(s:string):undefined|string; } = { short:(s:string):undefined|string => {
+  s = s.toLowerCase();
+
+  if(s.length === 36)
+    s = s.replace(/-/g, '');
+
+  if(
+       s.length === 32
+    && /^[0-9a-f]{12}4[0-9a-f]{3}[89ab][0-9a-f]{15}$/.test(s)
+  )
+    return s;
+} };
+
 export const get:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => {
   const response:Response = await fetch('https://httpstate.com/' + uuid);
 
@@ -17,8 +30,19 @@ export const load:() => Promise<void> = async ():Promise<void> => {
   for(const node of document.querySelectorAll('[httpstate]')) {
     const uuid:null|string = node.getAttribute('httpstate');
 
-    (globalThis as any).httpstate(uuid)
-      .on('change', (data:undefined|string) => node.innerHTML = String(data));
+    if(!(load as any)._)
+      (load as any)._ = {};
+
+    if(
+         uuid
+      && !(load as any)._[uuid]
+    )
+      (load as any)._[uuid] = httpstate(uuid)
+        .on('change', (data:undefined|string) => {
+          console.log('on.change', data);
+
+          node.innerHTML = String(data);
+        });
   }
 };
 
@@ -46,7 +70,7 @@ export type HttpState = {
   delete():void;
   emit(type:string, data?:undefined|string):HttpState;
   get():Promise<undefined|string>;
-  off(type:string, callback:(data?:undefined|string) => void):HttpState;
+  off(type:string, callback?:(data?:undefined|string) => void):HttpState;
   on(type:string, callback:(data?:undefined|string) => void):HttpState;
   read():Promise<undefined|string>;
   removeEventListener(type:string, callback:(data?:undefined|string) => void):void;
@@ -55,8 +79,8 @@ export type HttpState = {
   ws:{
     _?:undefined|WebSocket,
     delete:() => void,
-    interval?:undefined|number,
-    new:() => void
+    new:() => void,
+    pingInterval?:undefined|number
   };
 };
 
@@ -96,11 +120,12 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
         return _.data;
       }
     },
-    off:(type:string, callback:(data?:undefined|string) => void) => {
+    off:(type:string, callback?:(data?:undefined|string) => void) => {
       if(_.et?.[type]) {
-        _.et[type] = _.et[type].filter(_callback => _callback !== callback);
+        if(callback)
+          _.et[type] = _.et[type].filter(_callback => _callback !== callback);
 
-        if(!_.et[type].length)
+        if(!callback || !_.et[type].length)
           delete _.et[type];
       }
 
@@ -127,13 +152,13 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       _:undefined,
       delete:():void => {
         if(_.ws._) {
-          clearInterval(_.ws.interval);
+          clearInterval(_.ws.pingInterval);
           _.ws._.close(1000);
 
           delete _.ws._;
         }
       },
-      interval:undefined,
+      pingInterval:undefined,
       new:():void => {
         _.ws.delete();
 
@@ -157,15 +182,16 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
                   }, { once:true });
                 }
               }, ms); })(1024);
-            });
+            }, { once:true });
             _.ws._.addEventListener('error', e => console.log('error', e));
             _.ws._.addEventListener('message', async e => {
               const data:string = String(await e.data.text());
 
               if(
-                   data
+                   _.uuid
+                && data
                 && data.length > 32
-                && data.substring(0, 32) === _.uuid
+                && data.substring(0, 32) === UUIDV4.short(_.uuid)
                 && data.substring(45, 46) === '1'
               ) {
                 _.data = data.substring(46);
@@ -178,17 +204,17 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
 
             _.emit('open');
 
-            _.ws.interval = setInterval(() => {
+            _.ws.pingInterval = setInterval(() => {
               if(
                    _.ws._
                 && _.ws._.readyState === WebSocket.OPEN
               )
                 _.ws._.send('0');
               else
-                clearInterval(_.ws.interval);
+                clearInterval(_.ws.pingInterval);
             }, 1000*30); // 30 SECONDS
           }
-        });
+        }, { once:true });
       }
     }
   };
@@ -207,7 +233,7 @@ if(
   && typeof window !== 'undefined'
   && globalThis === window
 )
-  globalThis.addEventListener('load', async () => {
+  globalThis.addEventListener('DOMContentLoaded', async () => {
     if((globalThis as any).httpstate)
       (globalThis as any).httpstate = Object.assign(
         (globalThis as any).httpstate.default,

@@ -80,7 +80,7 @@ export type HttpState = {
   };
 };
 
-const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
+export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
   const _:HttpState = {
     data:undefined,
     et:{},
@@ -212,7 +212,13 @@ const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
   return _;
 };
 
-export default httpstate;
+export default Object.assign(httpstate, {
+  get,
+  load,
+  read,
+  set,
+  write
+});
 
 if(
      typeof document !== 'undefined'
@@ -221,10 +227,7 @@ if(
 )
   globalThis.addEventListener('DOMContentLoaded', async () => {
     if((globalThis as any).httpstate)
-      (globalThis as any).httpstate = Object.assign(
-        (globalThis as any).httpstate.default,
-        (globalThis as any).httpstate
-      );
+      (globalThis as any).httpstate = (globalThis as any).httpstate.default;
 
     await load();
   }, { once:true });

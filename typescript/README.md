@@ -1,17 +1,17 @@
-# httpstate (python)
+# httpstate (typescript)
 
 ## Quick Start
 
 Install
 
 ```bash
-pip install httpstate
+npm install @httpstate/typescript
 ```
 
 Import
 
 ```bash
-import httpstate
+import httpstate from '@httpstate/typescript';
 ```
 
 Pick any valid UUID v4. You can [generate one here](https://uuid.httpstate.com).
@@ -20,22 +20,22 @@ We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3` or `45fb36540e9244daaa21ca409c6
 
 Store some data with
 
-```python
-httpstate.set('45fb36540e9244daaa21ca409c6bdab3', 'Hi! 👋🏻')
+```typescript
+await httpstate.set('45fb36540e9244daaa21ca409c6bdab3', 'Hi! 👋🏻');
 ```
 
 and retrieve it with
 
-```python
-data = httpstate.get('45fb36540e9244daaa21ca409c6bdab3')
+```typescript
+const data = await httpstate.get('45fb36540e9244daaa21ca409c6bdab3');
 ```
 
 You can also get real-time updates
 
-```python
-hs = httpstate.HttpState('45fb36540e9244daaa21ca409c6bdab3')
+```typescript
+const hs = httpstate('45fb36540e9244daaa21ca409c6bdab3');
 
-hs.on('change', lambda data: print(f'This will change everytime data is set [{data}].'))
+hs.on('change', data => console.log(`This will change everytime data is set [${data}].`));
 ```
 
 That's it! 🐙
@@ -46,6 +46,9 @@ That's it! 🐙
 
 - `get(uuid)`
   Get state of UUIDv4.
+
+- `load()`
+  Auto-load state from DOM elements with `httpstate` attribute.
 
 - `post(uuid, data)`
   Alias for `set`.
@@ -61,8 +64,9 @@ That's it! 🐙
 
 ### HttpState Class
 
-- `HttpState(uuid)`
+- `httpstate(uuid)`
   Create a reactive state instance of UUIDv4.
+
 - `<HttpState>.data`
   Property with the most up-to-date state value.
 
@@ -81,11 +85,15 @@ That's it! 🐙
 
 <br>
 
+- `<HttpState>.addEventListener(type, callback)`
+  Subscribe to real-time updates (alias for `on`).
 - `<HttpState>.off(type, callback)`
   Unsubscribe from real-time updates.
 - `<HttpState>.on(type, callback)`
   Subscribe to real-time updates.
   - `change`: fired when state data changes. Callback receives current data as argument.
+- `<HttpState>.removeEventListener(type, callback)`
+  Unsubscribe from real-time updates (alias for `off`).
 
 <br>
 

@@ -114,7 +114,7 @@ class HttpState:
     
     await asyncio.Event().wait()
   
-  def destroy(self):
+  def delete(self):
     pass
 
   def emit(self, type:str, data:None|str = None):

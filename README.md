@@ -109,7 +109,7 @@ pip install httpstate
 ### Ruby ([ruby](./ruby))
 
 ```bash
-[gem install ...]
+[...]
 ```
 
 [API and Docs](./ruby)

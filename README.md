@@ -30,7 +30,7 @@ Import (not needed if you use the CDN)
 import * as httpstate from '@httpstate/typescript';
 ```
 
-Pick any valid UUID v4. You can [generate one here](https://www.uuidgenerator.net/version4).
+Pick any valid UUID v4. You can [generate one here](https://uuid.httpstate.com).
 
 We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3` or `45fb36540e9244daaa21ca409c6bdab3` (without dashes).
 

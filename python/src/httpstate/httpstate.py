@@ -26,6 +26,9 @@ def get(uuid:str) -> None|str:
   except Exception:
     return None
 
+def post(uuid:str, data:str) -> None|int:
+  return set(uuid, data)
+
 def read(uuid:str) -> None|str:
   return get(uuid)
 
@@ -152,6 +155,9 @@ class HttpState:
     self.et[type].append(callback)
 
     return self
+  
+  def post(self, data:str) -> None|int:
+    return self.set(data)
 
   def read(self) -> None|str:
     return self.get()

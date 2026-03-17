@@ -42,6 +42,8 @@ export const load:() => Promise<void> = async ():Promise<void> => {
   }
 };
 
+export const post:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => set(uuid, data);
+
 export const read:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => get(uuid);
 
 export const set:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => {
@@ -68,6 +70,7 @@ export type HttpState = {
   get():Promise<undefined|string>;
   off(type:string, callback?:(data?:undefined|string) => void):HttpState;
   on(type:string, callback:(data?:undefined|string) => void):HttpState;
+  post(data:string):Promise<undefined|number>;
   read():Promise<undefined|string>;
   removeEventListener(type:string, callback:(data?:undefined|string) => void):void;
   set(data:string):Promise<undefined|number>;
@@ -137,6 +140,7 @@ export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
 
       return _;
     },
+    post:async (data:string):Promise<undefined|number> => _.set(data),
     read:async ():Promise<undefined|string> => _.get(),
     removeEventListener:(type:string, callback:(data?:undefined|string) => void) => _.off(type, callback),
     set:async (data:string):Promise<undefined|number> => {

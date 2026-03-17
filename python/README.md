@@ -14,7 +14,7 @@ Import
 import httpstate
 ```
 
-Pick any valid UUID v4. You can [generate one here](https://www.uuidgenerator.net/version4).
+Pick any valid UUID v4. You can [generate one here](https://uuid.httpstate.com).
 
 We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3` or `45fb36540e9244daaa21ca409c6bdab3` (without dashes).
 
@@ -44,40 +44,53 @@ That's it! 🐙
 
 ### Functions
 
-- `get(uuid)`  
+- `get(uuid)`
   Get state of UUIDv4.
 
-- `read(uuid)`  
+- `post(uuid, data)`
+  Alias for `set`.
+
+- `read(uuid)`
   Alias for `get`.
 
-- `set(uuid, data)`  
+- `set(uuid, data)`
   Set state of UUIDv4.
 
-- `write(uuid, data)`  
+- `write(uuid, data)`
   Alias for `set`.
 
 ### HttpState Class
 
-- `HttpState(uuid)`  
+- `HttpState(uuid)`
   Create a reactive state instance of UUIDv4.
+- `<HttpState>.data`
+  Property with the most up-to-date state value.
 
 <br>
 
-- `<HttpState>.get()`  
+- `<HttpState>.get()`
   Get state.
-- `<HttpState>.read()`  
+- `<HttpState>.post(data)`
+  Alias for `set`.
+- `<HttpState>.read()`
   Alias for `get`.
-- `<HttpState>.set(data)`  
+- `<HttpState>.set(data)`
   Set state.
-- `<HttpState>.write(data)`  
+- `<HttpState>.write(data)`
   Alias for `set`.
 
 <br>
 
-- `<HttpState>.off(type, callback)`  
+- `<HttpState>.off(type, callback)`
   Unsubscribe from real-time updates.
-- `<HttpState>.on(type, callback)`  
-  Subscribe to real-time updates (type = `change`).
+- `<HttpState>.on(type, callback)`
+  Subscribe to real-time updates.
+  - `change`: fired when state data changes. Callback receives current data as argument.
+
+<br>
+
+- `<HttpState>.destroy()`
+  Cleanup and destroy the instance.
 
 ---
 

@@ -90,6 +90,14 @@ go get github.com/httpstate/httpstate/go
 
 [API and Docs](./go)
 
+### Java ([java](./java))
+
+```bash
+[...]
+```
+
+[API and Docs](./java)
+
 ### Python ([python](./python))
 
 ```bash
@@ -97,6 +105,14 @@ pip install httpstate
 ```
 
 [API and Docs](./python)
+
+### Ruby ([ruby](./ruby))
+
+```bash
+[gem install ...]
+```
+
+[API and Docs](./ruby)
 
 ### Rust ([rust](./rust))
 
@@ -112,7 +128,7 @@ cargo add httpstate
 
 Community: [...]
 
-Cookbook: Refer to [...]
+Cookbook: [...]
 
 ---
 

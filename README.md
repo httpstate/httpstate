@@ -32,7 +32,7 @@ import * as httpstate from '@httpstate/typescript';
 
 Pick any valid UUID v4. You can [generate one here](https://uuid.httpstate.com).
 
-We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3` or `45fb36540e9244daaa21ca409c6bdab3` (without dashes).
+We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3` or `45fb36540e9244daaa21ca409c6bdab3` (works without dashes).
 
 Store some data with
 
@@ -62,9 +62,9 @@ That's it! 🐙
 
 ## httpstate in your favorite language
 
-Browser and server (node.js, deno, bun) compatible clients.
-
 ### <img alt="JS" height="32" src="assets/JS.svg" width="32"/> Javascript / Typescript ([typescript](./typescript))
+
+Browser and server (node.js, deno, bun) compatible clients.
 
 ```bash
 npm install @httpstate/typescript

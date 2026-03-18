@@ -6,6 +6,10 @@
 # General Public License as published by the Free Software Foundation, either
 # version 3 of the License, or (at your option) any later version.
 
+# frozen_string_literal: true
+
+require_relative "httpstate/version"
+
 require 'eventmachine'
 require 'faye/websocket'
 require 'json'

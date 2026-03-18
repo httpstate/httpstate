@@ -30,7 +30,7 @@ and retrieve it with
 data = httpstate.get('45fb36540e9244daaa21ca409c6bdab3')
 ```
 
-You can also get real-time updates
+You can also get realtime updates
 
 ```python
 hs = httpstate.HttpState('45fb36540e9244daaa21ca409c6bdab3')
@@ -82,9 +82,9 @@ That's it! 🐙
 <br>
 
 - `<HttpState>.off(type, callback)`
-  Unsubscribe from real-time updates.
+  Unsubscribe from realtime updates.
 - `<HttpState>.on(type, callback)`
-  Subscribe to real-time updates.
+  Subscribe to realtime updates.
   - `change`: fired when state data changes. Callback receives current data as argument.
 
 <br>

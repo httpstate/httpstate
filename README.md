@@ -82,7 +82,7 @@ Then `useHttpState(uuid)` as you would `useState()`.
 
 [API and Docs](./react)
 
-### Go ([go](./go))
+### <img alt="Go" height="32" src="assets/Go.png" width="32"/> Go ([go](./go))
 
 ```bash
 go get github.com/httpstate/httpstate/go
@@ -90,7 +90,7 @@ go get github.com/httpstate/httpstate/go
 
 [API and Docs](./go)
 
-### Java ([java](./java))
+### <img alt="Java" height="32" src="assets/Java.svg" width="32"/> Java ([java](./java))
 
 ```bash
 [...]
@@ -106,7 +106,7 @@ pip install httpstate
 
 [API and Docs](./python)
 
-### Ruby ([ruby](./ruby))
+### <img alt="Ruby" height="32" src="assets/Ruby.svg" width="32"/> Ruby ([ruby](./ruby))
 
 ```bash
 [...]
@@ -114,7 +114,7 @@ pip install httpstate
 
 [API and Docs](./ruby)
 
-### Rust ([rust](./rust))
+### <img alt="Rust" height="32" src="assets/Rust.svg" width="32"/> Rust ([rust](./rust))
 
 ```bash
 cargo add httpstate

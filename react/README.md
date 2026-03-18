@@ -21,9 +21,9 @@ We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3` or `45fb36540e9244daaa21ca409c6
 Use `useHttpState(uuid)` as you would do with a React `useState()` hook.
 
 ```tsx
-const [data, setData] = useHttpState('45fb36540e9244daaa21ca409c6bdab3');
+const [state, setState] = useHttpState('45fb36540e9244daaa21ca409c6bdab3');
 
-setData('Hi! 👋🏻');
+setState('Hi! 👋🏻');
 ```
 
 That's it! 🐙
@@ -37,7 +37,7 @@ That's it! 🐙
   - `uuid`: The UUID v4 string.
 
   - Returns `[state, setState]` where:
-    - `state`: The current data (undefined | string).
+    - `state`: The current value (undefined | string).
     - `setState`: The set function that lets you update the state to a different value.
 
 ---

@@ -30,7 +30,7 @@ and retrieve it with
 const data = await httpstate.get('45fb36540e9244daaa21ca409c6bdab3');
 ```
 
-You can also get real-time updates
+You can also get realtime updates
 
 ```typescript
 const hs = httpstate('45fb36540e9244daaa21ca409c6bdab3');
@@ -86,14 +86,14 @@ That's it! 🐙
 <br>
 
 - `<HttpState>.addEventListener(type, callback)`
-  Subscribe to real-time updates (alias for `on`).
+  Subscribe to realtime updates (alias for `on`).
 - `<HttpState>.off(type, callback)`
-  Unsubscribe from real-time updates.
+  Unsubscribe from realtime updates.
 - `<HttpState>.on(type, callback)`
-  Subscribe to real-time updates.
+  Subscribe to realtime updates.
   - `change`: fired when state data changes. Callback receives current data as argument.
 - `<HttpState>.removeEventListener(type, callback)`
-  Unsubscribe from real-time updates (alias for `off`).
+  Unsubscribe from realtime updates (alias for `off`).
 
 <br>
 

@@ -46,7 +46,7 @@ and retrieve it with
 const data = await httpstate.get('45fb36540e9244daaa21ca409c6bdab3');
 ```
 
-You can also get real-time updates
+You can also get realtime updates
 
 ```js
 import httpstate from '@httpstate/typescript';
@@ -64,7 +64,7 @@ That's it! 🐙
 
 Browser and server (node.js, deno, bun) compatible clients.
 
-### Javascript / Typescript ([typescript](./typescript)) <img alt="JS" height="32" src="assets/JS.svg" width="32"/>
+### <img alt="JS" height="32" src="assets/JS.svg" width="32"/> Javascript / Typescript ([typescript](./typescript))
 
 ```bash
 npm install @httpstate/typescript
@@ -72,7 +72,7 @@ npm install @httpstate/typescript
 
 [API and Docs](./typescript)
 
-### React ([react](./react)) <img alt="React" height="32" src="assets/React.svg" width="32"/>
+### <img alt="React" height="32" src="assets/React.svg" width="32"/> React ([react](./react))
 
 ```bash
 npm install @httpstate/react
@@ -82,7 +82,7 @@ Then `useHttpState(uuid)` as you would `useState()`.
 
 [API and Docs](./react)
 
-### Go ([go](./go)) <img alt="Go" height="32" src="assets/Go.png" width="32"/>
+### <img alt="Go" height="32" src="assets/Go.png" width="32"/> Go ([go](./go))
 
 ```bash
 go get github.com/httpstate/httpstate/go
@@ -90,7 +90,7 @@ go get github.com/httpstate/httpstate/go
 
 [API and Docs](./go)
 
-### Java ([java](./java)) <img alt="Java" height="32" src="assets/Java.svg" width="32"/>
+### <img alt="Java" height="32" src="assets/Java.svg" width="32"/> Java ([java](./java))
 
 ```bash
 [...]
@@ -98,7 +98,7 @@ go get github.com/httpstate/httpstate/go
 
 [API and Docs](./java)
 
-### Python ([python](./python)) <img alt="Python" height="32" src="assets/python.png" width="32"/>
+### <img alt="Python" height="32" src="assets/python.png" width="32"/> Python ([python](./python))
 
 ```bash
 pip install httpstate
@@ -106,7 +106,7 @@ pip install httpstate
 
 [API and Docs](./python)
 
-### Ruby ([ruby](./ruby)) <img alt="Ruby" height="24" src="assets/Ruby.svg" width="24"/>
+### <img alt="Ruby" height="24" src="assets/Ruby.svg" width="24"/> Ruby ([ruby](./ruby))
 
 ```bash
 [...]
@@ -114,7 +114,7 @@ pip install httpstate
 
 [API and Docs](./ruby)
 
-### Rust ([rust](./rust)) <img alt="Rust" height="32" src="assets/Rust.svg" width="32"/>
+### <img alt="Rust" height="32" src="assets/Rust.svg" width="32"/> Rust ([rust](./rust))
 
 ```bash
 cargo add httpstate

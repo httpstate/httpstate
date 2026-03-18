@@ -106,7 +106,7 @@ pip install httpstate
 
 [API and Docs](./python)
 
-### <img alt="Ruby" height="32" src="assets/Ruby.svg" width="32"/> Ruby ([ruby](./ruby))
+### <img alt="Ruby" height="24" src="assets/Ruby.svg" width="24"/> Ruby ([ruby](./ruby))
 
 ```bash
 [...]
@@ -114,7 +114,7 @@ pip install httpstate
 
 [API and Docs](./ruby)
 
-### <img alt="Rust" height="24" src="assets/Rust.svg" width="24"/> Rust ([rust](./rust))
+### <img alt="Rust" height="32" src="assets/Rust.svg" width="32"/> Rust ([rust](./rust))
 
 ```bash
 cargo add httpstate

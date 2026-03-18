@@ -72,7 +72,7 @@ npm install @httpstate/typescript
 
 [API and Docs](./typescript)
 
-### React ([react](./react))
+### <img alt="React" height="32" src="assets/React.svg" width="32"/> React ([react](./react))
 
 ```bash
 npm install @httpstate/react

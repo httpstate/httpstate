@@ -64,7 +64,7 @@ That's it! 🐙
 
 Browser and server (node.js, deno, bun) compatible clients.
 
-### <img alt="JS" height="16" src="assets/JS.svg" width="16"/> Javascript / Typescript ([typescript](./typescript))
+### <img alt="JS" height="32" src="assets/JS.svg" width="32"/> Javascript / Typescript ([typescript](./typescript))
 
 ```bash
 npm install @httpstate/typescript

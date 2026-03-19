@@ -12,21 +12,27 @@
 
 ## Quick Start (browser, node.js)
 
-Install from CDN
+Install from CDN (Script Tag)
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@httpstate/typescript/dist/index.global.js" type="text/javascript"></script>
 ```
 
-or from npm
+or Import from CDN (ES Module)
 
-```bash
+```js
+import httpstate from 'https://cdn.jsdelivr.net/npm/@httpstate/typescript@0.0.42/dist/index.esm.js';
+```
+
+or Install from npm
+
+```html
 npm install @httpstate/typescript
 ```
 
-Import (not needed if you use the CDN)
+and then import
 
-```bash
+```js
 import * as httpstate from '@httpstate/typescript';
 ```
 

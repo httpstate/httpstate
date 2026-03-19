@@ -27,16 +27,13 @@ export const get:(uuid:string) => Promise<undefined|string> = async (uuid:string
 };
 
 export const load:() => Promise<void> = async ():Promise<void> => {
-  for(const uuid of new Set(Array.from(document.querySelectorAll('[httpstate]')).map(v => v.getAttribute('httpstate')).filter(Boolean))) {
+  for(const uuid of new Set(Array.from(document.querySelectorAll<HTMLElement>('[httpstate]')).map(v => v.getAttribute('httpstate')).filter((v):v is string => Boolean(v)))) {
     if(!(load as any)._)
       (load as any)._ = {};
 
-    if(
-         uuid
-      && !(load as any)._[uuid]
-    )
+    if(!(load as any)._[uuid])
       (load as any)._[uuid] = httpstate(uuid).on('change', (data:undefined|string) => {
-        for(const node of document.querySelectorAll('[httpstate="' + uuid + '"]'))
+        for(const node of document.querySelectorAll<HTMLElement>('[httpstate="' + uuid + '"]'))
           node.innerHTML = String(data);
       });
   }

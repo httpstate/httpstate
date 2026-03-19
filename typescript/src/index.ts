@@ -33,6 +33,7 @@ export const load:() => Promise<void> = async ():Promise<void> => {
     if(!(load as any)._)
       (load as any)._ = {};
 
+    //T = IF CALLED MORE THAN ONCE, IT SHOULDN'T BE BOUND MORE THAN ONCE
     if(
          uuid
       && !(load as any)._[uuid]

@@ -18,13 +18,13 @@ Install from CDN (Script Tag)
 <script src="https://cdn.jsdelivr.net/npm/@httpstate/typescript/dist/index.global.js" type="text/javascript"></script>
 ```
 
-or Import from CDN (ES Module)
+or import from CDN (ES Module)
 
 ```js
 import httpstate from 'https://cdn.jsdelivr.net/npm/@httpstate/typescript@0.0.42/dist/index.esm.js';
 ```
 
-or Install from npm
+or install from npm
 
 ```html
 npm install @httpstate/typescript

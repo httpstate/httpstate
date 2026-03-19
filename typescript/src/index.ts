@@ -27,19 +27,18 @@ export const get:(uuid:string) => Promise<undefined|string> = async (uuid:string
 };
 
 export const load:() => Promise<void> = async ():Promise<void> => {
-  for(const node of document.querySelectorAll('[httpstate]')) {
-    const uuid:null|string = node.getAttribute('httpstate');
-
+  for(const uuid of new Set(Array.from(document.querySelectorAll('[httpstate]')).map(v => v.getAttribute('httpstate')).filter(Boolean))) {
     if(!(load as any)._)
       (load as any)._ = {};
 
-    //T = IF CALLED MORE THAN ONCE, IT SHOULDN'T BE BOUND MORE THAN ONCE
     if(
          uuid
       && !(load as any)._[uuid]
     )
-      (load as any)._[uuid] = httpstate(uuid)
-        .on('change', (data:undefined|string) => node.innerHTML = String(data));
+      (load as any)._[uuid] = httpstate(uuid).on('change', (data:undefined|string) => {
+        for(const node of document.querySelectorAll('[httpstate="' + uuid + '"]'))
+          node.innerHTML = String(data);
+      });
   }
 };
 

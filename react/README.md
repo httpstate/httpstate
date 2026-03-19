@@ -16,7 +16,7 @@ import { useHttpState } from '@httpstate/react';
 
 Pick any valid UUID v4. You can [generate one here](https://uuid.httpstate.com).
 
-We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3` or `45fb36540e9244daaa21ca409c6bdab3 (without dashes).
+We'll use `45fb3654-0e92-44da-aa21-ca409c6bdab3` or `45fb36540e9244daaa21ca409c6bdab3` (without dashes).
 
 Use `useHttpState(uuid)` as you would do with a React `useState()` hook.
 

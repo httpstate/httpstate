@@ -3,8 +3,6 @@
 
   <h1>httpstate</h1>
 
-  <p>The missing reactive layer for all your applications.</p>
-
   <p>Create interactive experiences with a couple lines of code.</p>
 
   <p>More at <a href="https://httpstate.com" target="_blank">httpstate.com</a>.</p>
@@ -99,7 +97,7 @@ go get github.com/httpstate/httpstate/go
 ### <img alt="Java" height="32" src="assets/Java.svg" width="32"/> Java ([java](./java))
 
 ```bash
-[...]
+See, https://github.com/httpstate/httpstate/blob/master/java/src/com/httpstate/HttpState.java
 ```
 
 [API and Docs](./java)
@@ -115,7 +113,7 @@ pip install httpstate
 ### <img alt="Ruby" height="24" src="assets/Ruby.svg" width="24"/> Ruby ([ruby](./ruby))
 
 ```bash
-[...]
+gem install httpstate
 ```
 
 [API and Docs](./ruby)

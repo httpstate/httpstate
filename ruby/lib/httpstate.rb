@@ -8,8 +8,6 @@
 
 # frozen_string_literal: true
 
-require_relative "httpstate/version"
-
 require 'eventmachine'
 require 'faye/websocket'
 require 'json'
@@ -57,7 +55,9 @@ class HttpState
 
   def initialize(uuid)
     @data = nil
+    @et = nil
     @uuid = uuid
+    @ws = nil
 
     Thread.new do
       EM.run do
@@ -72,13 +72,21 @@ class HttpState
         end
 
         @ws.on :message do |event|
-          puts "Received: #{event.data}"
+          if @uuid &&
+             !event.data.empty? &&
+             event.data.length > 32 &&
+             event.data[0...32] == @uuid &&
+             event.data[45] == '1'
+            @data = event.data[46..]
+
+            emit('change', @data)
+          end
         end
 
         @ws.on :open do |_|
           puts '@ws.open'
 
-          @ws.send({ open:uuid }.to_json)
+          @ws.send({ open:@uuid }.to_json)
         end
       end
 
@@ -86,19 +94,60 @@ class HttpState
     end
   end
 
+  def emit(type, data = nil)
+    if @et && @et[type]
+      for callback in @et[type]
+        if data.nil?
+          callback.call
+        else
+          callback.call(data)
+        end
+      end
+    end
+
+    self
+  end
+
   def get
     if @uuid
       data = self.class.get(@uuid)
 
       if(data != @data)
-        @data = data
+        # emit change
       end
+      
+      @data = data
 
       return @data
     end
   end
 
+  def off(type, &callback)
+    if @et && @et[type]
+      if callback
+        @et[type].delete(callback)
+      end
+      
+      if !callback || @et[type].empty?
+        @et.delete(type)
+      end
+    end
+
+    self
+  end
+
+  def on(type, &callback)
+    @et ||= {}
+    @et[type] ||= []
+    @et[type] << callback
+
+    self
+  end
+
   def set(data)
     self.class.set(@uuid, data) if @uuid
   end
+
+  alias read get
+  alias write set
 end

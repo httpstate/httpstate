@@ -3,6 +3,10 @@
 
   <h1>httpstate</h1>
 
+  <p><strong>httpstate</strong> is the missing reactive layer for all your applications.</p>
+
+  <p>Store and retrieve <strong>state</strong> by binding it to any UUID.</p>
+
   <p>Create interactive experiences with a couple lines of code.</p>
 
   <p>More at <a href="https://httpstate.com" target="_blank">httpstate.com</a>.</p>
@@ -57,9 +61,7 @@ import httpstate from '@httpstate/typescript';
 
 const hs = httpstate('45fb36540e9244daaa21ca409c6bdab3');
 
-hs.on('change', data => {
-  console.log(`This will change everytime data is set [${data}].`);
-});
+hs.on('change', data => console.log(data));
 ```
 
 That's it! 🐙

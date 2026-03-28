@@ -157,17 +157,21 @@ export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       },
       pingInterval:undefined,
       new:():void => {
+        console.log(new Date().toISOString(), 'ws.new');
         _.ws.delete();
 
         _.ws._ = new WebSocket('wss://httpstate.com/' + uuid);
 
         _.ws._.addEventListener('close', e => {
+          console.log(new Date().toISOString(), 'ws.close', e);
+
           let timeout = (_.ws.new as any).timeout||0;
           (_.ws.new as any).timeout = Math.min(Math.max(1024, timeout*2), 1024*60); // ~1 SECOND TO ~1 MINUTE
 
+          console.log(new Date().toISOString(), 'ws.new.timeout', (_.ws.new as any).timeout);
           setTimeout(_.ws.new, (_.ws.new as any).timeout);
         }, { once:true });
-        _.ws._.addEventListener('error', e => console.log('error', e));
+        _.ws._.addEventListener('error', e => console.error(new Date().toISOString(), 'ws.error', e));
         _.ws._.addEventListener('open', () => {
           if(_.ws._) {
             _.ws._.addEventListener('message', () => delete (_.ws.new as any).timeout, { once:true });

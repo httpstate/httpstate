@@ -111,6 +111,14 @@ export const HttpStateWebSocket:any = { //X - type
     console.log('HttpStateWebSocket', 'delete', uid);
 
     clearInterval(HttpStateWebSocket.pingInterval);
+
+    if(
+         HttpStateWebSocket.ws
+      && HttpStateWebSocket.ws.readyState === WebSocket.OPEN
+    )
+      HttpStateWebSocket.ws.close(1000);
+    
+    delete HttpStateWebSocket.ws;
   },
   dispatchEvent:(uuid:string, type:string, data:string) => {
     if(HttpStateWebSocket._?.[uuid])
@@ -131,7 +139,12 @@ export const HttpStateWebSocket:any = { //X - type
       HttpStateWebSocket.delete();
       
       // TODO, reopen with retries, etc...
-    });
+      const timeout = HttpStateWebSocket.timeout||0;
+      HttpStateWebSocket.timeout = Math.min(Math.max(1024, timeout*2), 1024*60); // ~1 SECOND TO ~1 MINUTE
+
+      console.log(new Date().toISOString(), 'HttpStateWebSocket.new.timeout', HttpStateWebSocket.timeout);
+      setTimeout(HttpStateWebSocket.new, HttpStateWebSocket.timeout);
+    }, { once:true });
     HttpStateWebSocket.ws.addEventListener('error', (e:any) => { //X
       console.log('ws.error', e);
     });

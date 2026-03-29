@@ -148,7 +148,7 @@ export const HttpStateWebSocket:any = { //X - type
     HttpStateWebSocket.delete();
 
     HttpStateWebSocket.ws = new WebSocket('wss://httpstate.com');
-    (window as any).ws = HttpStateWebSocket.ws; //X
+    (window as any).ws = HttpStateWebSocket; //X
 
     HttpStateWebSocket.ws.addEventListener('close', (e:any) => { //X
       console.log('ws.close', e);
@@ -378,7 +378,7 @@ export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
 
   setTimeout(_.get, 0);
 
-  setTimeout(() => _.ws.delete(), 1024*8);
+  setTimeout(() => _.ws.delete(), 1024*30);
 
   return _;
 };

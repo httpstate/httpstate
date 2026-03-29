@@ -6,6 +6,12 @@
 // General Public License as published by the Free Software Foundation, either
 // version 3 of the License, or (at your option) any later version.
 
+const UID:() => string = ():string => 
+    Date.now().toString(36)
+  + Math.random().toString(36).slice(2, 10);
+
+console.log('UID', UID);
+
 const UUIDV4:{ short(s:string):undefined|string; } = { short:(s:string):undefined|string => {
   s = s.toLowerCase();
 
@@ -41,6 +47,8 @@ export const load:() => Promise<void> = async ():Promise<void> => {
 
 export const post:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => set(uuid, data);
 
+export const put:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => set(uuid, data);
+
 export const read:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => get(uuid);
 
 export const set:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => {
@@ -55,11 +63,21 @@ export const set:(uuid:string, data:string) => Promise<number> = async (uuid:str
 
 export const write:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => set(uuid, data);
 
+
+
 // HTTP State
 export type HttpState = {
   data?:undefined|string;
   et?:undefined|{ [type:string]:((data?:undefined|string) => void)[] };
+  uid:string;
   uuid?:undefined|string;
+  // ws:{
+  //   _?:undefined|WebSocket,
+  //   delete:() => void,
+  //   new:() => void,
+  //   pingInterval?:undefined|number
+  // };
+  ws:any;
 
   addEventListener(type:string, callback:(data?:undefined|string) => void):void;
   delete():void;
@@ -68,23 +86,84 @@ export type HttpState = {
   off(type:string, callback?:(data?:undefined|string) => void):HttpState;
   on(type:string, callback:(data?:undefined|string) => void):HttpState;
   post(data:string):Promise<undefined|number>;
+  put(data:string):Promise<undefined|number>;
   read():Promise<undefined|string>;
   removeEventListener(type:string, callback:(data?:undefined|string) => void):void;
   set(data:string):Promise<undefined|number>;
   write(data:string):Promise<undefined|number>;
-  ws:{
-    _?:undefined|WebSocket,
-    delete:() => void,
-    new:() => void,
-    pingInterval?:undefined|number
-  };
 };
 
 export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
   const _:HttpState = {
     data:undefined,
     et:{},
+    uid:UID(),
     uuid,
+    // ws:{
+    //   _:undefined,
+    //   delete:():void => {
+    //     if(_.ws._) {
+    //       clearInterval(_.ws.pingInterval);
+    //       _.ws._.close(1000);
+
+    //       delete _.ws._;
+    //     }
+    //   },
+    //   pingInterval:undefined,
+    //   new:():void => {
+    //     console.log(new Date().toISOString(), uuid, 'ws.new');
+    //     _.ws.delete();
+
+    //     _.ws._ = new WebSocket('wss://httpstate.com/' + uuid);
+
+    //     _.ws._.addEventListener('close', e => {
+    //       console.log(new Date().toISOString(), uuid, 'ws.close', e);
+
+    //       let timeout = (_.ws.new as any).timeout||0;
+    //       (_.ws.new as any).timeout = Math.min(Math.max(1024, timeout*2), 1024*60); // ~1 SECOND TO ~1 MINUTE
+
+    //       console.log(new Date().toISOString(), uuid, 'ws.new.timeout', (_.ws.new as any).timeout);
+    //       setTimeout(_.ws.new, (_.ws.new as any).timeout);
+    //     }, { once:true });
+    //     _.ws._.addEventListener('error', e => console.error(new Date().toISOString(), uuid, 'ws.error', e));
+    //     _.ws._.addEventListener('open', () => {
+    //       if(_.ws._) {
+    //         _.ws._.addEventListener('message', () => delete (_.ws.new as any).timeout, { once:true });
+    //         _.ws._.addEventListener('message', async e => {
+    //           const data:string = String(await e.data.text());
+
+    //           if(
+    //                _.uuid
+    //             && data
+    //             && data.length > 32
+    //             && data.substring(0, 32) === UUIDV4.short(_.uuid)
+    //             && data.substring(45, 46) === '1'
+    //           ) {
+    //             _.data = data.substring(46);
+
+    //             _.emit('change', _.data);
+    //           }
+    //         });
+
+    //         _.ws._.send(JSON.stringify({ open:_.uuid }));
+
+    //         _.emit('open');
+
+    //         _.ws.pingInterval = setInterval(() => {
+    //           if(
+    //                _.ws._
+    //             && _.ws._.readyState === WebSocket.OPEN
+    //           )
+    //             _.ws._.send('0');
+    //           else
+    //             clearInterval(_.ws.pingInterval);
+    //         }, 1000*30); // 30 SECONDS
+    //       }
+    //     }, { once:true });
+    //   }
+    // },
+    ws:{},
+
 
     addEventListener:(type:string, callback:(data?:undefined|string) => void) => _.on(type, callback),
     delete:() => {
@@ -92,7 +171,7 @@ export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       delete _.et;
       delete _.uuid;
 
-      _.ws.delete();
+      // _.ws.delete();
     },
     emit:(type:string, data?:undefined|string) => {
       if(_.et?.[type])
@@ -138,79 +217,17 @@ export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       return _;
     },
     post:async (data:string):Promise<undefined|number> => _.set(data),
+    put:async (data:string):Promise<undefined|number> => _.set(data),
     read:async ():Promise<undefined|string> => _.get(),
     removeEventListener:(type:string, callback:(data?:undefined|string) => void) => _.off(type, callback),
     set:async (data:string):Promise<undefined|number> => {
       if(_.uuid)
         return set(_.uuid, data);
     },
-    write:async (data:string):Promise<undefined|number> => _.set(data),
-    ws:{
-      _:undefined,
-      delete:():void => {
-        if(_.ws._) {
-          clearInterval(_.ws.pingInterval);
-          _.ws._.close(1000);
-
-          delete _.ws._;
-        }
-      },
-      pingInterval:undefined,
-      new:():void => {
-        console.log(new Date().toISOString(), uuid, 'ws.new');
-        _.ws.delete();
-
-        _.ws._ = new WebSocket('wss://httpstate.com/' + uuid);
-
-        _.ws._.addEventListener('close', e => {
-          console.log(new Date().toISOString(), uuid, 'ws.close', e);
-
-          let timeout = (_.ws.new as any).timeout||0;
-          (_.ws.new as any).timeout = Math.min(Math.max(1024, timeout*2), 1024*60); // ~1 SECOND TO ~1 MINUTE
-
-          console.log(new Date().toISOString(), uuid, 'ws.new.timeout', (_.ws.new as any).timeout);
-          setTimeout(_.ws.new, (_.ws.new as any).timeout);
-        }, { once:true });
-        _.ws._.addEventListener('error', e => console.error(new Date().toISOString(), uuid, 'ws.error', e));
-        _.ws._.addEventListener('open', () => {
-          if(_.ws._) {
-            _.ws._.addEventListener('message', () => delete (_.ws.new as any).timeout, { once:true });
-            _.ws._.addEventListener('message', async e => {
-              const data:string = String(await e.data.text());
-
-              if(
-                   _.uuid
-                && data
-                && data.length > 32
-                && data.substring(0, 32) === UUIDV4.short(_.uuid)
-                && data.substring(45, 46) === '1'
-              ) {
-                _.data = data.substring(46);
-
-                _.emit('change', _.data);
-              }
-            });
-
-            _.ws._.send(JSON.stringify({ open:_.uuid }));
-
-            _.emit('open');
-
-            _.ws.pingInterval = setInterval(() => {
-              if(
-                   _.ws._
-                && _.ws._.readyState === WebSocket.OPEN
-              )
-                _.ws._.send('0');
-              else
-                clearInterval(_.ws.pingInterval);
-            }, 1000*30); // 30 SECONDS
-          }
-        }, { once:true });
-      }
-    }
+    write:async (data:string):Promise<undefined|number> => _.set(data)
   };
 
-  _.ws.new();
+  // _.ws.new();
 
   setTimeout(_.get, 0);
 
@@ -221,6 +238,8 @@ export default Object.assign(httpstate, {
   get,
   load,
   read,
+  post,
+  put,
   set,
   write
 });

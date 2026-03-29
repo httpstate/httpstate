@@ -10,7 +10,7 @@ const UID:() => string = ():string =>
     Date.now().toString(36)
   + Math.random().toString(36).slice(2, 10);
 
-console.log('UID', UID);
+console.log('UID', UID());
 
 const UUIDV4:{ short(s:string):undefined|string; } = { short:(s:string):undefined|string => {
   s = s.toLowerCase();
@@ -64,7 +64,6 @@ export const set:(uuid:string, data:string) => Promise<number> = async (uuid:str
 export const write:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => set(uuid, data);
 
 
-
 // HTTP State
 export type HttpState = {
   data?:undefined|string;
@@ -77,7 +76,7 @@ export type HttpState = {
   //   new:() => void,
   //   pingInterval?:undefined|number
   // };
-  ws:any;
+  ws:any; //X
 
   addEventListener(type:string, callback:(data?:undefined|string) => void):void;
   delete():void;
@@ -91,6 +90,51 @@ export type HttpState = {
   removeEventListener(type:string, callback:(data?:undefined|string) => void):void;
   set(data:string):Promise<undefined|number>;
   write(data:string):Promise<undefined|number>;
+};
+
+export const HttpStateWebSocket:any = { //X - type
+  _:undefined,
+  addEventListener:(uid:string, type:string, callback:any) => { //X
+    //T - once:true
+
+    // ...
+  },
+  delete:(uid:string) => {
+    console.log('HttpStateWebSocket', 'delete', uid);
+  },
+  new:(uid:string, uuid:string) => {
+    console.log('HttpStateWebSocket', 'new', uid, uuid);
+
+    if(!HttpStateWebSocket._)
+      HttpStateWebSocket._ = {};
+    
+    if(!HttpStateWebSocket._[uuid]) {
+      HttpStateWebSocket._[uuid] = {};
+    }
+
+    if(!HttpStateWebSocket.ws) {
+      HttpStateWebSocket.ws = new WebSocket('wss://httpstate.com');
+
+      HttpStateWebSocket.ws.addEventListener('close', (e:any) => { //X
+        console.log('ws.close', e);
+      });
+      HttpStateWebSocket.ws.addEventListener('error', (e:any) => { //X
+        console.log('ws.error', e);
+      });
+      HttpStateWebSocket.ws.addEventListener('open', () => {
+        console.log('ws.open');
+
+        for(const uuid of Object.keys(HttpStateWebSocket._))
+          HttpStateWebSocket.ws.send(JSON.stringify({ open:uuid }));
+      }, { once:true });
+      HttpStateWebSocket.ws.addEventListener('message', async (e:any) => { //X
+        const data:string = String(await e.data.text());
+
+        console.log('ws.message', data);
+      });
+    }
+  },
+  ws:undefined
 };
 
 export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
@@ -162,7 +206,20 @@ export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
     //     }, { once:true });
     //   }
     // },
-    ws:{},
+    ws:{
+      delete:():void => {
+
+      },
+      new:():void => {
+        console.log('new ws', _.uid);
+
+        _.ws._ = HttpStateWebSocket.new(_.uid, _.uuid);
+
+        _.ws._.addEventListener('message', async (e:any) => { //X
+          console.log('ws.message', e);
+        });
+      }
+    },
 
 
     addEventListener:(type:string, callback:(data?:undefined|string) => void) => _.on(type, callback),
@@ -227,7 +284,7 @@ export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
     write:async (data:string):Promise<undefined|number> => _.set(data)
   };
 
-  // _.ws.new();
+  _.ws.new();
 
   setTimeout(_.get, 0);
 

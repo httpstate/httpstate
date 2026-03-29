@@ -121,7 +121,7 @@ export const HttpStateWebSocket:any = { //X - type
     HttpStateWebSocket.delete();
 
     HttpStateWebSocket.ws = new WebSocket('wss://httpstate.com');
-    window.ws = HttpStateWebSocket.ws; //X
+    (window as any).ws = HttpStateWebSocket.ws; //X
 
     HttpStateWebSocket.ws.addEventListener('close', (e:any) => { //X
       console.log('ws.close', e);

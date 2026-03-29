@@ -189,6 +189,7 @@ export const HttpStateWebSocket:any = { //X - type
     HttpStateWebSocket.ws.addEventListener('message', () => delete HttpStateWebSocket.new.timeout, { once:true });
     HttpStateWebSocket.ws.addEventListener('message', async (e:any) => { //X
       const data:string = String(await e.data.text());
+      console.log('ws.message', data);
 
       if(
            data

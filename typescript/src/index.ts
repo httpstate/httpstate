@@ -125,8 +125,6 @@ export const HttpStateWebSocket:any = { //X - type
   delete:() => {
     console.log('HttpStateWebSocket', 'delete');
     
-    delete HttpStateWebSocket._;
-
     if(HttpStateWebSocket.ws) {
       clearInterval(HttpStateWebSocket.ws.pingInterval);
       delete HttpStateWebSocket.ws.pingInterval;

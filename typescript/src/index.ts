@@ -139,11 +139,10 @@ export const HttpStateWebSocket:any = { //X - type
       HttpStateWebSocket.delete();
       
       // TODO, reopen with retries, etc...
-      const timeout = HttpStateWebSocket.timeout||0;
-      HttpStateWebSocket.timeout = Math.min(Math.max(1024, timeout*2), 1024*60); // ~1 SECOND TO ~1 MINUTE
+      HttpStateWebSocket.new.timeout = Math.min(Math.max(1024, (HttpStateWebSocket.new.timeout||0)*2), 1024*60); // ~1 SECOND TO ~1 MINUTE
 
-      console.log(new Date().toISOString(), 'HttpStateWebSocket.new.timeout', HttpStateWebSocket.timeout);
-      setTimeout(HttpStateWebSocket.new, HttpStateWebSocket.timeout);
+      console.log(new Date().toISOString(), 'HttpStateWebSocket.new.timeout', HttpStateWebSocket.new.timeout);
+      setTimeout(HttpStateWebSocket.new, HttpStateWebSocket.new.timeout);
     }, { once:true });
     HttpStateWebSocket.ws.addEventListener('error', (e:any) => { //X
       console.log('ws.error', e);
@@ -166,6 +165,7 @@ export const HttpStateWebSocket:any = { //X - type
           clearInterval(HttpStateWebSocket.pingInterval);
       }, 1000*30); // 30 SECONDS
     }, { once:true });
+    HttpStateWebSocket.ws.addEventListener('message', () => delete HttpStateWebSocket.new.timeout, { once:true });
     HttpStateWebSocket.ws.addEventListener('message', async (e:any) => { //X
       const data:string = String(await e.data.text());
 

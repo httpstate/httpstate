@@ -6,11 +6,7 @@
 // General Public License as published by the Free Software Foundation, either
 // version 3 of the License, or (at your option) any later version.
 
-const UID:() => string = ():string => 
-    Date.now().toString(36)
-  + Math.random().toString(36).slice(2, 10);
-
-console.log('UID', UID());
+const UID:() => string = ():string => Date.now().toString(36) + Math.random().toString(36).slice(2);
 
 const UUIDV4:{ short(s:string):undefined|string; } = { short:(s:string):undefined|string => {
   s = s.toLowerCase();
@@ -108,9 +104,8 @@ export const HttpStateWebSocket:any = { //X - type
     if(!HttpStateWebSocket._)
       HttpStateWebSocket._ = {};
     
-    if(!HttpStateWebSocket._[uuid]) {
+    if(!HttpStateWebSocket._[uuid])
       HttpStateWebSocket._[uuid] = {};
-    }
 
     if(!HttpStateWebSocket.ws) {
       HttpStateWebSocket.ws = new WebSocket('wss://httpstate.com');
@@ -133,6 +128,8 @@ export const HttpStateWebSocket:any = { //X - type
         console.log('ws.message', data);
       });
     }
+
+    return HttpStateWebSocket;
   },
   ws:undefined
 };
@@ -207,6 +204,7 @@ export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
     //   }
     // },
     ws:{
+      _:undefined,
       delete:():void => {
 
       },

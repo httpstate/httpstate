@@ -93,8 +93,8 @@ export type HttpStateType = {
 };
 
 export type HttpStateWebSocketType = {
-  _:any;
-  ws:any;
+  _?:undefined|{ [type:string]:any }; //X - AQUI VAS
+  ws?:undefined|(WebSocket&{ pingInterval?:ReturnType<typeof setInterval> });
 
   addEventListener(uid:string, uuid:string, type:string, callback:(data?:undefined|string) => void):void;
   close:any;
@@ -269,11 +269,11 @@ export const HttpState:(uuid:string) => HttpStateType = (uuid:string):HttpStateT
   return _;
 };
 
-export const HttpStateWebSocket:HttpStateWebSocketType = { //X - type
+export const HttpStateWebSocket:HttpStateWebSocketType = {
   _:undefined,
   ws:undefined,
 
-  addEventListener:(uid:string, uuid:string, type:string, callback:any) => { //X
+  addEventListener:(uid:string, uuid:string, type:string, callback:(data?:undefined|string) => void) => {
     if(HttpStateWebSocket._?.[uuid]?.[uid]) {
       if(!HttpStateWebSocket._[uuid][uid][type])
         HttpStateWebSocket._[uuid][uid][type] = [];
@@ -320,7 +320,7 @@ export const HttpStateWebSocket:HttpStateWebSocketType = { //X - type
 
     HttpStateWebSocket.ws = new WebSocket('wss://httpstate.com');
 
-    HttpStateWebSocket.ws.addEventListener('close', (e:any) => { //X
+    HttpStateWebSocket.ws.addEventListener('close', (e:CloseEvent) => {
       console.log('ws.close', e);
       
       HttpStateWebSocket.delete();
@@ -332,27 +332,29 @@ export const HttpStateWebSocket:HttpStateWebSocketType = { //X - type
         setTimeout(HttpStateWebSocket.new, HttpStateWebSocket.new.timeout);
       }
     }, { once:true });
-    HttpStateWebSocket.ws.addEventListener('error', (e:any) => { //X
+    HttpStateWebSocket.ws.addEventListener('error', (e:Event) => {
       console.log('ws.error', e);
     });
     HttpStateWebSocket.ws.addEventListener('open', () => {
       console.log('ws.open');
 
-      for(const uuid of Object.keys(HttpStateWebSocket._))
-        HttpStateWebSocket.ws.send(JSON.stringify({ open:uuid }));
+      if(HttpStateWebSocket.ws) {
+        if(HttpStateWebSocket._)
+          for(const uuid of Object.keys(HttpStateWebSocket._))
+            HttpStateWebSocket.ws.send(JSON.stringify({ open:uuid }));
 
-      HttpStateWebSocket.ws.pingInterval = setInterval(() => {
-        if(
-             HttpStateWebSocket.ws
-          && HttpStateWebSocket.ws.readyState === WebSocket.OPEN
-        )
-          HttpStateWebSocket.ws.send('0');
-        else
-          clearInterval(HttpStateWebSocket.ws.pingInterval);
-      }, 1000*30); // 30 SECONDS
+        HttpStateWebSocket.ws.pingInterval = setInterval(() => {
+          if(HttpStateWebSocket.ws) {
+            if(HttpStateWebSocket.ws.readyState === WebSocket.OPEN)
+              HttpStateWebSocket.ws.send('0');
+            else
+              clearInterval(HttpStateWebSocket.ws.pingInterval);
+          }
+        }, 1000*30); // 30 SECONDS
+      }
     }, { once:true });
     HttpStateWebSocket.ws.addEventListener('message', () => delete HttpStateWebSocket.new.timeout, { once:true });
-    HttpStateWebSocket.ws.addEventListener('message', async (e:any) => { //X
+    HttpStateWebSocket.ws.addEventListener('message', async (e:MessageEvent) => {
       const data:string = String(await e.data.text());
 
       if(

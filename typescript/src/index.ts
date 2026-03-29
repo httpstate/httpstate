@@ -109,6 +109,8 @@ export const HttpStateWebSocket:any = { //X - type
   },
   delete:(uid:string) => {
     console.log('HttpStateWebSocket', 'delete', uid);
+
+    clearInterval(HttpStateWebSocket.pingInterval);
   },
   dispatchEvent:(uuid:string, type:string, data:string) => {
     if(HttpStateWebSocket._?.[uuid])
@@ -125,8 +127,10 @@ export const HttpStateWebSocket:any = { //X - type
 
     HttpStateWebSocket.ws.addEventListener('close', (e:any) => { //X
       console.log('ws.close', e);
-
-      // TODO, reopen ...
+      
+      HttpStateWebSocket.delete();
+      
+      // TODO, reopen with retries, etc...
     });
     HttpStateWebSocket.ws.addEventListener('error', (e:any) => { //X
       console.log('ws.error', e);
@@ -137,15 +141,17 @@ export const HttpStateWebSocket:any = { //X - type
       for(const uuid of Object.keys(HttpStateWebSocket._))
         HttpStateWebSocket.ws.send(JSON.stringify({ open:uuid }));
 
-      // HttpStateWebSocket.pingInterval = setInterval(() => {
-      //   if(
-      //        HttpStateWebSocket.ws
-      //     && HttpStateWebSocket.ws.readyState === WebSocket.OPEN
-      //   )
-      //     HttpStateWebSocket.ws.send('0');
-      //   else
-      //     clearInterval(HttpStateWebSocket.pingInterval);
-      // }, 1000*30); // 30 SECONDS
+      HttpStateWebSocket.pingInterval = setInterval(() => {
+        if(
+             HttpStateWebSocket.ws
+          && HttpStateWebSocket.ws.readyState === WebSocket.OPEN
+        ) {
+          console.log('PING');
+
+          HttpStateWebSocket.ws.send('0');
+        } else
+          clearInterval(HttpStateWebSocket.pingInterval);
+      }, 1000*30); // 30 SECONDS
     }, { once:true });
     HttpStateWebSocket.ws.addEventListener('message', async (e:any) => { //X
       const data:string = String(await e.data.text());

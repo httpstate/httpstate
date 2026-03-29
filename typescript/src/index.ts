@@ -134,6 +134,16 @@ export const HttpStateWebSocket:any = { //X - type
 
       for(const uuid of Object.keys(HttpStateWebSocket._))
         HttpStateWebSocket.ws.send(JSON.stringify({ open:uuid }));
+
+      HttpStateWebSocket.pingInterval = setInterval(() => {
+        if(
+             HttpStateWebSocket.ws
+          && HttpStateWebSocket.ws.readyState === WebSocket.OPEN
+        )
+          HttpStateWebSocket.ws.send('0');
+        else
+          clearInterval(HttpStateWebSocket.pingInterval);
+      }, 1000*30); // 30 SECONDS
     }, { once:true });
     HttpStateWebSocket.ws.addEventListener('message', async (e:any) => { //X
       const data:string = String(await e.data.text());

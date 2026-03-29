@@ -104,24 +104,53 @@ export const HttpStateWebSocket:any = { //X - type
       HttpStateWebSocket._[uuid][uid][type].push(callback);
     }
   },
+  close:(uid:string) => {
+    console.log('HttpStateWebSocket', 'close', uid);
+  },
   delete:(uid:string) => {
     console.log('HttpStateWebSocket', 'delete', uid);
   },
   dispatchEvent:(uuid:string, type:string, data:string) => {
-    console.log('HttpStateWebSocket', 'dispatchEvent', uuid, type, data);
-
-    if(HttpStateWebSocket._?.[uuid]) {
-      for(const uid of Object.keys(HttpStateWebSocket._[uuid])) {
-        console.log('iterate', uid);
-
+    if(HttpStateWebSocket._?.[uuid])
+      for(const uid of Object.keys(HttpStateWebSocket._[uuid]))
         if(HttpStateWebSocket._[uuid][uid]?.[type])
           for(const callback of HttpStateWebSocket._[uuid][uid][type])
             callback(data);
-      }
-    }
   },
-  new:(uuid:string, uid:string) => {
-    console.log('HttpStateWebSocket', 'new', uuid, uid);
+  new:():void => {
+    HttpStateWebSocket.delete();
+
+    HttpStateWebSocket.ws = new WebSocket('wss://httpstate.com');
+    window.ws = HttpStateWebSocket.ws; //X
+
+    HttpStateWebSocket.ws.addEventListener('close', (e:any) => { //X
+      console.log('ws.close', e);
+    });
+    HttpStateWebSocket.ws.addEventListener('error', (e:any) => { //X
+      console.log('ws.error', e);
+    });
+    HttpStateWebSocket.ws.addEventListener('open', () => {
+      console.log('ws.open');
+
+      for(const uuid of Object.keys(HttpStateWebSocket._))
+        HttpStateWebSocket.ws.send(JSON.stringify({ open:uuid }));
+    }, { once:true });
+    HttpStateWebSocket.ws.addEventListener('message', async (e:any) => { //X
+      const data:string = String(await e.data.text());
+
+      if(
+            data
+        && data.length > 32
+        && data.substring(45, 46) === '1'
+      ) {
+        const uuid:string = data.substring(0, 32);
+
+        HttpStateWebSocket.dispatchEvent(uuid, 'message', data.substring(46));
+      }
+    });
+  },
+  open:(uuid:string, uid:string) => {
+    console.log('HttpStateWebSocket', 'open', uuid, uid);
 
     if(!HttpStateWebSocket._)
       HttpStateWebSocket._ = {};
@@ -129,39 +158,8 @@ export const HttpStateWebSocket:any = { //X - type
     if(!HttpStateWebSocket._[uuid])
       HttpStateWebSocket._[uuid] = {};
 
-    if(!HttpStateWebSocket.ws) {
-      HttpStateWebSocket.ws = new WebSocket('wss://httpstate.com');
-
-      HttpStateWebSocket.ws.addEventListener('close', (e:any) => { //X
-        console.log('ws.close', e);
-      });
-      HttpStateWebSocket.ws.addEventListener('error', (e:any) => { //X
-        console.log('ws.error', e);
-      });
-      HttpStateWebSocket.ws.addEventListener('open', () => {
-        console.log('ws.open');
-
-        for(const uuid of Object.keys(HttpStateWebSocket._))
-          HttpStateWebSocket.ws.send(JSON.stringify({ open:uuid }));
-      }, { once:true });
-      HttpStateWebSocket.ws.addEventListener('message', async (e:any) => { //X
-        const data:string = String(await e.data.text());
-
-        console.log('ws.message', data);
-
-        if(
-             data
-          && data.length > 32
-          && data.substring(45, 46) === '1'
-        ) {
-          const uuid:string = data.substring(0, 32);
-
-          console.log('uuid', uuid);
-
-          HttpStateWebSocket.dispatchEvent(uuid, 'message', data.substring(46));
-        }
-      });
-    }
+    if(!HttpStateWebSocket.ws)
+      HttpStateWebSocket.new();
 
     return HttpStateWebSocket;
   },
@@ -240,16 +238,14 @@ export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
     ws:{
       _:undefined,
       delete:():void => {
-
+        // ...
       },
       new:():void => {
         console.log('new ws', _.uid);
 
-        _.ws._ = HttpStateWebSocket.new(_.uuid, _.uid);
+        _.ws._ = HttpStateWebSocket.open(_.uuid, _.uid);
 
         _.ws._.addEventListener(_.uuid, _.uid, 'message', async (data:any) => { //X
-          console.log('_.ws._.message', data);
-
           _.data = data;
 
           _.emit('change', _.data);

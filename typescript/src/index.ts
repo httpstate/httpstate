@@ -90,16 +90,38 @@ export type HttpState = {
 
 export const HttpStateWebSocket:any = { //X - type
   _:undefined,
-  addEventListener:(uid:string, type:string, callback:any) => { //X
+  addEventListener:(uuid:string, uid:string, type:string, callback:any) => { //X
     //T - once:true
 
     // ...
+    if(HttpStateWebSocket._?.[uuid]) {
+      if(!HttpStateWebSocket._[uuid][uid])
+        HttpStateWebSocket._[uuid][uid] = {};
+
+      if(!HttpStateWebSocket._[uuid][uid][type])
+        HttpStateWebSocket._[uuid][uid][type] = [];
+
+      HttpStateWebSocket._[uuid][uid][type].push(callback);
+    }
   },
   delete:(uid:string) => {
     console.log('HttpStateWebSocket', 'delete', uid);
   },
-  new:(uid:string, uuid:string) => {
-    console.log('HttpStateWebSocket', 'new', uid, uuid);
+  dispatchEvent:(uuid:string, type:string, data:string) => {
+    console.log('HttpStateWebSocket', 'dispatchEvent', uuid, type, data);
+
+    if(HttpStateWebSocket._?.[uuid]) {
+      for(const uid of Object.keys(HttpStateWebSocket._[uuid])) {
+        console.log('iterate', uid);
+
+        if(HttpStateWebSocket._[uuid][uid]?.[type])
+          for(const callback of HttpStateWebSocket._[uuid][uid][type])
+            callback(data);
+      }
+    }
+  },
+  new:(uuid:string, uid:string) => {
+    console.log('HttpStateWebSocket', 'new', uuid, uid);
 
     if(!HttpStateWebSocket._)
       HttpStateWebSocket._ = {};
@@ -126,6 +148,18 @@ export const HttpStateWebSocket:any = { //X - type
         const data:string = String(await e.data.text());
 
         console.log('ws.message', data);
+
+        if(
+             data
+          && data.length > 32
+          && data.substring(45, 46) === '1'
+        ) {
+          const uuid:string = data.substring(0, 32);
+
+          console.log('uuid', uuid);
+
+          HttpStateWebSocket.dispatchEvent(uuid, 'message', data.substring(46));
+        }
       });
     }
 
@@ -211,10 +245,14 @@ export const httpstate:(uuid:string) => HttpState = (uuid:string):HttpState => {
       new:():void => {
         console.log('new ws', _.uid);
 
-        _.ws._ = HttpStateWebSocket.new(_.uid, _.uuid);
+        _.ws._ = HttpStateWebSocket.new(_.uuid, _.uid);
 
-        _.ws._.addEventListener('message', async (e:any) => { //X
-          console.log('ws.message', e);
+        _.ws._.addEventListener(_.uuid, _.uid, 'message', async (data:any) => { //X
+          console.log('_.ws._.message', data);
+
+          _.data = data;
+
+          _.emit('change', _.data);
         });
       }
     },

@@ -28,6 +28,21 @@ export const load:() => Promise<void> = async ():Promise<void> => {
   }
 };
 
+export type MessageType = {
+  // ...
+};
+
+export const message:{ unpack(ab:ArrayBuffer):MessageType } = { unpack(ab:ArrayBuffer):MessageType {
+  const ui8a = new Uint8Array(ab);
+
+  let i = 0;
+  const uuid = new TextDecoder().decode(ui8a.slice(i + 1, i += 1 + ui8a[i]!));
+
+  console.log('uuid', uuid);
+
+  return {};
+} };
+
 export const post:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => set(uuid, data);
 
 export const put:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => set(uuid, data);
@@ -260,15 +275,19 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
     }, { once:true });
     HttpStateWebSocket.ws.addEventListener('error', (e:Event) => console.error(new Date().toISOString(), 'HttpStateWebSocket.ws.error'));
     HttpStateWebSocket.ws.addEventListener('message', async (e:MessageEvent) => {
-      const data = new Uint8Array(await e.data.arrayBuffer());
+      // const data:Uint8Array = new Uint8Array(await e.data.arrayBuffer());
       
-      let i = 0;
+      // if(data) {
+      //   let i = 0;
 
-      const uuid = new TextDecoder().decode(
-        data.slice(i + 1, i += 1 + data[i])
-      );
+      //   const uuid = new TextDecoder().decode(
+      //     data.slice(i + 1, i += 1 + data[i])
+      //   );
 
-      console.log('uuid', uuid);
+      //   console.log('uuid', uuid);
+      // }
+
+      message.unpack();
 
       // const data:string = String(await e.data.text());
 
@@ -322,6 +341,7 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
 export default Object.assign(HttpState, {
   get,
   load,
+  message,
   read,
   post,
   put,

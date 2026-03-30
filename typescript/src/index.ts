@@ -260,7 +260,15 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
     }, { once:true });
     HttpStateWebSocket.ws.addEventListener('error', (e:Event) => console.error(new Date().toISOString(), 'HttpStateWebSocket.ws.error'));
     HttpStateWebSocket.ws.addEventListener('message', async (e:MessageEvent) => {
-      console.log('e', e);
+      const data = new Uint8Array(await e.data.arrayBuffer());
+      
+      let i = 0;
+
+      const uuid = new TextDecoder().decode(
+        data.slice(i + 1, i += 1 + data[i])
+      );
+
+      console.log('uuid', uuid);
 
       // const data:string = String(await e.data.text());
 

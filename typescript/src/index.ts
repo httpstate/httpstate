@@ -98,8 +98,6 @@ export const HttpState:(uuid:string) => HttpStateType = (uuid:string):HttpStateT
     ws:{
       _:undefined,
       delete:():void => {
-        console.log('delete ws', _.uid);
-        
         if(
              _.uid
           && _.uuid
@@ -110,9 +108,10 @@ export const HttpState:(uuid:string) => HttpStateType = (uuid:string):HttpStateT
         delete _.ws._;
       },
       new:():void => {
-        console.log('new ws', _.uid);
-
-        if(_.uid && _.uuid) {
+        if(
+             _.uid
+          && _.uuid
+        ) {
           _.ws._ = HttpStateWebSocket.open(_.uid, _.uuid);
 
           _.ws._.addEventListener(_.uid, _.uuid, 'message', (data?:undefined|string):void => {
@@ -208,7 +207,7 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
     }
   },
   close:(uid:string, uuid:string):void => {
-    console.log('HttpStateWebSocket', 'close', uid, uuid);
+    console.log(new Date().toISOString(), 'HttpStateWebSocket.close', uid, uuid);
 
     if(HttpStateWebSocket._?.[uuid]) {
       delete HttpStateWebSocket._[uuid][uid];
@@ -221,7 +220,7 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
     }
   },
   delete:():void => {
-    console.log('HttpStateWebSocket', 'delete');
+    console.log(new Date().toISOString(), 'HttpStateWebSocket.delete');
     
     if(HttpStateWebSocket.ws) {
       clearInterval(HttpStateWebSocket.ws.pingInterval);
@@ -264,7 +263,7 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
       const data:string = String(await e.data.text());
 
       if(
-          data
+           data
         && data.length > 32
         && data.substring(45, 46) === '1'
       ) {
@@ -292,7 +291,7 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
     }, { once:true });
   },
   open:(uid:string, uuid:string):HttpStateWebSocketType => {
-    console.log('HttpStateWebSocket', 'open', uid, uuid);
+    console.log(new Date().toISOString(), 'HttpStateWebSocket.open', uid, uuid);
 
     if(!HttpStateWebSocket._)
       HttpStateWebSocket._ = {};

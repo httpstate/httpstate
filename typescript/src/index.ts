@@ -287,9 +287,8 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
       //   console.log('uuid', uuid);
       // }
 
-      message.unpack();
-
-      // const data:string = String(await e.data.text());
+      const data:MessageType = message.unpack(await e.data.arrayBuffer());
+      console.log('data', data);
 
       // if(
       //      data

@@ -8,19 +8,6 @@
 
 const UID:() => string = ():string => Date.now().toString(36) + Math.random().toString(36).slice(2);
 
-const UUIDV4:{ short(s:string):undefined|string; } = { short:(s:string):undefined|string => {
-  s = s.toLowerCase();
-
-  if(s.length === 36)
-    s = s.replace(/-/g, '');
-
-  if(
-       s.length === 32
-    && /^[0-9a-f]{12}4[0-9a-f]{3}[89ab][0-9a-f]{15}$/.test(s)
-  )
-    return s;
-} };
-
 export const get:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => {
   const response:Response = await fetch('https://httpstate.com/' + uuid);
 
@@ -34,20 +21,23 @@ export const load:() => Promise<void> = async ():Promise<void> => {
       (load as any)._ = {};
 
     if(!(load as any)._[uuid])
-      (load as any)._[uuid] = httpstate(uuid).on('change', (data:undefined|string) => {
+      (load as any)._[uuid] = httpstate(uuid).on('change', (data?:undefined|string) => {
         for(const node of document.querySelectorAll<HTMLElement>('[httpstate="' + uuid + '"]'))
           node.innerHTML = String(data);
       });
   }
 };
 
-export const post:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => set(uuid, data);
+export const post:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => set(uuid, data);
 
-export const put:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => set(uuid, data);
+export const put:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => set(uuid, data);
 
 export const read:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => get(uuid);
 
-export const set:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => {
+export const set:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => {
+  if(!data)
+    data = '';
+
   const response:Response = await fetch('https://httpstate.com/' + uuid, {
     body:data,
     headers:{ 'Content-Type':'text/plain;charset=UTF-8' },
@@ -57,7 +47,7 @@ export const set:(uuid:string, data:string) => Promise<number> = async (uuid:str
   return response.status;
 };
 
-export const write:(uuid:string, data:string) => Promise<number> = async (uuid:string, data:string):Promise<number> => set(uuid, data);
+export const write:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => set(uuid, data);
 
 
 // HTTP State
@@ -69,7 +59,7 @@ export type HttpStateType = {
   ws:{
     _?:undefined|HttpStateWebSocketType,
 
-    delete:() => void,
+    delete():void,
     new:() => void
   };
 
@@ -79,19 +69,18 @@ export type HttpStateType = {
   get():Promise<undefined|string>;
   off(type:string, callback?:(data?:undefined|string) => void):HttpStateType;
   on(type:string, callback:(data?:undefined|string) => void):HttpStateType;
-  post(data:string):Promise<undefined|number>;
-  put(data:string):Promise<undefined|number>;
+  post(data?:undefined|string):Promise<undefined|number>;
+  put(data?:undefined|string):Promise<undefined|number>;
   read():Promise<undefined|string>;
   removeEventListener(type:string, callback:(data?:undefined|string) => void):void;
-  set(data:string):Promise<undefined|number>;
-  write(data:string):Promise<undefined|number>;
+  set(data?:undefined|string):Promise<undefined|number>;
+  write(data?:undefined|string):Promise<undefined|number>;
 };
 
 export type HttpStateWebSocketType = {
   _?:undefined|{ [uuid:string]:{ [uid:string]:{ [type:string]:((data?:undefined|string) => void)[] } } };
   ws?:undefined|(WebSocket&{ pingInterval?:ReturnType<typeof setInterval> });
 
-  //T - data:undefined|string
   addEventListener(uid:string, uuid:string, type:string, callback:(data?:undefined|string) => void):void;
   close(uid:string, uuid:string):void;
   delete():void;
@@ -136,8 +125,8 @@ export const HttpState:(uuid:string) => HttpStateType = (uuid:string):HttpStateT
     },
 
 
-    addEventListener:(type:string, callback:(data?:undefined|string) => void) => _.on(type, callback),
-    delete:() => {
+    addEventListener:(type:string, callback:(data?:undefined|string) => void):HttpStateType => _.on(type, callback),
+    delete:():void => {
       _.ws.delete();
 
       delete _.data;
@@ -145,7 +134,7 @@ export const HttpState:(uuid:string) => HttpStateType = (uuid:string):HttpStateT
       delete _.uid;
       delete _.uuid;
     },
-    emit:(type:string, data?:undefined|string) => {
+    emit:(type:string, data?:undefined|string):HttpStateType => {
       if(_.et?.[type])
         for(const callback of _.et[type])
           if(data === undefined)
@@ -167,7 +156,7 @@ export const HttpState:(uuid:string) => HttpStateType = (uuid:string):HttpStateT
         return _.data;
       }
     },
-    off:(type:string, callback?:(data?:undefined|string) => void) => {
+    off:(type:string, callback?:(data?:undefined|string) => void):HttpStateType => {
       if(_.et?.[type]) {
         if(callback)
           _.et[type] = _.et[type].filter(_callback => _callback !== callback);
@@ -178,7 +167,7 @@ export const HttpState:(uuid:string) => HttpStateType = (uuid:string):HttpStateT
 
       return _;
     },
-    on:(type:string, callback:(data?:undefined|string) => void) => {
+    on:(type:string, callback:(data?:undefined|string) => void):HttpStateType => {
       if(_.et) {
         if(!_.et[type])
           _.et[type] = [];
@@ -188,15 +177,15 @@ export const HttpState:(uuid:string) => HttpStateType = (uuid:string):HttpStateT
 
       return _;
     },
-    post:async (data:string):Promise<undefined|number> => _.set(data),
-    put:async (data:string):Promise<undefined|number> => _.set(data),
+    post:async (data?:undefined|string):Promise<undefined|number> => _.set(data),
+    put:async (data?:undefined|string):Promise<undefined|number> => _.set(data),
     read:async ():Promise<undefined|string> => _.get(),
-    removeEventListener:(type:string, callback:(data?:undefined|string) => void) => _.off(type, callback),
-    set:async (data:string):Promise<undefined|number> => {
+    removeEventListener:(type:string, callback:(data?:undefined|string) => void):HttpStateType => _.off(type, callback),
+    set:async (data?:undefined|string):Promise<undefined|number> => {
       if(_.uuid)
         return set(_.uuid, data);
     },
-    write:async (data:string):Promise<undefined|number> => _.set(data)
+    write:async (data?:undefined|string):Promise<undefined|number> => _.set(data)
   };
 
   _.ws.new();
@@ -210,8 +199,7 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
   _:undefined,
   ws:undefined,
 
-  //T - catch this one ...
-  addEventListener:(uid:string, uuid:string, type:string, callback:(data?:undefined|string) => void) => {
+  addEventListener:(uid:string, uuid:string, type:string, callback:(data?:undefined|string) => void):void => {
     if(HttpStateWebSocket._?.[uuid]?.[uid]) {
       if(!HttpStateWebSocket._[uuid][uid][type])
         HttpStateWebSocket._[uuid][uid][type] = [];
@@ -219,8 +207,7 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
       HttpStateWebSocket._[uuid][uid][type].push(callback);
     }
   },
-  //T - this is actually a remove event listener ... or something else
-  close:(uid:string, uuid:string) => {
+  close:(uid:string, uuid:string):void => {
     console.log('HttpStateWebSocket', 'close', uid, uuid);
 
     if(HttpStateWebSocket._?.[uuid]) {
@@ -304,7 +291,7 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
       }
     }, { once:true });
   },
-  open:(uid:string, uuid:string) => {
+  open:(uid:string, uuid:string):HttpStateWebSocketType => {
     console.log('HttpStateWebSocket', 'open', uid, uuid);
 
     if(!HttpStateWebSocket._)

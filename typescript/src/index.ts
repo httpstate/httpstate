@@ -33,11 +33,12 @@ export type MessageType = {
 };
 
 export const message:{ unpack(ab:ArrayBuffer):MessageType } = { unpack(ab:ArrayBuffer):MessageType {
-  const ui8a = new Uint8Array(ab);
+  const ui8a:Uint8Array = new Uint8Array(ab);
+  console.log('ui8a', ui8a);
 
-  let i = 0;
-  const uuid = new TextDecoder().decode(ui8a.slice(i + 1, i += 1 + ui8a[i]!));
+  console.log('l', ui8a[0]);
 
+  const uuid = new TextDecoder().decode(ui8a.slice(1, 1+ui8a[0]!));
   console.log('uuid', uuid);
 
   return {};

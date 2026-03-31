@@ -29,29 +29,22 @@ export const load:() => Promise<void> = async ():Promise<void> => {
 };
 
 export type MessageType = {
-  // ...
+  uuid:string;
+  timestamp:number;
+  type:number;
+  value:Uint8Array;
 };
 
 export const message:{ unpack(ab:ArrayBuffer):MessageType } = { unpack(ab:ArrayBuffer):MessageType {
   const ui8a:Uint8Array = new Uint8Array(ab);
-  console.log('ui8a', ui8a);
-
   const length:number = new DataView(ui8a.buffer, ui8a.byteOffset, 1).getUint8(0);
-  console.log('length', length);
 
-  const uuid = new TextDecoder().decode(ui8a.slice(1, 1+length));
-  console.log('uuid', uuid);
-
-  const timestamp = Number(new DataView(ui8a.buffer, ui8a.byteOffset+1+length, 8).getBigUint64(0));
-  console.log('timestamp', timestamp);
-
-  const type = new DataView(ui8a.buffer, ui8a.byteOffset+1+length+8, 1).getUint8(0);
-  console.log('type', type);
-
-  const value = ui8a.slice(1+length+8+1);
-  console.log('value', value);
-
-  return {};
+  return {
+    uuid:new TextDecoder().decode(ui8a.slice(1, 1+length)),
+    timestamp:Number(new DataView(ui8a.buffer, ui8a.byteOffset+1+length, 8).getBigUint64(0)),
+    type:new DataView(ui8a.buffer, ui8a.byteOffset+1+length+8, 1).getUint8(0),
+    value:ui8a.slice(1+length+8+1)
+  };
 } };
 
 export const post:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => set(uuid, data);
@@ -299,7 +292,12 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
       // }
 
       const data:MessageType = message.unpack(await e.data.arrayBuffer());
-      console.log('data', data);
+      
+      if(
+           data.uuid
+        && data.type === 1
+      )
+        HttpStateWebSocket.dispatchEvent(data.uuid, 'message', new TextDecoder().decode(data.value));
 
       // if(
       //      data

@@ -8,6 +8,9 @@
 
 from .httpstate import(
   get,
+  message,
+  post,
+  put,
   read,
   set,
   write,
@@ -16,6 +19,9 @@ from .httpstate import(
 
 __all__ = [
   'get',
+  'message',
+  'post',
+  'put',
   'read',
   'set',
   'write',

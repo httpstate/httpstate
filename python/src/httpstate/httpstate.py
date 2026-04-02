@@ -7,7 +7,9 @@
 # version 3 of the License, or (at your option) any later version.
 
 import asyncio
+import struct
 import threading
+import types
 import urllib.error
 import urllib.request
 import websockets
@@ -26,14 +28,38 @@ def get(uuid:str) -> None|str:
   except Exception:
     return None
 
+class MessageType:
+  def __init__(self, uuid:str, timestamp:int, type:int, value:bytes) -> None:
+    self.uuid:str = uuid
+    self.timestamp:int = timestamp
+    self.type:int = type
+    self.value:bytes = value
+
+class Message:
+  @staticmethod
+  def unpack(b:bytes) -> MessageType:
+    length:int = b[0]
+
+    return MessageType(
+      uuid=b[1:1+length].decode('utf-8'),
+      timestamp=struct.unpack_from('>Q', b, 1+length)[0],
+      type=b[1+length+8],
+      value=b[1+length+9:],
+    )
+
+message:type = Message
+
 def post(uuid:str, data:str) -> None|int:
+  return set(uuid, data)
+
+def put(uuid:str, data:str) -> None|int:
   return set(uuid, data)
 
 def read(uuid:str) -> None|str:
   return get(uuid)
 
 def set(uuid:str, data:str) -> None|int:
-  req = urllib.request.Request(
+  req:urllib.request.Request = urllib.request.Request(
     f'https://httpstate.com/{uuid}',
     data=data.encode('utf-8'),
     headers={ 'Content-Type':'text/plain;charset=UTF-8' },
@@ -53,7 +79,7 @@ def write(uuid:str, data:str) -> None|int:
 
 # HTTP State
 class HttpState:
-  def __init__(self, uuid:str):
+  def __init__(self, uuid:str) -> None:
     self.data:None|str = None
     self.el:None|asyncio.AbstractEventLoop = None
     self.et:Dict[str, List[Callable[[None|str], None]]] = {}
@@ -70,8 +96,8 @@ class HttpState:
       target=lambda : asyncio.run(self._ws())
     ).start()
   
-  def _el(self):
-    self.el = asyncio.new_event_loop()
+  def _el(self) -> None:
+    self.el:asyncio.AbstractEventLoop = asyncio.new_event_loop()
     
     asyncio.set_event_loop(self.el)
     
@@ -79,29 +105,28 @@ class HttpState:
 
     self.el.run_forever()
 
-  async def _ws(self):
-    self.ws = await websockets.connect(f"wss://httpstate.com/{self.uuid}")
+  async def _ws(self) -> None:
+    self.ws:websockets.WebSocketClientProtocol = await websockets.connect(f"wss://httpstate.com/{self.uuid}")
 
     await self.ws.send(f'{{"open":"{self.uuid}"}}')
     self.emit('open')
 
-    async def data():
+    async def data() -> None:
       async for data in self.ws:
-        data = data.decode()
+        data:MessageType = message.unpack(data)
 
         if(
               data
-          and len(data) > 32
-          and data[:32] == self.uuid
-          and data[45] == '1'
+          and data.uuid == self.uuid
+          and data.type == 1
         ):
-          self.data = data[46:]
+          self.data:None|str = data.value.decode()
 
           self.emit('change', self.data)
     
     asyncio.create_task(data())
 
-    async def interval():
+    async def interval() -> None:
       while True:
         try:
           await self.ws.ping()
@@ -114,10 +139,10 @@ class HttpState:
     
     await asyncio.Event().wait()
   
-  def delete(self):
+  def delete(self) -> None:
     pass
 
-  def emit(self, type:str, data:None|str = None):
+  def emit(self, type:str, data:None|str = None) -> "HttpState":
     for callback in self.et.get(type, []):
       if(data is None):
         callback()
@@ -127,7 +152,7 @@ class HttpState:
     return self
 
   def get(self) -> None|str:
-    data = get(self.uuid)
+    data:None|str = get(self.uuid)
 
     if(data != self.data):
       self.el.call_soon_threadsafe(lambda : self.emit('change', self.data))
@@ -136,7 +161,7 @@ class HttpState:
 
     return self.data
 
-  def off(self, type:str, callback:Callable[[None|str], None]):
+  def off(self, type:str, callback:Callable[[None|str], None]) -> "HttpState":
     if type in self.et:
       try:
         self.et[type].remove(callback)
@@ -148,7 +173,7 @@ class HttpState:
 
     return self
 
-  def on(self, type:str, callback:Callable[[None|str], None]):
+  def on(self, type:str, callback:Callable[[None|str], None]) -> "HttpState":
     if type not in self.et:
       self.et[type] = []
 
@@ -157,6 +182,9 @@ class HttpState:
     return self
   
   def post(self, data:str) -> None|int:
+    return self.set(data)
+  
+  def put(self, data:str) -> None|int:
     return self.set(data)
 
   def read(self) -> None|str:

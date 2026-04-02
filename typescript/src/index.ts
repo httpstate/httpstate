@@ -278,6 +278,7 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
       }
     }, { once:true });
     HttpStateWebSocket.ws.addEventListener('error', (e:Event) => console.error(new Date().toISOString(), 'HttpStateWebSocket.ws.error'));
+    HttpStateWebSocket.ws.addEventListener('message', () => delete HttpStateWebSocket.new.timeout, { once:true });
     HttpStateWebSocket.ws.addEventListener('message', async (e:MessageEvent) => {
       const data:MessageType = message.unpack(await e.data.arrayBuffer());
       
@@ -287,7 +288,6 @@ export const HttpStateWebSocket:HttpStateWebSocketType = {
       )
         HttpStateWebSocket.dispatchEvent(data.uuid, 'message', new TextDecoder().decode(data.value));
     });
-    HttpStateWebSocket.ws.addEventListener('message', () => delete HttpStateWebSocket.new.timeout, { once:true });
     HttpStateWebSocket.ws.addEventListener('open', () => {
       if(HttpStateWebSocket.ws) {
         if(HttpStateWebSocket._)

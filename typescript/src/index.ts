@@ -75,6 +75,7 @@ export type HttpStateType = {
   et?:undefined|{ [type:string]:((data?:undefined|string) => void)[] };
   uid?:undefined|string;
   uuid?:undefined|string;
+  visibilitychange?:undefined|(() => void);
   ws:{
     _?:undefined|HttpStateWebSocketType,
 
@@ -209,6 +210,16 @@ export const HttpState:(uuid:string) => HttpStateType = (uuid:string):HttpStateT
   _.ws.new();
 
   setTimeout(_.get, 0);
+  
+  if(
+       typeof document !== 'undefined'
+    && typeof window !== 'undefined'
+    && globalThis === window
+  )
+    document.addEventListener('visibilitychange', _.visibilitychange = () => {
+      if(document.visibilityState === 'visible')
+        console.log('Tab is active again ...');
+    });
 
   return _;
 };

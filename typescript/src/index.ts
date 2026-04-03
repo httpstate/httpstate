@@ -152,6 +152,10 @@ export const HttpState:(uuid:string) => HttpStateType = (uuid:string):HttpStateT
       delete _.et;
       delete _.uid;
       delete _.uuid;
+
+      if(_.visibilitychange)
+        document.removeEventListener('visibilitychange', _.visibilitychange);
+      delete _.visibilitychange;
     },
     emit:(type:string, data?:undefined|string):HttpStateType => {
       if(_.et?.[type])

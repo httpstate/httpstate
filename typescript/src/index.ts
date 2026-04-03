@@ -9,10 +9,14 @@
 const UID:() => string = ():string => Date.now().toString(36) + Math.random().toString(36).slice(2);
 
 export const get:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => {
-  const response:Response = await fetch('https://httpstate.com/' + uuid);
+  try {
+    const response:Response = await fetch('https://httpstate.com/' + uuid);
 
-  if(response.status === 200)
-    return await response.text();
+    if(response.status === 200)
+      return await response.text();
+  } catch(e) {
+    console.error(new Date().toISOString(), 'get.error', e);
+  }
 };
 
 export const load:() => Promise<void> = async ():Promise<void> => {
@@ -57,13 +61,17 @@ export const set:(uuid:string, data?:undefined|string) => Promise<number> = asyn
   if(!data)
     data = '';
 
-  const response:Response = await fetch('https://httpstate.com/' + uuid, {
-    body:data,
-    headers:{ 'Content-Type':'text/plain;charset=UTF-8' },
-    method:'POST'
-  });
+  try {
+    const response:Response = await fetch('https://httpstate.com/' + uuid, {
+      body:data,
+      headers:{ 'Content-Type':'text/plain;charset=UTF-8' },
+      method:'POST'
+    });
 
-  return response.status;
+    return response.status;
+  } catch(e) {
+    console.error(new Date().toISOString(), 'set.error', e);
+  }
 };
 
 export const write:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => set(uuid, data);

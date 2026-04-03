@@ -224,15 +224,14 @@ export const HttpState:(uuid:string) => HttpStateType = (uuid:string):HttpStateT
       if(_.visibilitychange) {
         if(document.visibilityState === 'hidden')
           _.visibilitychange.now = Date.now();
-        else if(document.visibilityState === 'visible' && _.visibilitychange.now) {
-          console.log('Tab is active again ...', Date.now(), _.visibilitychange.now, Date.now()-_.visibilitychange.now);
-
-          if(Date.now()-_.visibilitychange.now > 1000*60) // 1 MIN
-            _.get();
-        }
+        else if(
+             document.visibilityState === 'visible'
+          && _.visibilitychange.now
+          && Date.now()-_.visibilitychange.now > 1000*60 // 1 MIN
+        )
+          _.get();
       }
     };
-
     document.addEventListener('visibilitychange', _.visibilitychange);
   }
 

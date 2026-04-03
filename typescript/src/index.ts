@@ -51,13 +51,13 @@ export const message:{ unpack(ab:ArrayBuffer):MessageType } = { unpack(ab:ArrayB
   };
 } };
 
-export const post:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => set(uuid, data);
+export const post:(uuid:string, data?:undefined|string) => Promise<undefined|number> = async (uuid:string, data?:undefined|string):Promise<undefined|number> => set(uuid, data);
 
-export const put:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => set(uuid, data);
+export const put:(uuid:string, data?:undefined|string) => Promise<undefined|number> = async (uuid:string, data?:undefined|string):Promise<undefined|number> => set(uuid, data);
 
 export const read:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => get(uuid);
 
-export const set:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => {
+export const set:(uuid:string, data?:undefined|string) => Promise<undefined|number> = async (uuid:string, data?:undefined|string):Promise<undefined|number> => {
   if(!data)
     data = '';
 
@@ -74,7 +74,7 @@ export const set:(uuid:string, data?:undefined|string) => Promise<number> = asyn
   }
 };
 
-export const write:(uuid:string, data?:undefined|string) => Promise<number> = async (uuid:string, data?:undefined|string):Promise<number> => set(uuid, data);
+export const write:(uuid:string, data?:undefined|string) => Promise<undefined|number> = async (uuid:string, data?:undefined|string):Promise<undefined|number> => set(uuid, data);
 
 
 // HTTP State

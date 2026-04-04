@@ -219,11 +219,7 @@ func (hs *HttpState) ws() {
 			return
 		}
 
-		fmt.Println("_data:", _data)
-
 		var data HttpStateMessageType = Message.Unpack(_data)
-
-		fmt.Println("data:", data)
 
 		if
 			data.UUID == hs.UUID &&
@@ -233,18 +229,5 @@ func (hs *HttpState) ws() {
 
 			hs.Emit("change", hs.Data)
 		}
-
-		// s := string(message)
-		// hs.Data = &s
-
-		// if
-		// 	hs.Data != nil &&
-		// 	len(*hs.Data) > 32 &&
-		// 	(*hs.Data)[:32] == hs.UUID &&
-		// 	(*hs.Data)[45] == '1' {
-		// 	data := (*hs.Data)[46:]
-
-		// 	hs.Emit("change", &data)
-		// }
 	}
 }

@@ -1,0 +1,9 @@
+[package]
+name = "quickstart"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+chrono = "0.4.44"
+httpstate = "0.0.5"
+tokio = "1.51.0"

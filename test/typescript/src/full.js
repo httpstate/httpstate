@@ -1,3 +1,5 @@
+// npm install @httpstate/typescript
+
 import * as httpstate from '@httpstate/typescript';
 
 const uuid = '06ee9a21a70b49c3bcffc335995cf2b4';

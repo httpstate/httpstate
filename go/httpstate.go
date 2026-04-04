@@ -9,7 +9,7 @@
 package httpstate
 
 import (
-	"encoding/binary"
+	// "encoding/binary"
 	"bytes"
 	"fmt"
 	"io"

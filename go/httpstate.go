@@ -225,17 +225,13 @@ func (hs *HttpState) ws() {
 
 		fmt.Println("data:", data)
 
-		// s := string(message)
-		// hs.Data = &s
+		if
+			data != nil &&
+			data.UUID == hs.UUID &&
+			data.Type == 1 {
+			hs.Data = string(data.Value)
 
-		// if
-		// 	hs.Data != nil &&
-		// 	len(*hs.Data) > 32 &&
-		// 	(*hs.Data)[:32] == hs.UUID &&
-		// 	(*hs.Data)[45] == '1' {
-		// 	data := (*hs.Data)[46:]
-
-		// 	hs.Emit("change", &data)
-		// }
+			hs.Emit("change", &hs.Data)
+		}
 	}
 }

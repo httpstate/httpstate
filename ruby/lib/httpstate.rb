@@ -46,8 +46,8 @@ class HttpState
       length = b.getbyte(0)
 
       MessageType.new(
-        b.byteslice(1, length).force_encoding("UTF-8"),
-        b.byteslice(1+length, 8).unpack1("Q>"),
+        b.byteslice(1, length).force_encoding('UTF-8'),
+        b.byteslice(1+length, 8).unpack1('Q>'),
         b.getbyte(1+length+8),
         b.byteslice(1+length+9, b.bytesize-(1+length+9))
       )

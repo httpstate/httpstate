@@ -210,7 +210,7 @@ func (hs *HttpState) ws() {
 	}()
 
 	for {
-		_, message, err := c.ReadMessage()
+		_, _data, err := c.ReadMessage()
 		if err != nil {
 			fmt.Println("err:", err)
 
@@ -219,11 +219,11 @@ func (hs *HttpState) ws() {
 			return
 		}
 
-		fmt.Println("message:", message)
+		fmt.Println("_data:", _data)
 
-		message = Message.Unpack(message);
+		data = Message.Unpack(_data);
 
-		fmt.Println("message:", message)
+		fmt.Println("data:", data)
 
 		// s := string(message)
 		// hs.Data = &s

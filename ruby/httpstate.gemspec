@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "lib/httpstate/version"
+require_relative "lib/httpstate"
 
 Gem::Specification.new do |spec|
   spec.authors = ["HTTP State"]

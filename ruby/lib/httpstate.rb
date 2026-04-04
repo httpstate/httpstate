@@ -16,7 +16,7 @@ require 'socket'
 require 'uri'
 
 class HttpState
-  VERSION = '0.0.1'
+  VERSION = '0.1.1'
 
   attr_reader :data, :uuid, :ws
 
@@ -28,6 +28,34 @@ class HttpState
     puts 'Error: ' + e.message
 
     nil
+  end
+
+  class Message
+    class MessageType
+      attr_accessor :uuid, :timestamp, :type, :value
+
+      def initialize(uuid, timestamp, type, value)
+        @uuid = uuid
+        @timestamp = timestamp
+        @type = type
+        @value = value
+      end
+    end
+
+    def self.unpack(b)
+      length = b.getbyte(0)
+
+      MessageType.new(
+        b.byteslice(1, length).force_encoding("UTF-8"),
+        b.byteslice(1+length, 8).unpack1("Q>"),
+        b.getbyte(1+length+8),
+        b.byteslice(1+length+9, b.bytesize-(1+length+9))
+      )
+    end
+  end
+
+  def self.message
+    Message
   end
 
   def self.set(uuid, data)
@@ -50,6 +78,8 @@ class HttpState
 
   class << self
     alias read get
+    alias post set
+    alias put set
     alias write set
   end
 
@@ -72,12 +102,12 @@ class HttpState
         end
 
         @ws.on :message do |event|
-          if @uuid &&
-             !event.data.empty? &&
-             event.data.length > 32 &&
-             event.data[0...32] == @uuid &&
-             event.data[45] == '1'
-            @data = event.data[46..]
+          data = self.class.message.unpack(event.data)
+
+          if data &&
+             data.uuid == @uuid &&
+             data.type == 1
+            @data = data.value
 
             emit('change', @data)
           end
@@ -149,5 +179,7 @@ class HttpState
   end
 
   alias read get
+  alias post set
+  alias put set
   alias write set
 end

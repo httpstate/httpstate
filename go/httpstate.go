@@ -50,7 +50,7 @@ var Message = struct { Unpack func(b []byte) HttpStateMessageType } { Unpack:fun
 		Type:b[1+length+8],
 		Value:b[1+length+9:],
 	}
-} };
+} }
 
 func Post(uuid string, data string) *int {
 	return Set(uuid, data)
@@ -221,17 +221,17 @@ func (hs *HttpState) ws() {
 
 		fmt.Println("_data:", _data)
 
-		var data HttpStateMessageType = Message.Unpack(_data);
+		var data HttpStateMessageType = Message.Unpack(_data)
 
 		fmt.Println("data:", data)
 
 		if
 			data.UUID == hs.UUID &&
 			data.Type == 1 {
-			var s string = string(data.Value);
-			hs.Data &s;
+			var s string = string(data.Value)
+			hs.Data = &s
 
-			hs.Emit("change", hs.Data);
+			hs.Emit("change", hs.Data)
 		}
 
 		// s := string(message)

@@ -142,15 +142,15 @@ func (hs *HttpState) On(_type string, _callback HttpStateCallback) *HttpState {
 }
 
 func (hs *HttpState) Post(data string) *int {
-	return hs.Set(hs.UUID, data)
+	return hs.Set(data)
 }
 
 func (hs *HttpState) Put(data string) *int {
-	return hs.Set(hs.UUID, data)
+	return hs.Set(data)
 }
 
 func (hs *HttpState) Read() *string {
-	return hs.Get(hs.UUID)
+	return hs.Get()
 }
 
 func (hs *HttpState) Set(data string) *int {
@@ -158,7 +158,7 @@ func (hs *HttpState) Set(data string) *int {
 }
 
 func (hs *HttpState) Write(data string) *int {
-	return hs.Set(hs.UUID, data)
+	return hs.Set(data)
 }
 
 func (hs *HttpState) ws() {

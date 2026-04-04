@@ -16,6 +16,7 @@ import java.net.http.WebSocket;
 import java.net.http.WebSocket.Listener;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,11 +43,46 @@ public class HttpState {
       : null;
   }
 
+  public static class Message {
+    static class MessageType {
+      String uuid;
+      long timestamp;
+      byte type;
+      byte[] value;
+
+      MessageType(String uuid, long timestamp, byte type, byte[] value) {
+        this.uuid = uuid;
+        this.timestamp = timestamp;
+        this.type = type;
+        this.value = value;
+      }
+    }
+
+    public static MessageType unpack(byte[] b) {
+      int length = b[0]&0xFF;
+
+      String uuid = new String(b, 1, length, StandardCharsets.UTF_8);
+      long timestamp = ByteBuffer.wrap(b, 1+length, 8).getLong();
+      byte type = b[1+length+8];
+      byte[] value = Arrays.copyOfRange(b, 1+length+9, b.length);
+
+      return new MessageType(uuid, timestamp, type, value);
+    }
+  }
+
+  static Integer Post(String uuid, String body) throws Exception {
+    return Set(uuid, body);
+  }
+
+  static Integer Put(String uuid, String body) throws Exception {
+    return Set(uuid, body);
+  }
+
   static String Read(String uuid) throws Exception {
     return Get(uuid);
   }
 
-  static int Set(String uuid, String body) throws Exception {
+  static Integer Set(String uuid, String body) throws Exception {
     HttpClient httpClient = HttpClient.newHttpClient();
 
     HttpRequest httpRequest = HttpRequest.newBuilder()
@@ -60,7 +96,7 @@ public class HttpState {
     return httpResponse.statusCode();
   }
 
-  static int Write(String uuid, String body) throws Exception {
+  static Integer Write(String uuid, String body) throws Exception {
     return Set(uuid, body);
   }
 
@@ -109,17 +145,25 @@ public class HttpState {
     this.et.get(type).add(callback);
   }
 
+  public Integer Post(String body) throws Exception {
+    return this.Set(body);
+  }
+
+  public Integer Put(String body) throws Exception {
+    return this.Set(body);
+  }
+
   public String Read() throws Exception {
     return this.Get();
   }
 
-  public int Set(String body) throws Exception {
+  public Integer Set(String body) throws Exception {
     return this.uuid != null
       ? HttpState.Set(this.uuid, body)
       : null;
   }
 
-  public int Write(String body) throws Exception {
+  public Integer Write(String body) throws Exception {
     return this.Set(body);
   }
 
@@ -157,17 +201,18 @@ public class HttpState {
       }
 
       @Override
-      public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data, boolean last) {
-        String _data = StandardCharsets.UTF_8.decode(data).toString();
+      public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer _data, boolean last) {
+        byte[] data = new byte[_data.remaining()];
+        _data.get(data);
+
+        Message.MessageType message = Message.unpack(data);
 
         if(
-             HttpState.this.uuid != null
-          && !_data.isEmpty()
-          && _data.length() > 32
-          && _data.substring(0, 32).equals(HttpState.this.uuid)
-          && _data.substring(45, 46).equals("1")
+             message != null
+          && message.uuid.equals(HttpState.this.uuid)
+          && message.type == 1
         ) {
-          HttpState.this.data = _data.substring(46);
+          HttpState.this.data = new String(message.value, StandardCharsets.UTF_8);
 
           HttpState.this.Emit("change", HttpState.this.data);
         }

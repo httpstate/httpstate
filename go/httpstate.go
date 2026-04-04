@@ -9,6 +9,7 @@
 package httpstate
 
 import (
+	"encoding/binary"
 	"bytes"
 	"fmt"
 	"io"
@@ -40,6 +41,18 @@ func Get(uuid string) *string {
 	return &s
 }
 
+var Message = struct { Unpack func(b []byte) } { Unpack:func(b []byte) {
+	fmt.Println("hi")
+} };
+
+func Post(uuid string, data string) *int {
+	return Set(uuid, data)
+}
+
+func Put(uuid string, data string) *int {
+	return Set(uuid, data)
+}
+
 func Read(uuid string) *string {
 	return Get(uuid)
 }
@@ -62,13 +75,20 @@ func Write(uuid string, data string) *int {
 }
 
 // HTTP State
-type HttpStateCallback func(data *string)
-
 type HttpState struct {
 	Data *string
-	ET map[string][]HttpStateCallback
+	ET   map[string][]HttpStateCallback
 	UUID string
-	WS *websocket.Conn
+	WS   *websocket.Conn
+}
+
+type HttpStateCallback func(data *string)
+
+type HttpStateMessageType struct {
+	UUID      string
+	Timestamp uint64
+	Type      uint8
+	Value     []byte
 }
 
 func New(uuid string) *HttpState {
@@ -121,8 +141,16 @@ func (hs *HttpState) On(_type string, _callback HttpStateCallback) *HttpState {
 	return hs
 }
 
+func (hs *HttpState) Post(data string) *int {
+	return hs.Set(hs.UUID, data)
+}
+
+func (hs *HttpState) Put(data string) *int {
+	return hs.Set(hs.UUID, data)
+}
+
 func (hs *HttpState) Read() *string {
-	return Read(hs.UUID)
+	return hs.Get(hs.UUID)
 }
 
 func (hs *HttpState) Set(data string) *int {
@@ -130,7 +158,7 @@ func (hs *HttpState) Set(data string) *int {
 }
 
 func (hs *HttpState) Write(data string) *int {
-	return Write(hs.UUID, data)
+	return hs.Set(hs.UUID, data)
 }
 
 func (hs *HttpState) ws() {
@@ -185,6 +213,8 @@ func (hs *HttpState) ws() {
 		}
 
 		fmt.Println("message:", message)
+
+		Message.Unpack(message);
 
 		// s := string(message)
 		// hs.Data = &s

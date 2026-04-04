@@ -229,7 +229,7 @@ func (hs *HttpState) ws() {
 			data != nil &&
 			data.UUID == hs.UUID &&
 			data.Type == 1 {
-			hs.Data = string(data.Value)
+			hs.Data := string(data.Value)
 
 			hs.Emit("change", &hs.Data)
 		}

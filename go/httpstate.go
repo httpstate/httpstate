@@ -9,7 +9,7 @@
 package httpstate
 
 import (
-	// "encoding/binary"
+	"encoding/binary"
 	"bytes"
 	"fmt"
 	"io"
@@ -41,8 +41,15 @@ func Get(uuid string) *string {
 	return &s
 }
 
-var Message = struct { Unpack func(b []byte) } { Unpack:func(b []byte) {
-	fmt.Println("hi")
+var Message = struct { Unpack func(b []byte) HttpStateMessageType } { Unpack:func(b []byte) HttpStateMessageType {
+	var length int = int(b[0])
+
+	return HttpStateMessageType {
+		UUID:string(b[1:1+length]),
+		Timestamp:binary.BigEndian.Uint64(b[1+length:1+length+8]),
+		Type:b[1+length+8],
+		Value:b[1+length+9:],
+	}
 } };
 
 func Post(uuid string, data string) *int {
@@ -214,7 +221,9 @@ func (hs *HttpState) ws() {
 
 		fmt.Println("message:", message)
 
-		Message.Unpack(message);
+		message = Message.Unpack(message);
+
+		fmt.Println("message:", message)
 
 		// s := string(message)
 		// hs.Data = &s

@@ -202,17 +202,17 @@ public class HttpState {
 
       @Override
       public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer _data, boolean last) {
-        byte[] data = new byte[_data.remaining()];
-        _data.get(data);
+        byte[] bytes = new byte[_data.remaining()];
+        _data.get(bytes);
 
-        Message.MessageType message = Message.unpack(data);
+        Message.MessageType data = Message.unpack(bytes);
 
         if(
-             message != null
-          && message.uuid.equals(HttpState.this.uuid)
-          && message.type == 1
+             data != null
+          && data.uuid.equals(HttpState.this.uuid)
+          && data.type == 1
         ) {
-          HttpState.this.data = new String(message.value, StandardCharsets.UTF_8);
+          HttpState.this.data = new String(data.value, StandardCharsets.UTF_8);
 
           HttpState.this.Emit("change", HttpState.this.data);
         }

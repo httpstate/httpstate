@@ -221,7 +221,7 @@ func (hs *HttpState) ws() {
 
 		fmt.Println("_data:", _data)
 
-		data = Message.Unpack(_data);
+		var data HttpStateMessageType = Message.Unpack(_data);
 
 		fmt.Println("data:", data)
 

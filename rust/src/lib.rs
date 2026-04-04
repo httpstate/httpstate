@@ -30,6 +30,29 @@ pub async fn get(uuid:&str) -> Option<String> {
   }
 }
 
+pub mod message {
+  use crate::HttpStateMessageType;
+  
+  pub fn unpack(b:&[u8]) -> HttpStateMessageType {
+    let length:usize = b[0] as usize;
+
+    HttpStateMessageType {
+      uuid:String::from_utf8(b[1..1+length].to_vec()).unwrap(),
+      timestamp:u64::from_be_bytes(b[1+length..1+length+8].try_into().unwrap()),
+      r#type:b[1+length+8],
+      value:b[1+length+9..].to_vec()
+    }
+  }
+}
+
+pub async fn post(uuid:&str, data:&str) -> Option<u16> {
+  set(uuid, data).await
+}
+
+pub async fn put(uuid:&str, data:&str) -> Option<u16> {
+  set(uuid, data).await
+}
+
 pub async fn read(uuid:&str) -> Option<String> {
   get(uuid).await
 }
@@ -60,6 +83,13 @@ pub struct HttpState {
   pub ws:Arc<Mutex<Option<WebSocket<MaybeTlsStream<TcpStream>>>>>
 }
 
+pub struct HttpStateMessageType {
+  pub uuid:String,
+  pub timestamp:u64,
+  pub r#type:u8,
+  pub value:Vec<u8>
+}
+
 impl HttpState {
   pub fn new(uuid:&str) -> Arc<Self> {
     let httpstate = Arc::new(HttpState {
@@ -77,17 +107,9 @@ impl HttpState {
         Ok((mut ws, _)) => {
           let stream = ws.get_mut();
 
-          eprintln!("stream {:?}", stream);
-
           match stream {
             tungstenite::stream::MaybeTlsStream::NativeTls(nativetls) => {
-              eprintln!("nativetls {:?}", nativetls);
-
-              let ss = nativetls.get_mut();
-
-              eprintln!("ss {:?}", ss);
-
-              let _ = ss.set_read_timeout(Some(std::time::Duration::from_secs(10))); // 10 SECONDS
+              let _ = nativetls.get_mut().set_read_timeout(Some(std::time::Duration::from_secs(10))); // 10 SECONDS
             },
             _ => {}
           }
@@ -109,7 +131,7 @@ impl HttpState {
 
           std::thread::spawn(move || {
             loop {
-              eprintln!("[DEBUG] interval");
+              // eprintln!("[DEBUG] interval");
 
               {
                 let mut lock = httpstate_clone_interval.ws.lock().unwrap();
@@ -125,15 +147,15 @@ impl HttpState {
           let httpstate_clone_read = Arc::clone(&httpstate_clone);
           std::thread::spawn(move || {
             loop {
-              eprintln!("[DEBUG] read");
+              // eprintln!("[DEBUG] loop");
 
-              let message = {
+              let _data = {
                 let mut lock = httpstate_clone_read.ws.lock().unwrap();
 
                 lock.as_mut().unwrap().read()
               };
 
-              match message {
+              match _data {
                 Err(e) => {
                   match e {
                     tungstenite::Error::Io(ref io_err) if io_err.kind() == std::io::ErrorKind::WouldBlock => {},
@@ -144,32 +166,19 @@ impl HttpState {
                     }
                   }
                 },
-                Ok(message) => {
-                  match message {
+                Ok(_data) => {
+                  match _data {
                     tungstenite::Message::Binary(bytes) => {
-                      match String::from_utf8(bytes.to_vec()) {
-                        Err(_) => {},
-                        Ok(data) => {
-                          {
-                            let mut lock = httpstate_clone_read.data.lock().unwrap();
-                            
-                            *lock = Some(data.clone());
-                          }
+                      let data:HttpStateMessageType = message::unpack(&bytes);
 
-                          {
-                            let lock = httpstate_clone_read.data.lock().unwrap();
+                      if data.uuid == httpstate_clone_read.uuid
+                        && data.r#type == 1
+                      {
+                        let mut lock = httpstate_clone_read.data.lock().unwrap();
+                        
+                        *lock = Some(String::from_utf8_lossy(&data.value).to_string());
 
-                            let data = lock.as_ref().unwrap();
-                            
-                            if   !data.is_empty()
-                              && data.len() > 46
-                              && &data[..32] == httpstate_clone_read.uuid
-                              && data.as_bytes()[45] == b'1'
-                            {
-                              httpstate_clone_read.emit("change", Some(String::from(&data[46..])));
-                            }
-                          }
-                        }
+                        httpstate_clone_read.emit("change", lock.clone());
                       }
                     },
                     _ => {}
@@ -214,8 +223,16 @@ impl HttpState {
       .push(Box::new(_callback));
   }
 
+  pub async fn post(&self, data:&str) -> Option<u16> {
+    set(&self.uuid, data).await
+  }
+
+  pub async fn put(&self, data:&str) -> Option<u16> {
+    set(&self.uuid, data).await
+  }
+
   pub async fn read(&self) -> Option<String> {
-    read(&self.uuid).await
+    get(&self.uuid).await
   }
 
   pub async fn set(&self, data:&str) -> Option<u16> {
@@ -223,6 +240,6 @@ impl HttpState {
   }
 
   pub async fn write(&self, data:&str) -> Option<u16> {
-    write(&self.uuid, data).await
+    set(&self.uuid, data).await
   }
 }

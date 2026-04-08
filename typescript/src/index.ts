@@ -27,7 +27,10 @@ export const load:() => Promise<void> = async ():Promise<void> => {
     if(!(load as any)._[uuid])
       (load as any)._[uuid] = httpstate(uuid).on('change', (data?:undefined|string) => {
         for(const node of document.querySelectorAll<HTMLElement>('[httpstate="' + uuid + '"]'))
-          node.innerHTML = String(data);
+          if(node instanceof HTMLImageElement)
+            node.src = String(data);
+          else
+            node.innerHTML = String(data);
       });
   }
 };

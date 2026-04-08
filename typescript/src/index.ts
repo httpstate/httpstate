@@ -30,7 +30,7 @@ export const load:() => Promise<void> = async ():Promise<void> => {
           if(node instanceof HTMLImageElement)
             node.src = String(data);
           else
-            node.innerHTML = String(data);
+            node.textContent = String(data);
       });
   }
 };

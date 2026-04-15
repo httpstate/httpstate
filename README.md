@@ -66,6 +66,18 @@ hs.on('change', data => console.log(data));
 
 That's it! 🐙
 
+## Realtime Updates
+
+All client libraries support realtime updates via WebSocket. Create a reactive instance bound to a UUID and subscribe to `change` events:
+
+```js
+const hs = httpstate('45fb36540e9244daaa21ca409c6bdab3');
+
+hs.on('change', data => console.log(data));
+```
+
+Any client that calls `set()` on the same UUID will trigger a `change` event across all connected instances — across devices, languages, and platforms. The TypeScript client uses a shared WebSocket connection with automatic reconnection and exponential backoff.
+
 ## httpstate in your favorite language
 
 ### <img alt="JS" height="32" src="assets/JS.svg" width="32"/> Javascript / Typescript ([typescript](./typescript))
@@ -84,7 +96,14 @@ npm install @httpstate/typescript
 npm install @httpstate/react
 ```
 
-Then `useHttpState(uuid)` as you would `useState()`.
+Use it like `useState()`:
+
+```js
+const [state, setState] = useHttpState('45fb36540e9244daaa21ca409c6bdab3');
+
+// state — reactive value, auto-updates on change
+// setState(data) — writes data via httpstate.set()
+```
 
 [API and Docs](./react)
 
@@ -127,6 +146,14 @@ cargo add httpstate
 ```
 
 [API and Docs](./rust)
+
+### iOS ([iOS](./iOS))
+
+Native app with live data display, Home Screen widget, and Lock Screen widget.
+
+### macOS ([macOS](./macOS))
+
+Native app with live data display and widget.
 
 ---
 

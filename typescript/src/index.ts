@@ -61,7 +61,7 @@ export const put:(uuid:string, data?:undefined|string) => Promise<undefined|numb
 export const read:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => get(uuid);
 
 export const set:(uuid:string, data?:undefined|string) => Promise<undefined|number> = async (uuid:string, data?:undefined|string):Promise<undefined|number> => {
-  if(!data)
+  if(data === undefined || data === null)
     data = '';
 
   try {

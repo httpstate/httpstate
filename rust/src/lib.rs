@@ -1,4 +1,4 @@
-// HTTP State, https://httpstate.com/
+// HTTPState, https://httpstate.com/
 // Copyright (C) Alex Morales, 2026
 //
 // Unless otherwise stated in particular files or directories, this software is free software.
@@ -75,7 +75,7 @@ pub async fn write(uuid:&str, data:&str) -> Option<u16> {
   set(uuid, data).await
 }
 
-// HTTP State
+// HTTPState
 pub struct HttpState {
   pub data:Arc<Mutex<Option<String>>>,
   pub et:Arc<Mutex<HashMap<String, Vec<Box<dyn Fn(Option<String>) + Send + Sync>>>>>,

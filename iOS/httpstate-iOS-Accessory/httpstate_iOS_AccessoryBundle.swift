@@ -1,12 +1,13 @@
+// HTTPState, https://httpstate.com/
+// Copyright (C) Alex Morales, 2026
 //
-//  httpstate_iOS_AccessoryBundle.swift
-//  httpstate-iOS-Accessory
-//
-//  Created by Al Mo on 2026-04-12.
-//
+// Unless otherwise stated in particular files or directories, this software is free software.
+// You can redistribute it and/or modify it under the terms of the GNU Affero
+// General Public License as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any later version.
 
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
 @main
 struct httpstate_iOS_AccessoryBundle: WidgetBundle {

@@ -1,4 +1,4 @@
-// HTTP State, https://httpstate.com/
+// HTTPState, https://httpstate.com/
 // Copyright (C) Alex Morales, 2026
 //
 // Unless otherwise stated in particular files or directories, this software is free software.
@@ -80,7 +80,7 @@ export const set:(uuid:string, data?:undefined|string) => Promise<undefined|numb
 export const write:(uuid:string, data?:undefined|string) => Promise<undefined|number> = async (uuid:string, data?:undefined|string):Promise<undefined|number> => set(uuid, data);
 
 
-// HTTP State
+// HTTPState
 export type HTTPStateType = {
   data?:undefined|string;
   et?:undefined|{ [type:string]:((data?:undefined|string) => void)[] };

@@ -1,6 +1,6 @@
 [package]
-authors = ["Alex Morales, HTTP State <alex@httpstate.com>"]
-description = "HTTP State, httpstate.com"
+authors = ["Alex Morales, HTTPState <alex@httpstate.com>"]
+description = "HTTPState, httpstate.com"
 edition = "2024"
 license = "AGPL-3.0"
 name = "httpstate"

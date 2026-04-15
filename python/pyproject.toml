@@ -3,13 +3,13 @@ build-backend = "hatchling.build"
 requires = ["hatchling >= 1.26"]
 
 [project]
-authors = [{ email="alex@httpstate.com", name="Alex Morales, HTTP State" }]
+authors = [{ email="alex@httpstate.com", name="Alex Morales, HTTPState" }]
 classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3"
 ]
 dependencies = ["websockets>=16.0"]
-description = "HTTP State, httpstate.com"
+description = "HTTPState, httpstate.com"
 keywords = ["httpstate"]
 license = "AGPL-3.0"
 license-files = ["LICEN[CS]E*"]

@@ -1,4 +1,4 @@
-// HTTP State, https://httpstate.com/
+// HTTPState, https://httpstate.com/
 // Copyright (C) Alex Morales, 2026
 //
 // Unless otherwise stated in particular files or directories, this software is free software.
@@ -81,7 +81,7 @@ func Write(uuid string, data string) *int {
 	return Set(uuid, data)
 }
 
-// HTTP State
+// HTTPState
 type HttpState struct {
 	Data *string
 	ET   map[string][]HttpStateCallback

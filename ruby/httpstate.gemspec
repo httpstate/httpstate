@@ -3,14 +3,14 @@
 require_relative "lib/httpstate"
 
 Gem::Specification.new do |spec|
-  spec.authors = ["HTTP State"]
-  spec.description = "HTTP State, httpstate.com"
+  spec.authors = ["HTTPState"]
+  spec.description = "HTTPState, httpstate.com"
   spec.email = ["inbox@httpstate.com"]
   spec.homepage = "https://httpstate.com"
   spec.license = "AGPL-3.0"
   spec.name = "httpstate"
   spec.required_ruby_version = ">= 2.6.0"
-  spec.summary = "HTTP State, httpstate.com"
+  spec.summary = "HTTPState, httpstate.com"
   spec.version = HttpState::VERSION
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"

@@ -60,19 +60,19 @@ That's it! 🐙
 - `message.unpack(arrayBuffer)`
   Unpack binary WebSocket message into `{ uuid, timestamp, type, value }`.
 
-- `post(uuid, data)`
+- `post(uuid, data?)`
   Alias for `set`. Returns `undefined|number`.
 
-- `put(uuid, data)`
+- `put(uuid, data?)`
   Alias for `set`. Returns `undefined|number`.
 
 - `read(uuid)`
   Alias for `get`.
 
-- `set(uuid, data)`
-  Set state of UUIDv4. Returns `undefined|number`.
+- `set(uuid, data?)`
+  Set state of UUIDv4. Returns `undefined|number`. If `data` is omitted or `null`/`undefined`, defaults to `''`.
 
-- `write(uuid, data)`
+- `write(uuid, data?)`
   Alias for `set`.
 
 ### HttpState Class
@@ -87,15 +87,15 @@ That's it! 🐙
 
 - `<HttpState>.get()`
   Get state. Returns `undefined|string`.
-- `<HttpState>.post(data)`
+- `<HttpState>.post(data?)`
   Alias for `set`.
-- `<HttpState>.put(data)`
+- `<HttpState>.put(data?)`
   Alias for `set`.
 - `<HttpState>.read()`
   Alias for `get`.
-- `<HttpState>.set(data)`
-  Set state. Returns `undefined|number`.
-- `<HttpState>.write(data)`
+- `<HttpState>.set(data?)`
+  Set state. Returns `undefined|number`. If `data` is omitted or `null`/`undefined`, defaults to `''`.
+- `<HttpState>.write(data?)`
   Alias for `set`.
 
 <br>

@@ -9,7 +9,6 @@
 import asyncio
 import struct
 import threading
-import types
 import urllib.error
 import urllib.request
 import websockets
@@ -49,16 +48,19 @@ class Message:
 
 message:type = Message
 
-def post(uuid:str, data:str) -> None|int:
+def post(uuid:str, data:None|str = None) -> None|int:
   return set(uuid, data)
 
-def put(uuid:str, data:str) -> None|int:
+def put(uuid:str, data:None|str = None) -> None|int:
   return set(uuid, data)
 
 def read(uuid:str) -> None|str:
   return get(uuid)
 
-def set(uuid:str, data:str) -> None|int:
+def set(uuid:str, data:None|str = None) -> None|int:
+  if(data is None):
+    data = ''
+
   req:urllib.request.Request = urllib.request.Request(
     f'https://httpstate.com/{uuid}',
     data=data.encode('utf-8'),
@@ -74,7 +76,7 @@ def set(uuid:str, data:str) -> None|int:
   except Exception:
     return None
 
-def write(uuid:str, data:str) -> None|int:
+def write(uuid:str, data:None|str = None) -> None|int:
   return set(uuid, data)
 
 # HTTPState
@@ -83,6 +85,7 @@ class HttpState:
     self.data:None|str = None
     self.el:None|asyncio.AbstractEventLoop = None
     self.et:Dict[str, List[Callable[[None|str], None]]] = {}
+    self.lock:threading.Lock = threading.Lock()
     self.uuid:str = uuid
     self.ws:None|websockets.WebSocketClientProtocol = None
 
@@ -120,7 +123,8 @@ class HttpState:
           and data.uuid == self.uuid
           and data.type == 1
         ):
-          self.data:None|str = data.value.decode()
+          with self.lock:
+            self.data:None|str = data.value.decode()
 
           self.emit('change', self.data)
     
@@ -154,10 +158,12 @@ class HttpState:
   def get(self) -> None|str:
     data:None|str = get(self.uuid)
 
-    if(data != self.data):
-      self.el.call_soon_threadsafe(lambda : self.emit('change', self.data))
+    with self.lock:
+      if(data != self.data):
+        if self.el is not None:
+          self.el.call_soon_threadsafe(lambda : self.emit('change', self.data))
 
-    self.data = data
+      self.data = data
 
     return self.data
 
@@ -181,17 +187,17 @@ class HttpState:
 
     return self
   
-  def post(self, data:str) -> None|int:
+  def post(self, data:None|str = None) -> None|int:
     return self.set(data)
   
-  def put(self, data:str) -> None|int:
+  def put(self, data:None|str = None) -> None|int:
     return self.set(data)
 
   def read(self) -> None|str:
     return self.get()
 
-  def set(self, data:str) -> None|int:
+  def set(self, data:None|str = None) -> None|int:
     return set(self.uuid, data)
 
-  def write(self, data:str) -> None|int:
+  def write(self, data:None|str = None) -> None|int:
     return self.set(data)

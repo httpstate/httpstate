@@ -45,18 +45,24 @@ That's it! 🐙
 ### Functions
 
 - `get(uuid)`
-  Get state of UUIDv4.
+  Get state of UUIDv4. Returns `None|str`.
 
-- `post(uuid, data)`
-  Alias for `set`.
+- `message.unpack(bytes)`
+  Unpack binary WebSocket message into `MessageType(uuid, timestamp, type, value)`.
+
+- `post(uuid, data=None)`
+  Alias for `set`. Returns `None|int`.
+
+- `put(uuid, data=None)`
+  Alias for `set`. Returns `None|int`.
 
 - `read(uuid)`
   Alias for `get`.
 
-- `set(uuid, data)`
-  Set state of UUIDv4.
+- `set(uuid, data=None)`
+  Set state of UUIDv4. Returns `None|int`. If `data` is `None`, defaults to `''`.
 
-- `write(uuid, data)`
+- `write(uuid, data=None)`
   Alias for `set`.
 
 ### HttpState Class
@@ -69,14 +75,16 @@ That's it! 🐙
 <br>
 
 - `<HttpState>.get()`
-  Get state.
-- `<HttpState>.post(data)`
+  Get state. Returns `None|str`.
+- `<HttpState>.post(data=None)`
+  Alias for `set`.
+- `<HttpState>.put(data=None)`
   Alias for `set`.
 - `<HttpState>.read()`
   Alias for `get`.
-- `<HttpState>.set(data)`
-  Set state.
-- `<HttpState>.write(data)`
+- `<HttpState>.set(data=None)`
+  Set state. Returns `None|int`. If `data` is `None`, defaults to `''`.
+- `<HttpState>.write(data=None)`
   Alias for `set`.
 
 <br>

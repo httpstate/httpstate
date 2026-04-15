@@ -45,19 +45,32 @@ That's it! 🐙
 ### Functions
 
 - `get(uuid)`
-  Get state of UUIDv4.
+  Get state of UUIDv4. Returns `undefined|string`.
 
 - `load()`
   Auto-load state from DOM elements with `httpstate` attribute.
 
+  ```html
+  <div httpstate="45fb36540e9244daaa21ca409c6bdab3"></div>
+  <img httpstate="45fb36540e9244daaa21ca409c6bdab3">
+  ```
+
+  Updates `textContent` (or `src` for `<img>` elements) on data changes.
+
+- `message.unpack(arrayBuffer)`
+  Unpack binary WebSocket message into `{ uuid, timestamp, type, value }`.
+
 - `post(uuid, data)`
-  Alias for `set`.
+  Alias for `set`. Returns `undefined|number`.
+
+- `put(uuid, data)`
+  Alias for `set`. Returns `undefined|number`.
 
 - `read(uuid)`
   Alias for `get`.
 
 - `set(uuid, data)`
-  Set state of UUIDv4.
+  Set state of UUIDv4. Returns `undefined|number`.
 
 - `write(uuid, data)`
   Alias for `set`.
@@ -73,13 +86,15 @@ That's it! 🐙
 <br>
 
 - `<HttpState>.get()`
-  Get state.
+  Get state. Returns `undefined|string`.
 - `<HttpState>.post(data)`
+  Alias for `set`.
+- `<HttpState>.put(data)`
   Alias for `set`.
 - `<HttpState>.read()`
   Alias for `get`.
 - `<HttpState>.set(data)`
-  Set state.
+  Set state. Returns `undefined|number`.
 - `<HttpState>.write(data)`
   Alias for `set`.
 

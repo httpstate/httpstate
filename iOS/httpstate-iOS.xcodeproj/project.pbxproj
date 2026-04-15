@@ -1,0 +1,687 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5E1DDE612F8BC8D300640027 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1DDE602F8BC8D300640027 /* WidgetKit.framework */; };
+		5E1DDE632F8BC8D300640027 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1DDE622F8BC8D300640027 /* SwiftUI.framework */; };
+		5E1DDE702F8BC8D400640027 /* httpstate-iOS-WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5E1DDE5E2F8BC8D300640027 /* httpstate-iOS-WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5E4ABB072F8C0AAB006F1206 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1DDE602F8BC8D300640027 /* WidgetKit.framework */; };
+		5E4ABB082F8C0AAB006F1206 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1DDE622F8BC8D300640027 /* SwiftUI.framework */; };
+		5E4ABB152F8C0AAC006F1206 /* httpstate-iOS-AccessoryExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5E4ABB062F8C0AAB006F1206 /* httpstate-iOS-AccessoryExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5E1DDE6E2F8BC8D400640027 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5E1DDE102F8BC59F00640027 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5E1DDE5D2F8BC8D300640027;
+			remoteInfo = "httpstate-iOS-WidgetExtension";
+		};
+		5E4ABB132F8C0AAC006F1206 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5E1DDE102F8BC59F00640027 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5E4ABB052F8C0AAB006F1206;
+			remoteInfo = "httpstate-iOS-AccessoryExtension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5E1DDE752F8BC8D400640027 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5E1DDE702F8BC8D400640027 /* httpstate-iOS-WidgetExtension.appex in Embed Foundation Extensions */,
+				5E4ABB152F8C0AAC006F1206 /* httpstate-iOS-AccessoryExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		5E1DDE182F8BC59F00640027 /* httpstate-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "httpstate-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E1DDE5E2F8BC8D300640027 /* httpstate-iOS-WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "httpstate-iOS-WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E1DDE602F8BC8D300640027 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		5E1DDE622F8BC8D300640027 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		5E4ABB062F8C0AAB006F1206 /* httpstate-iOS-AccessoryExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "httpstate-iOS-AccessoryExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5E1DDE712F8BC8D400640027 /* Exceptions for "httpstate-iOS-Widget" folder in "httpstate-iOS-WidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5E1DDE5D2F8BC8D300640027 /* httpstate-iOS-WidgetExtension */;
+		};
+		5E4ABB182F8C0AAC006F1206 /* Exceptions for "httpstate-iOS-Accessory" folder in "httpstate-iOS-AccessoryExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5E4ABB052F8C0AAB006F1206 /* httpstate-iOS-AccessoryExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		5E1DDE1A2F8BC59F00640027 /* httpstate-iOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "httpstate-iOS";
+			sourceTree = "<group>";
+		};
+		5E1DDE642F8BC8D300640027 /* httpstate-iOS-Widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5E1DDE712F8BC8D400640027 /* Exceptions for "httpstate-iOS-Widget" folder in "httpstate-iOS-WidgetExtension" target */,
+			);
+			path = "httpstate-iOS-Widget";
+			sourceTree = "<group>";
+		};
+		5E4ABB092F8C0AAB006F1206 /* httpstate-iOS-Accessory */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5E4ABB182F8C0AAC006F1206 /* Exceptions for "httpstate-iOS-Accessory" folder in "httpstate-iOS-AccessoryExtension" target */,
+			);
+			path = "httpstate-iOS-Accessory";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5E1DDE152F8BC59F00640027 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E1DDE5B2F8BC8D300640027 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E1DDE632F8BC8D300640027 /* SwiftUI.framework in Frameworks */,
+				5E1DDE612F8BC8D300640027 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E4ABB032F8C0AAB006F1206 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E4ABB082F8C0AAB006F1206 /* SwiftUI.framework in Frameworks */,
+				5E4ABB072F8C0AAB006F1206 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5E1DDE0F2F8BC59F00640027 = {
+			isa = PBXGroup;
+			children = (
+				5E1DDE1A2F8BC59F00640027 /* httpstate-iOS */,
+				5E1DDE642F8BC8D300640027 /* httpstate-iOS-Widget */,
+				5E4ABB092F8C0AAB006F1206 /* httpstate-iOS-Accessory */,
+				5E1DDE5F2F8BC8D300640027 /* Frameworks */,
+				5E1DDE192F8BC59F00640027 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5E1DDE192F8BC59F00640027 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5E1DDE182F8BC59F00640027 /* httpstate-iOS.app */,
+				5E1DDE5E2F8BC8D300640027 /* httpstate-iOS-WidgetExtension.appex */,
+				5E4ABB062F8C0AAB006F1206 /* httpstate-iOS-AccessoryExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5E1DDE5F2F8BC8D300640027 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5E1DDE602F8BC8D300640027 /* WidgetKit.framework */,
+				5E1DDE622F8BC8D300640027 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5E1DDE172F8BC59F00640027 /* httpstate-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E1DDE232F8BC5A000640027 /* Build configuration list for PBXNativeTarget "httpstate-iOS" */;
+			buildPhases = (
+				5E1DDE142F8BC59F00640027 /* Sources */,
+				5E1DDE152F8BC59F00640027 /* Frameworks */,
+				5E1DDE162F8BC59F00640027 /* Resources */,
+				5E1DDE752F8BC8D400640027 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5E1DDE6F2F8BC8D400640027 /* PBXTargetDependency */,
+				5E4ABB142F8C0AAC006F1206 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5E1DDE1A2F8BC59F00640027 /* httpstate-iOS */,
+			);
+			name = "httpstate-iOS";
+			packageProductDependencies = (
+			);
+			productName = "httpstate-iOS";
+			productReference = 5E1DDE182F8BC59F00640027 /* httpstate-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5E1DDE5D2F8BC8D300640027 /* httpstate-iOS-WidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E1DDE722F8BC8D400640027 /* Build configuration list for PBXNativeTarget "httpstate-iOS-WidgetExtension" */;
+			buildPhases = (
+				5E1DDE5A2F8BC8D300640027 /* Sources */,
+				5E1DDE5B2F8BC8D300640027 /* Frameworks */,
+				5E1DDE5C2F8BC8D300640027 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5E1DDE642F8BC8D300640027 /* httpstate-iOS-Widget */,
+			);
+			name = "httpstate-iOS-WidgetExtension";
+			packageProductDependencies = (
+			);
+			productName = "httpstate-iOS-WidgetExtension";
+			productReference = 5E1DDE5E2F8BC8D300640027 /* httpstate-iOS-WidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		5E4ABB052F8C0AAB006F1206 /* httpstate-iOS-AccessoryExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E4ABB192F8C0AAC006F1206 /* Build configuration list for PBXNativeTarget "httpstate-iOS-AccessoryExtension" */;
+			buildPhases = (
+				5E4ABB022F8C0AAB006F1206 /* Sources */,
+				5E4ABB032F8C0AAB006F1206 /* Frameworks */,
+				5E4ABB042F8C0AAB006F1206 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5E4ABB092F8C0AAB006F1206 /* httpstate-iOS-Accessory */,
+			);
+			name = "httpstate-iOS-AccessoryExtension";
+			packageProductDependencies = (
+			);
+			productName = "httpstate-iOS-AccessoryExtension";
+			productReference = 5E4ABB062F8C0AAB006F1206 /* httpstate-iOS-AccessoryExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5E1DDE102F8BC59F00640027 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					5E1DDE172F8BC59F00640027 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					5E1DDE5D2F8BC8D300640027 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					5E4ABB052F8C0AAB006F1206 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+				};
+			};
+			buildConfigurationList = 5E1DDE132F8BC59F00640027 /* Build configuration list for PBXProject "httpstate-iOS" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5E1DDE0F2F8BC59F00640027;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 5E1DDE192F8BC59F00640027 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5E1DDE172F8BC59F00640027 /* httpstate-iOS */,
+				5E1DDE5D2F8BC8D300640027 /* httpstate-iOS-WidgetExtension */,
+				5E4ABB052F8C0AAB006F1206 /* httpstate-iOS-AccessoryExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5E1DDE162F8BC59F00640027 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E1DDE5C2F8BC8D300640027 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E4ABB042F8C0AAB006F1206 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5E1DDE142F8BC59F00640027 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E1DDE5A2F8BC8D300640027 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E4ABB022F8C0AAB006F1206 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5E1DDE6F2F8BC8D400640027 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5E1DDE5D2F8BC8D300640027 /* httpstate-iOS-WidgetExtension */;
+			targetProxy = 5E1DDE6E2F8BC8D400640027 /* PBXContainerItemProxy */;
+		};
+		5E4ABB142F8C0AAC006F1206 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5E4ABB052F8C0AAB006F1206 /* httpstate-iOS-AccessoryExtension */;
+			targetProxy = 5E4ABB132F8C0AAC006F1206 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5E1DDE212F8BC5A000640027 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		5E1DDE222F8BC5A000640027 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5E1DDE242F8BC5A000640027 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A829QDX68J;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = HTTPState;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.httpstate.httpstate-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5E1DDE252F8BC5A000640027 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A829QDX68J;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = HTTPState;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.httpstate.httpstate-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5E1DDE732F8BC8D400640027 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A829QDX68J;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "httpstate-iOS-Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = HTTPState;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.httpstate.httpstate-iOS.httpstate-iOS-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5E1DDE742F8BC8D400640027 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A829QDX68J;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "httpstate-iOS-Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = HTTPState;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.httpstate.httpstate-iOS.httpstate-iOS-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5E4ABB162F8C0AAC006F1206 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A829QDX68J;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "httpstate-iOS-Accessory/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = HTTPState;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.httpstate.httpstate-iOS.httpstate-iOS-Accessory";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5E4ABB172F8C0AAC006F1206 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A829QDX68J;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "httpstate-iOS-Accessory/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = HTTPState;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.httpstate.httpstate-iOS.httpstate-iOS-Accessory";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5E1DDE132F8BC59F00640027 /* Build configuration list for PBXProject "httpstate-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E1DDE212F8BC5A000640027 /* Debug */,
+				5E1DDE222F8BC5A000640027 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E1DDE232F8BC5A000640027 /* Build configuration list for PBXNativeTarget "httpstate-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E1DDE242F8BC5A000640027 /* Debug */,
+				5E1DDE252F8BC5A000640027 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E1DDE722F8BC8D400640027 /* Build configuration list for PBXNativeTarget "httpstate-iOS-WidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E1DDE732F8BC8D400640027 /* Debug */,
+				5E1DDE742F8BC8D400640027 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E4ABB192F8C0AAC006F1206 /* Build configuration list for PBXNativeTarget "httpstate-iOS-AccessoryExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E4ABB162F8C0AAC006F1206 /* Debug */,
+				5E4ABB172F8C0AAC006F1206 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5E1DDE102F8BC59F00640027 /* Project object */;
+}

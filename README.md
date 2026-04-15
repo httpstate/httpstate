@@ -54,16 +54,6 @@ and retrieve it with
 const data = await httpstate.get('45fb36540e9244daaa21ca409c6bdab3');
 ```
 
-You can also get realtime updates
-
-```js
-import httpstate from '@httpstate/typescript';
-
-const hs = httpstate('45fb36540e9244daaa21ca409c6bdab3');
-
-hs.on('change', data => console.log(data));
-```
-
 That's it! 🐙
 
 ## Realtime Updates
@@ -118,7 +108,7 @@ go get github.com/httpstate/httpstate/go
 ### <img alt="Java" height="32" src="assets/Java.svg" width="32"/> Java ([java](./java))
 
 ```bash
-See, https://github.com/httpstate/httpstate/blob/master/java/src/com/httpstate/HttpState.java
+https://github.com/httpstate/httpstate/blob/master/java/src/com/httpstate/HttpState.java
 ```
 
 [API and Docs](./java)
@@ -149,11 +139,11 @@ cargo add httpstate
 
 ### iOS ([iOS](./iOS))
 
-Native app with live data display, Home Screen widget, and Lock Screen widget.
+Native SwiftUI app. Display your state live with Home Screen and Lock Screen widgets, pick from 10 background colors to your liking. To use, open this project on Xcode and compile.
 
 ### macOS ([macOS](./macOS))
 
-Native app with live data display and widget.
+Native SwiftUI app. Display your state live with customizable widgets, pick from 10 background colors to your liking. Two different modes, small and medium sized to cover all your state view needs. To use, open this project on Xcode and compile.
 
 ---
 

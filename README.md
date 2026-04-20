@@ -141,7 +141,7 @@ cargo add httpstate
 
 Native SwiftUI app. Display your state live with Home Screen and Lock Screen widgets, pick from 10 background colors to your liking. To use, open this project on Xcode and compile.
 
-<img src="./assets/iOS_Home_Widgets.png" width="24%"><sub>Home Screen</sub>&nbsp;&nbsp;&nbsp;<img src="./assets/iOS_Lock_Widgets.png" width="24%"><sub>Lock Screen</sub>
+<img src="./assets/iOS_Home_Widgets.png" height="640">&nbsp;&nbsp;&nbsp;<img src="./assets/iOS_Lock_Widgets.png" height="640">
 
 ### macOS ([macOS](./macOS))
 

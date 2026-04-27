@@ -7,11 +7,24 @@
 // version 3 of the License, or (at your option) any later version.
 
 import Combine
+import HTTPStateClient
 import SwiftUI
 import WidgetKit
 
+private let httpStateClient: HTTPStateClient = {
+    let cfg = URLSessionConfiguration.default
+    cfg.requestCachePolicy = .reloadIgnoringLocalCacheData
+    cfg.urlCache = nil
+    return HTTPStateClient(configuration: HTTPStateConfiguration(
+        endpoint: URL(string: "https://httpstate.com")!,
+        webSocketEndpoint: URL(string: "wss://httpstate.com")!,
+        transport: URLSessionTransport(session: URLSession(configuration: cfg))
+    ))
+}()
+
 struct ContentView: View {
-    @State private var stateData: HTTPStateData = HTTPStateData(value: "—", retrievedAt: Date())
+    @State private var value: String = "—"
+    @State private var retrievedAt: Date = .now
     @AppStorage("uuid") private var uuid: String = "45fb36540e9244daaa21ca409c6bdab3"
     @Environment(\.scenePhase) var scenePhase
 
@@ -37,7 +50,7 @@ struct ContentView: View {
 
             Spacer(minLength: 24)
 
-            Text(stateData.value)
+            Text(value)
                 .font(.system(size: 56, weight: .bold))
                 .foregroundStyle(.white)
                 .lineLimit(1)
@@ -47,7 +60,7 @@ struct ContentView: View {
 
             HStack {
                 Spacer()
-                Text("At \(stateData.retrievedAt.formatted(date: .omitted, time: .shortened))")
+                Text("At \(retrievedAt.formatted(date: .omitted, time: .shortened))")
                     .font(.system(size: 18, weight: .regular))
                     .foregroundStyle(.white.opacity(0.7))
             }
@@ -69,7 +82,14 @@ struct ContentView: View {
 
     private func reloadData() {
         Task {
-            stateData = await HTTPStateService.shared.fetch(uuid: uuid)
+            let next: String
+            do {
+                next = try await httpStateClient.get(uuid) ?? "—"
+            } catch {
+                next = "Error"
+            }
+            value = next
+            retrievedAt = Date()
             WidgetCenter.shared.reloadAllTimelines()
         }
     }

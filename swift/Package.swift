@@ -12,11 +12,11 @@ import PackageDescription
 let package = Package(
     name: "HTTPState",
     platforms: [
-        .iOS("26.0"),
-        .macOS("26.0"),
-        .tvOS("26.0"),
-        .watchOS("26.0"),
-        .visionOS("26.0")
+        .iOS(.v16),
+        .macOS(.v13),
+        .tvOS(.v16),
+        .watchOS(.v9),
+        .visionOS(.v1)
     ],
     products: [
         // Core: protocols, actor, errors, types. No concrete transport.

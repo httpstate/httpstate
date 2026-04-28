@@ -13,6 +13,7 @@
 		5E4ABB072F8C0AAB006F1206 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1DDE602F8BC8D300640027 /* WidgetKit.framework */; };
 		5E4ABB082F8C0AAB006F1206 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E1DDE622F8BC8D300640027 /* SwiftUI.framework */; };
 		5E4ABB152F8C0AAC006F1206 /* httpstate-iOS-AccessoryExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5E4ABB062F8C0AAB006F1206 /* httpstate-iOS-AccessoryExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5EAA01000000000000000003 /* HTTPStateClient in Frameworks */ = {isa = PBXBuildFile; productRef = 5EAA01000000000000000002 /* HTTPStateClient */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EAA01000000000000000003 /* HTTPStateClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -178,6 +180,7 @@
 			);
 			name = "httpstate-iOS";
 			packageProductDependencies = (
+				5EAA01000000000000000002 /* HTTPStateClient */,
 			);
 			productName = "httpstate-iOS";
 			productReference = 5E1DDE182F8BC59F00640027 /* httpstate-iOS.app */;
@@ -257,6 +260,9 @@
 			);
 			mainGroup = 5E1DDE0F2F8BC59F00640027;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5EAA01000000000000000001 /* XCLocalSwiftPackageReference "../swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5E1DDE192F8BC59F00640027 /* Products */;
 			projectDirPath = "";
@@ -682,6 +688,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		5EAA01000000000000000001 /* XCLocalSwiftPackageReference "../swift" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../swift;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5EAA01000000000000000002 /* HTTPStateClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HTTPStateClient;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5E1DDE102F8BC59F00640027 /* Project object */;
 }

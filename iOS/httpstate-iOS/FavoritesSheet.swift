@@ -9,9 +9,7 @@
 import SwiftUI
 
 struct FavoritesSheet: View {
-    @Binding var favorites: [Favorite]
-    let currentUUID: String
-    let onSelect: (String) -> Void
+    @Bindable var model: HTTPStateViewModel
 
     @Environment(\.dismiss) private var dismiss
     @State private var showingAdd = false
@@ -19,39 +17,50 @@ struct FavoritesSheet: View {
     var body: some View {
         NavigationStack {
             List {
-                if favorites.isEmpty {
-                    ContentUnavailableView(
-                        "No favorites yet",
-                        systemImage: "star",
-                        description: Text("Save the UUIDs you watch often.")
-                    )
-                } else {
-                    ForEach(favorites) { fav in
-                        Button {
-                            onSelect(fav.uuid)
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(fav.name.isEmpty ? "Unnamed" : fav.name)
-                                        .font(.body)
-                                        .foregroundStyle(.primary)
-                                    Text(fav.uuid)
-                                        .font(.system(.caption, design: .monospaced))
-                                        .foregroundStyle(.secondary)
-                                        .lineLimit(1)
-                                        .truncationMode(.middle)
-                                }
-                                Spacer()
-                                if fav.uuid == currentUUID {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(.tint)
-                                }
+                Section {
+                    if model.favoritesStore.favorites.isEmpty {
+                        Text("No favorites yet. Tap + to add one.")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(model.favoritesStore.favorites) { favorite in
+                            Button {
+                                model.selectFavorite(favorite)
+                                dismiss()
+                            } label: {
+                                FavoriteRow(
+                                    favorite: favorite,
+                                    isCurrent: favorite.uuid == model.canonicalUUIDForDisplay
+                                )
                             }
                         }
+                        .onDelete { offsets in
+                            model.removeFavorites(at: offsets)
+                        }
                     }
-                    .onDelete { indices in
-                        favorites.remove(atOffsets: indices)
+                }
+
+                Section {
+                    ShareLink(item: model.favoritesStore.storeUUID) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Tap to share or copy")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                Text(model.favoritesStore.storeUUID)
+                                    .font(.system(.caption, design: .monospaced))
+                                    .foregroundStyle(.primary)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                            }
+                            Spacer()
+                            Image(systemName: "square.and.arrow.up")
+                                .foregroundStyle(.tint)
+                        }
                     }
+                } header: {
+                    Text("Sync ID")
+                } footer: {
+                    Text("Save this ID to restore your favorites on another device or after reinstalling.")
                 }
             }
             .navigationTitle("Favorites")
@@ -68,9 +77,34 @@ struct FavoritesSheet: View {
                 }
             }
             .sheet(isPresented: $showingAdd) {
-                AddFavoriteSheet(currentUUID: currentUUID) { name, uuid in
-                    favorites.append(Favorite(name: name, uuid: uuid))
+                AddFavoriteSheet(currentUUID: model.canonicalUUIDForDisplay) { name, uuid in
+                    model.addFavorite(Favorite(name: name, uuid: uuid))
                 }
+            }
+        }
+    }
+}
+
+private struct FavoriteRow: View {
+    let favorite: Favorite
+    let isCurrent: Bool
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(favorite.name.isEmpty ? "Unnamed" : favorite.name)
+                    .font(.body)
+                    .foregroundStyle(.primary)
+                Text(favorite.uuid)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
+            Spacer()
+            if isCurrent {
+                Image(systemName: "checkmark")
+                    .foregroundStyle(.tint)
             }
         }
     }

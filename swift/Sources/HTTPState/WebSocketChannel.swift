@@ -28,3 +28,19 @@ public enum WebSocketFrame: Sendable, Equatable {
     case text(String)
     case data(Data)
 }
+
+/// A `WebSocketChannel` that does nothing useful. `receive()` returns `nil`
+/// immediately — i.e. the channel is already closed — so any consumer's
+/// frame loop terminates on the first iteration. `send` and `close` accept
+/// their inputs and drop them.
+///
+/// Returned by transports that haven't wired up a real WebSocket yet, so
+/// callers can exercise the streaming API without crashing.
+public struct NoOpWebSocketChannel: WebSocketChannel {
+    public init() {}
+
+    public func send(text: String) async throws(HTTPStateError) {}
+    public func send(data: Data) async throws(HTTPStateError) {}
+    public func receive() async throws(HTTPStateError) -> WebSocketFrame? { nil }
+    public func close() async {}
+}

@@ -56,7 +56,7 @@ public struct URLSessionTransport: Transport {
     }
 
     public func openWebSocket(_ url: URL) async throws(HTTPStateError) -> any WebSocketChannel {
-        fatalError("unimplemented: URLSessionTransport.openWebSocket")
+        NoOpWebSocketChannel()
     }
 }
 

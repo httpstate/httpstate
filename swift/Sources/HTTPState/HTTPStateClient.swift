@@ -85,14 +85,21 @@ public actor HTTPStateClient {
     /// cancels its task.
     ///
     /// Emits `nil` when the server reports an empty/cleared value.
+    ///
+    /// > Note: Until the WebSocket transport is wired up, this returns an
+    /// > already-finished stream. Callers can iterate it; the loop just
+    /// > exits immediately.
     public func changes(for uuid: UUID) -> AsyncStream<String?> {
-        fatalError("unimplemented: HTTPStateClient.changes(for:UUID) — WebSocket transport not yet wired")
+        AsyncStream { $0.finish() }
     }
 
     /// String overload. This variant **throws** on malformed input because
     /// validation happens synchronously before any stream is created.
     public func changes(for uuid: String) throws(HTTPStateError) -> AsyncStream<String?> {
-        fatalError("unimplemented: HTTPStateClient.changes(for:String) — WebSocket transport not yet wired")
+        guard canonicalize(uuid) != nil else {
+            throw HTTPStateError.invalidUUID(uuid)
+        }
+        return AsyncStream { $0.finish() }
     }
 
     // MARK: - Lifecycle

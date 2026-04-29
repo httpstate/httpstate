@@ -81,7 +81,7 @@ export const set:(uuid:string, data?:undefined|string, args?:undefined|HTTPState
     const response:Response = await fetch('https://httpstate.com/' + uuid, {
       body:data,
       headers:{
-        ...args?.authorization && { Authorization:args.authorization },
+        ...args?.Authorization && { Authorization:args.Authorization },
         'Content-Type':'text/plain;charset=UTF-8'
       },
       method:'POST'
@@ -97,12 +97,15 @@ export const write:(uuid:string, data?:undefined|string, args?:undefined|HTTPSta
 
 
 // HTTPState
-export type HTTPStateGetArgsType = { etag?:boolean };
+export type HTTPStateGetArgsType = {
+  etag?:boolean,
+  data?:boolean
+};
 export type HTTPStateGetReturnType = {
   etag?:undefined|string,
   data:undefined|string
 };
-export type HTTPStateSetArgsType = { authorization?:undefined|string };
+export type HTTPStateSetArgsType = { Authorization?:undefined|string };
 
 export type HTTPStateType = {
   data?:undefined|string;

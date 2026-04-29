@@ -8,14 +8,27 @@
 
 const UID:() => string = ():string => Date.now().toString(36) + Math.random().toString(36).slice(2);
 
-export const get:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => {
+export const get:(uuid:string, args?:undefined|HTTPStateGetArgsType) => Promise<undefined|string|HTTPStateGetReturnType> = async (uuid:string, args?:undefined|HTTPStateGetArgsType):Promise<undefined|string|HTTPStateGetReturnType> => {
   try {
     const response:Response = await fetch('https://httpstate.com/' + uuid);
 
-    if(response.status === 200)
-      return await response.text();
+    if(response.status === 200) {
+      const data = await response.text();
+
+      if(!args)
+        return data;
+      else
+        return {
+          ...args.etag && { etag:response.headers.get('ETag') ?? undefined },
+          data
+        };
+    }
+    else if(response.status === 429)
+      throw new Error('429 Too Many Requests: You can send up to 8 requests per second');
   } catch(e) {
     console.error(new Date().toISOString(), 'get.error', e);
+
+    throw e;
   }
 };
 
@@ -54,20 +67,23 @@ export const message:{ unpack(ab:ArrayBuffer):MessageType } = { unpack(ab:ArrayB
   };
 } };
 
-export const post:(uuid:string, data?:undefined|string) => Promise<undefined|number> = async (uuid:string, data?:undefined|string):Promise<undefined|number> => set(uuid, data);
+export const post:(uuid:string, data?:undefined|string, args?:undefined|HTTPStateSetArgsType) => Promise<undefined|number> = async (uuid:string, data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => set(uuid, data, args);
 
-export const put:(uuid:string, data?:undefined|string) => Promise<undefined|number> = async (uuid:string, data?:undefined|string):Promise<undefined|number> => set(uuid, data);
+export const put:(uuid:string, data?:undefined|string, args?:undefined|HTTPStateSetArgsType) => Promise<undefined|number> = async (uuid:string, data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => set(uuid, data, args);
 
-export const read:(uuid:string) => Promise<undefined|string> = async (uuid:string):Promise<undefined|string> => get(uuid);
+export const read:(uuid:string, args?:undefined|HTTPStateGetArgsType) => Promise<undefined|string|HTTPStateGetReturnType> = async (uuid:string, args?:undefined|HTTPStateGetArgsType):Promise<undefined|string|HTTPStateGetReturnType> => get(uuid, args);
 
-export const set:(uuid:string, data?:undefined|string) => Promise<undefined|number> = async (uuid:string, data?:undefined|string):Promise<undefined|number> => {
+export const set:(uuid:string, data?:undefined|string, args?:undefined|HTTPStateSetArgsType) => Promise<undefined|number> = async (uuid:string, data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => {
   if(data === undefined || data === null)
     data = '';
 
   try {
     const response:Response = await fetch('https://httpstate.com/' + uuid, {
       body:data,
-      headers:{ 'Content-Type':'text/plain;charset=UTF-8' },
+      headers:{
+        ...args?.authorization && { Authorization:args.authorization },
+        'Content-Type':'text/plain;charset=UTF-8'
+      },
       method:'POST'
     });
 
@@ -77,10 +93,17 @@ export const set:(uuid:string, data?:undefined|string) => Promise<undefined|numb
   }
 };
 
-export const write:(uuid:string, data?:undefined|string) => Promise<undefined|number> = async (uuid:string, data?:undefined|string):Promise<undefined|number> => set(uuid, data);
+export const write:(uuid:string, data?:undefined|string, args?:undefined|HTTPStateSetArgsType) => Promise<undefined|number> = async (uuid:string, data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => set(uuid, data, args);
 
 
 // HTTPState
+export type HTTPStateGetArgsType = { etag?:boolean };
+export type HTTPStateGetReturnType = {
+  etag?:undefined|string,
+  data:undefined|string
+};
+export type HTTPStateSetArgsType = { authorization?:undefined|string };
+
 export type HTTPStateType = {
   data?:undefined|string;
   et?:undefined|{ [type:string]:((data?:undefined|string) => void)[] };
@@ -97,15 +120,15 @@ export type HTTPStateType = {
   addEventListener(type:string, callback:(data?:undefined|string) => void):void;
   delete():void;
   emit(type:string, data?:undefined|string):HTTPStateType;
-  get():Promise<undefined|string>;
+  get(args?:undefined|HTTPStateGetArgsType):Promise<undefined|string>;
   off(type:string, callback?:(data?:undefined|string) => void):HTTPStateType;
   on(type:string, callback:(data?:undefined|string) => void):HTTPStateType;
-  post(data?:undefined|string):Promise<undefined|number>;
-  put(data?:undefined|string):Promise<undefined|number>;
-  read():Promise<undefined|string>;
+  post(data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number>;
+  put(data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number>;
+  read(args?:undefined|HTTPStateGetArgsType):Promise<undefined|string>;
   removeEventListener(type:string, callback:(data?:undefined|string) => void):void;
-  set(data?:undefined|string):Promise<undefined|number>;
-  write(data?:undefined|string):Promise<undefined|number>;
+  set(data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number>;
+  write(data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number>;
 };
 
 export type HTTPStateWebSocketType = {
@@ -178,14 +201,15 @@ export const HTTPState:(uuid:string) => HTTPStateType = (uuid:string):HTTPStateT
 
       return _;
     },
-    get:async ():Promise<undefined|string> => {
+    get:async (args?:undefined|HTTPStateGetArgsType):Promise<undefined|string> => {
       if(_.uuid) {
-        const data:undefined|string = await get(_.uuid);
+        const data:undefined|string|HTTPStateGetReturnType = await get(_.uuid);
 
         if(data !== _.data)
           setTimeout(() => _.emit('change', _.data), 0);
         
-        _.data = data;
+        if(typeof data === 'string')
+          _.data = data;
 
         return _.data;
       }
@@ -211,15 +235,15 @@ export const HTTPState:(uuid:string) => HTTPStateType = (uuid:string):HTTPStateT
 
       return _;
     },
-    post:async (data?:undefined|string):Promise<undefined|number> => _.set(data),
-    put:async (data?:undefined|string):Promise<undefined|number> => _.set(data),
-    read:async ():Promise<undefined|string> => _.get(),
+    post:async (data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => _.set(data, args),
+    put:async (data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => _.set(data, args),
+    read:async (args?:undefined|HTTPStateGetArgsType):Promise<undefined|string> => _.get(args),
     removeEventListener:(type:string, callback:(data?:undefined|string) => void):HTTPStateType => _.off(type, callback),
-    set:async (data?:undefined|string):Promise<undefined|number> => {
+    set:async (data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => {
       if(_.uuid)
-        return set(_.uuid, data);
+        return set(_.uuid, data, args);
     },
-    write:async (data?:undefined|string):Promise<undefined|number> => _.set(data)
+    write:async (data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => _.set(data, args)
   };
 
   _.ws.new();

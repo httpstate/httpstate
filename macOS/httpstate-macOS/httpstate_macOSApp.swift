@@ -10,9 +10,18 @@ import SwiftUI
 
 @main
 struct httpstate_macOSApp: App {
+    @StateObject private var viewModel = HTTPStateViewModel()
+    @State private var menuBarManager: MenuBarManager?
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(viewModel)
+                .onAppear {
+                    if menuBarManager == nil {
+                        menuBarManager = MenuBarManager(viewModel: viewModel)
+                    }
+                }
         }
     }
 }

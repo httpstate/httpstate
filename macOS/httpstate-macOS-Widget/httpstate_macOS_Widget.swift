@@ -90,11 +90,11 @@ HStack(alignment: .top) {
 
             Spacer(minLength: 8)
 
-            Text(entry.stateData.value)
+            Text(entry.stateData.value.components(separatedBy: .newlines).first ?? "")
                 .font(.system(size: 22, weight: .bold))
                 .tracking(0.1)
                 .foregroundStyle(.white)
-                .lineLimit(2)
+                .lineLimit(1)
                 .minimumScaleFactor(0.5)
 
             Spacer(minLength: 6)
@@ -133,7 +133,7 @@ struct MediumWidgetView: View {
 
             Spacer(minLength: 12)
 
-            Text(entry.stateData.value)
+            Text(entry.stateData.value.components(separatedBy: .newlines).first ?? "")
                 .font(.system(size: 28, weight: .bold))
                 .tracking(0.1)
                 .foregroundStyle(.white)

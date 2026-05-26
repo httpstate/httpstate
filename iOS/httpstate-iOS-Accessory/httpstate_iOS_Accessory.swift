@@ -43,9 +43,9 @@ struct httpstate_iOS_AccessoryEntryView: View {
     var body: some View {
         switch family {
         case .accessoryInline:
-            Text(entry.stateData.value)
+            Text(entry.stateData.value.components(separatedBy: .newlines).first ?? "")
         case .accessoryCircular:
-            Text(entry.stateData.value)
+            Text(entry.stateData.value.components(separatedBy: .newlines).first ?? "")
                 .font(.system(size: 34, weight: .bold))
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
@@ -53,7 +53,7 @@ struct httpstate_iOS_AccessoryEntryView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(entry.configuration.title)
                     .font(.system(size: 12, weight: .bold))
-                Text(entry.stateData.value)
+                Text(entry.stateData.value.components(separatedBy: .newlines).first ?? "")
                     .font(.system(size: 28, weight: .semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
@@ -61,7 +61,7 @@ struct httpstate_iOS_AccessoryEntryView: View {
             .padding(.horizontal, 4)
             .frame(maxWidth: .infinity, alignment: .leading)
         default:
-            Text(entry.stateData.value)
+            Text(entry.stateData.value.components(separatedBy: .newlines).first ?? "")
         }
     }
 }

@@ -9,7 +9,6 @@
 import AppKit
 import Combine
 import SwiftUI
-import WidgetKit
 
 class NoSelectTextField: NSTextField {
     override func becomeFirstResponder() -> Bool {
@@ -25,6 +24,8 @@ class NoSelectTextField: NSTextField {
 
 struct UUIDTextField: NSViewRepresentable {
     @Binding var text: String
+    var font: NSFont = NSFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+    var textColor: NSColor = NSColor.white.withAlphaComponent(0.7)
     var onCommit: (() -> Void)?
 
     func makeNSView(context: Context) -> NoSelectTextField {
@@ -33,8 +34,8 @@ struct UUIDTextField: NSViewRepresentable {
         tf.isEditable = true
         tf.isBordered = false
         tf.drawsBackground = false
-        tf.font = NSFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-        tf.textColor = NSColor.white.withAlphaComponent(0.7)
+        tf.font = font
+        tf.textColor = textColor
         tf.cell?.wraps = false
         tf.cell?.isScrollable = true
         tf.delegate = context.coordinator
@@ -74,9 +75,7 @@ struct UUIDTextField: NSViewRepresentable {
 }
 
 struct ContentView: View {
-    @State private var stateData: HTTPStateData = HTTPStateData(value: "—", retrievedAt: Date())
-    @AppStorage("uuid") private var uuid: String = "45fb36540e9244daaa21ca409c6bdab3"
-    @Environment(\.scenePhase) var scenePhase
+    @EnvironmentObject private var viewModel: HTTPStateViewModel
 
     private let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
@@ -84,11 +83,14 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("HTTPState")
-                        .font(.system(size: 22, weight: .bold))
-                        .tracking(0.2)
-                        .foregroundStyle(.white)
-                    UUIDTextField(text: $uuid, onCommit: reloadData)
+                    UUIDTextField(
+                        text: $viewModel.title,
+                        font: NSFont.systemFont(ofSize: 22, weight: .bold),
+                        textColor: NSColor.white,
+                        onCommit: viewModel.reloadData
+                    )
+                    .frame(height: 26)
+                    UUIDTextField(text: $viewModel.uuid, onCommit: viewModel.reloadData)
                         .frame(height: 20)
                 }
                 Spacer()
@@ -97,7 +99,7 @@ struct ContentView: View {
 
             Spacer(minLength: 24)
 
-            Text(stateData.value)
+            Text(viewModel.stateData.value)
                 .font(.system(size: 56, weight: .bold))
                 .foregroundStyle(.white)
                 .lineLimit(1)
@@ -107,7 +109,7 @@ struct ContentView: View {
 
             HStack {
                 Spacer()
-                Text("At \(stateData.retrievedAt.formatted(date: .omitted, time: .shortened))")
+                Text("At \(viewModel.stateData.retrievedAt.formatted(date: .omitted, time: .shortened))")
                     .font(.system(size: 18, weight: .regular))
                     .foregroundStyle(.white.opacity(0.7))
             }
@@ -120,22 +122,10 @@ struct ContentView: View {
             NSApp.keyWindow?.makeFirstResponder(nil)
         }
         .onAppear {
-            reloadData()
-        }
-        .onChange(of: scenePhase) {
-            if scenePhase == .active {
-                reloadData()
-            }
+            viewModel.reloadData()
         }
         .onReceive(timer) { _ in
-            reloadData()
-        }
-    }
-
-    private func reloadData() {
-        Task {
-            stateData = await HTTPStateService.shared.fetch(uuid: uuid)
-            WidgetCenter.shared.reloadAllTimelines()
+            viewModel.reloadData()
         }
     }
 }

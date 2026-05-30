@@ -2,7 +2,7 @@
 
 ## What is httpstate?
 
-httpstate is a reactive state layer for applications. You bind state values to UUID v4 keys, store them via the REST API at `https://httpstate.com`, and retrieve them from anywhere. Realtime updates are delivered through WebSocket connections. It is free, requires no authentication, and values are limited to 128 bytes.
+httpstate is a reactive state layer for applications. You bind state values to UUID v4 keys, store them via the REST API at `https://httpstate.com`, and retrieve them from anywhere. Realtime updates are delivered through WebSocket connections. It is free, requires no authentication, and values are limited to 1024 bytes.
 
 ## REST API
 
@@ -32,7 +32,7 @@ Store a value at a UUID v4. If the UUID already has a value, it is overwritten.
 
 - Content-Type: `text/plain;charset=UTF-8` (default).
 - Content-Type: `application/x-www-form-urlencoded` — form data is parsed into JSON if there are multiple keys or a single non-empty key. When the `Referer` header is also present, the server responds with a `302` redirect back to the referer (enables plain HTML form submissions).
-- Maximum body size: **128 bytes**. Larger requests return `413 Content Too Large`.
+- Maximum body size: **1024 bytes**. Larger requests return `413 Content Too Large`.
 - **Response `200`**: Value was stored. Headers include `ETag` and `Last-Modified`.
 - **Response `304`**: Conditional write precondition was not met.
 - **Response `412`**: `If-Match` or `If-None-Match` precondition failed.
@@ -75,9 +75,9 @@ Set `Operation: <type>` to perform an atomic read-modify-write:
 | Operation | Description |
 |---|---|
 | `add` | Adds the posted number to the current value |
-| `append` | Appends the posted value to the current value (truncated to 128 bytes) |
+| `append` | Appends the posted value to the current value (truncated to 1024 bytes) |
 | `merge` | Merges the posted JSON object into the current JSON object |
-| `prepend` | Prepends the posted value to the current value (truncated to 128 bytes) |
+| `prepend` | Prepends the posted value to the current value (truncated to 1024 bytes) |
 | `toggle` | Toggles between `0` and `1` |
 
 ### Conditional Write Headers

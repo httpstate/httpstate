@@ -67,6 +67,9 @@ The POST endpoint supports special headers for conditional and atomic operations
 |---|---|
 | `If-Match: <etag>` | Only succeed if the current ETag matches |
 | `If-None-Match: <etag>` | Only succeed if the current ETag does not match |
+| `No-Op` | Does not perform any write; request body is ignored |
+| `Authorization-Read: <key>` | Sets a read secret for the UUID |
+| `Authorization-Write: <key>` | Sets a write secret for the UUID |
 
 ### Operation Header
 

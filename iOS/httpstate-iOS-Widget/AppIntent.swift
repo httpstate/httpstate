@@ -45,7 +45,7 @@ enum WidgetColor: String, AppEnum {
         case .peach: Color(red: 224/255, green: 138/255, blue: 88/255)
         case .rose: Color(red: 208/255, green: 116/255, blue: 148/255)
         case .ruby: Color(red: 200/255, green: 56/255, blue: 72/255)
-        case .sage: Color(red: 148/255, green: 162/255, blue: 112/255)
+        case .sage: Color(red: 148/255, green: 162/255,  blue: 112/255)
         case .sky: Color(red: 108/255, green: 150/255, blue: 208/255)
         case .walnut: Color(red: 118/255, green: 86/255, blue: 50/255)
         }

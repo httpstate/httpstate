@@ -19,6 +19,7 @@ Retrieve the current value stored at a UUID v4.
 - UUIDs can be full format (`45fb3654-0e92-44da-aa21-ca409c6bdab3`) or short format (`45fb36540e9244daaa21ca409c6bdab3`).
 - UUIDs can optionally include a path suffix of 1-8 hex chars (e.g. `45fb36540e9244daaa21ca409c6bdab3/0`).
 - **Response `200`**: Body contains the stored value as `text/plain;charset=UTF-8`.
+- **Response `401`**: Unauthorized (auth secret mismatch).
 - **Response `404`**: UUID has no stored value.
 - Response headers include `ETag` (timestamp in ms) and `Last-Modified`.
 
@@ -34,9 +35,14 @@ Store a value at a UUID v4. If the UUID already has a value, it is overwritten.
 - Content-Type: `application/x-www-form-urlencoded` — form data is parsed into JSON if there are multiple keys or a single non-empty key. When the `Referer` header is also present, the server responds with a `302` redirect back to the referer (enables plain HTML form submissions).
 - Maximum body size: **1024 bytes**. Larger requests return `413 Content Too Large`.
 - **Response `200`**: Value was stored. Headers include `ETag` and `Last-Modified`.
+- **Response `302`**: Redirect back to referer (when form-urlencoded and `Referer` header present).
 - **Response `304`**: Conditional write precondition was not met.
+- **Response `400`**: Bad request (invalid operation, non-numeric value for arithmetic ops, bad merge).
+- **Response `401`**: Unauthorized (auth secret mismatch).
+- **Response `405`**: Method not allowed.
 - **Response `412`**: `If-Match` or `If-None-Match` precondition failed.
 - **Response `429`**: Rate limit exceeded.
+- **Response `500`**: Internal server error.
 
 ```
 curl -X POST -d "Hi!" https://httpstate.com/45fb36540e9244daaa21ca409c6bdab3
@@ -57,6 +63,31 @@ Returns `200` with CORS headers. All responses include `Access-Control-Allow-Ori
 | **Email** (`mail.httpstate.com`) | Send email; UUID extracted from the `to` address (before `@`) or subject line; body is stored as the value |
 | **SMS** (`sms.httpstate.com`) | Send SMS in format `<UUID> <message>`; message is stored as the value |
 
+### Metadata
+
+Metadata is a JSON object stored alongside a UUID's value, accessed via `metadata.httpstate.com`.
+
+#### GET `/:uuid`
+
+- **Response `200`**: JSON object, `Content-Type: application/json`.
+- **Response `404`**: No metadata found for this UUID.
+- Auth: supports `Authorization-Read` the same as regular GET.
+
+```
+curl https://metadata.httpstate.com/45fb36540e9244daaa21ca409c6bdab3
+```
+
+#### POST `/:uuid`
+
+- Body: valid JSON object, stringified up to 1024 bytes.
+- **Response `200`**: Metadata stored.
+- **Response `400`**: Bad request (invalid JSON).
+- Auth: supports `Authorization-Write` the same as regular POST.
+
+```
+curl -X POST -d '{"title":"Temperature","unit":"celsius"}' https://metadata.httpstate.com/45fb36540e9244daaa21ca409c6bdab3
+```
+
 ## Conditional Writes & Operations
 
 The POST endpoint supports special headers for conditional and atomic operations:
@@ -67,9 +98,20 @@ The POST endpoint supports special headers for conditional and atomic operations
 |---|---|
 | `If-Match: <etag>` | Only succeed if the current ETag matches |
 | `If-None-Match: <etag>` | Only succeed if the current ETag does not match |
-| `No-Op` | Does not perform any write; request body is ignored |
+| `No-Op` | Does not perform any write; request body is ignored (auth checks still run) |
+
+### Authorization
+
+| Header | Behavior |
+|---|---|
+| `Authorization: Bearer <key>` | Authenticates the request against the stored read/write secret |
 | `Authorization-Read: <key>` | Sets a read secret for the UUID |
 | `Authorization-Write: <key>` | Sets a write secret for the UUID |
+
+If a read secret is set on a UUID, the `Authorization: Bearer <key>` header must match on GET requests, otherwise `401 Unauthorized` is returned.<br/>
+If a write secret is set on a UUID, the `Authorization: Bearer <key>` header must match on POST/PUT requests, otherwise `401 Unauthorized` is returned.<br/>
+Secrets are auto-set on the first write that includes the `Authorization-Read`/`Authorization-Write` header.<br/>
+To rotate a secret, include the new key in the `Authorization-Read`/`Authorization-Write` header alongside a valid `Authorization` header.
 
 ### Operation Header
 
@@ -126,6 +168,7 @@ Messages are binary with this packed format:
 
 - Type `0`: application/octet-stream
 - Type `1`: text/plain;charset=UTF-8 (the common case)
+- Type `2`: application/json
 
 ### Ping
 

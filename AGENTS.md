@@ -88,6 +88,20 @@ curl https://metadata.httpstate.com/45fb36540e9244daaa21ca409c6bdab3
 curl -X POST -d '{"title":"Temperature","unit":"celsius"}' https://metadata.httpstate.com/45fb36540e9244daaa21ca409c6bdab3
 ```
 
+### Featured
+
+A JSON endpoint listing UUIDs that have been made public by their authors.
+
+#### GET `/data/public.json`
+
+- **Host:** `httpstate.com` or `www.httpstate.com`
+- **Response `200`**: JSON object mapping UUIDs to their metadata objects, ordered most recently updated first.
+- **Response `404`**: No featured data available.
+
+```
+curl https://httpstate.com/data/public.json
+```
+
 ## Conditional Writes & Operations
 
 The POST endpoint supports special headers for conditional and atomic operations:

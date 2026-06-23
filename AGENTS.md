@@ -71,7 +71,7 @@ Metadata is a JSON object stored alongside a UUID's value, accessed via `metadat
 
 - **Response `200`**: JSON object, `Content-Type: application/json`.
 - **Response `404`**: No metadata found for this UUID.
-- Auth: supports `Authorization-Read` the same as regular GET.
+- Auth: supports `Authorization: Bearer <key>` the same as regular GET.
 
 ```
 curl https://metadata.httpstate.com/45fb36540e9244daaa21ca409c6bdab3
@@ -82,7 +82,7 @@ curl https://metadata.httpstate.com/45fb36540e9244daaa21ca409c6bdab3
 - Body: valid JSON object, stringified up to 1024 bytes.
 - **Response `200`**: Metadata stored.
 - **Response `400`**: Bad request (invalid JSON).
-- Auth: supports `Authorization-Write` the same as regular POST.
+- Auth: supports `Authorization: Bearer <key>` the same as regular POST.
 
 ```
 curl -X POST -d '{"title":"Temperature","unit":"celsius"}' https://metadata.httpstate.com/45fb36540e9244daaa21ca409c6bdab3
@@ -105,8 +105,8 @@ The POST endpoint supports special headers for conditional and atomic operations
 | Header | Behavior |
 |---|---|
 | `Authorization: Bearer <key>` | Authenticates the request against the stored read/write secret |
-| `Authorization-Read: <key>` | Sets a read secret for the UUID |
-| `Authorization-Write: <key>` | Sets a write secret for the UUID |
+| `Authorization-Read: <key>` | Sets a read secret for the UUID (max 256 bytes) |
+| `Authorization-Write: <key>` | Sets a write secret for the UUID (max 256 bytes) |
 
 If a read secret is set on a UUID, the `Authorization: Bearer <key>` header must match on GET requests, otherwise `401 Unauthorized` is returned.<br/>
 If a write secret is set on a UUID, the `Authorization: Bearer <key>` header must match on POST/PUT requests, otherwise `401 Unauthorized` is returned.<br/>

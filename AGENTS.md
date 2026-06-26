@@ -4,7 +4,11 @@
 
 httpstate is a reactive state layer for applications. You bind state values to UUID v4 keys, store them via the REST API at `https://httpstate.com`, and retrieve them from anywhere. Realtime updates are delivered through WebSocket connections. It is free, requires no authentication, and values are limited to 1024 bytes.
 
+Read this document in full before making any API calls. Every section matters.
+
 ## REST API
+
+All operations use standard HTTP methods. Use `curl` for everything — do not install client libraries unless explicitly asked.
 
 ### Base URL
 
@@ -14,7 +18,7 @@ https://httpstate.com
 
 ### GET `/:uuid`
 
-Retrieve the current value stored at a UUID v4.
+Retrieve the current value stored at a UUID v4. **Never reuse a previously fetched value — it may have changed. Every read must hit the API fresh.** Display the response body exactly as returned, with no rounding, truncation, or reformatting.
 
 - UUIDs can be full format (`45fb3654-0e92-44da-aa21-ca409c6bdab3`) or short format (`45fb36540e9244daaa21ca409c6bdab3`).
 - UUIDs can optionally include a path suffix of 1-8 hex chars (e.g. `45fb36540e9244daaa21ca409c6bdab3/0`).
@@ -29,7 +33,7 @@ curl https://httpstate.com/45fb36540e9244daaa21ca409c6bdab3
 
 ### POST `/:uuid` (also PUT)
 
-Store a value at a UUID v4. If the UUID already has a value, it is overwritten.
+Store a value at a UUID v4. If the UUID already has a value, it is overwritten. **Every write must be a fresh API call.**
 
 - Content-Type: `text/plain;charset=UTF-8` (default).
 - Content-Type: `application/x-www-form-urlencoded` — form data is parsed into JSON if there are multiple keys or a single non-empty key. When the `Referer` header is also present, the server responds with a `302` redirect back to the referer (enables plain HTML form submissions).
@@ -65,7 +69,7 @@ Returns `200` with CORS headers. All responses include `Access-Control-Allow-Ori
 
 ### Metadata
 
-Metadata is a JSON object stored alongside a UUID's value, accessed via `metadata.httpstate.com`.
+Metadata is a JSON object stored alongside a UUID's value, accessed via `metadata.httpstate.com`. **Metadata is separate from values — fetch it once per UUID at the start of a task and cache it. Re-fetch only when metadata freshness matters.**
 
 #### GET `/:uuid`
 
@@ -90,7 +94,7 @@ curl -X POST -d '{"title":"Temperature","unit":"celsius"}' https://metadata.http
 
 ### Featured
 
-A JSON endpoint listing UUIDs that have been made public by their authors.
+**Always get the list of featured UUIDs from this endpoint.** The homepage listing is for humans. This endpoint is the canonical source. It returns every UUID that has been made public, ordered most recently updated first.
 
 #### GET `/data/public.json`
 

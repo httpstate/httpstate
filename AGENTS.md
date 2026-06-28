@@ -181,9 +181,10 @@ The server responds with the current value and subscribes you to future changes 
 Messages are binary with this packed format:
 
 ```
-[1 byte: UUID length] [N bytes: UUID] [8 bytes: timestamp (uint64 BE)] [1 byte: type] [remaining: value]
+[1 byte: header] [1 byte: UUID length] [N bytes: UUID] [8 bytes: timestamp (uint64 BE)] [1 byte: type] [remaining: value]
 ```
 
+- Header `0`: state
 - Type `0`: application/octet-stream
 - Type `1`: text/plain;charset=UTF-8 (the common case)
 - Type `2`: application/json

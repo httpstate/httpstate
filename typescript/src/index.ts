@@ -48,22 +48,27 @@ export const load:() => Promise<void> = async ():Promise<void> => {
   }
 };
 
-export type MessageType = {
+export type MessageStateType = {
   uuid:string;
   timestamp:number;
   type:number;
   value:Uint8Array;
 };
 
-export const message:{ unpack(ab:ArrayBuffer):MessageType } = { unpack(ab:ArrayBuffer):MessageType {
+export const message:{ unpack(ab:ArrayBuffer):undefined|MessageStateType } = { unpack(ab:ArrayBuffer):undefined|MessageStateType {
   const ui8a:Uint8Array = new Uint8Array(ab);
-  const length:number = new DataView(ui8a.buffer, ui8a.byteOffset, 1).getUint8(0);
+  const header:number = new DataView(ui8a.buffer, ui8a.byteOffset, 1).getUint8(0);
+
+  if(header)
+    return;
+
+  const length:number = new DataView(ui8a.buffer, ui8a.byteOffset+1, 1).getUint8(0);
 
   return {
-    uuid:new TextDecoder().decode(ui8a.slice(1, 1+length)),
-    timestamp:Number(new DataView(ui8a.buffer, ui8a.byteOffset+1+length, 8).getBigUint64(0)),
-    type:new DataView(ui8a.buffer, ui8a.byteOffset+1+length+8, 1).getUint8(0),
-    value:ui8a.slice(1+length+8+1)
+    uuid:new TextDecoder().decode(ui8a.slice(2, 2+length)),
+    timestamp:Number(new DataView(ui8a.buffer, ui8a.byteOffset+2+length, 8).getBigUint64(0)),
+    type:new DataView(ui8a.buffer, ui8a.byteOffset+2+length+8, 1).getUint8(0),
+    value:ui8a.slice(2+length+8+1)
   };
 } };
 
@@ -343,10 +348,11 @@ export const HTTPStateWebSocket:HTTPStateWebSocketType = {
     HTTPStateWebSocket.ws.addEventListener('error', (e:Event) => console.error(new Date().toISOString(), 'HTTPStateWebSocket.ws.error'));
     HTTPStateWebSocket.ws.addEventListener('message', () => delete HTTPStateWebSocket.new.timeout, { once:true });
     HTTPStateWebSocket.ws.addEventListener('message', async (e:MessageEvent) => {
-      const data:MessageType = message.unpack(await e.data.arrayBuffer());
+      const data:undefined|MessageStateType = message.unpack(await e.data.arrayBuffer());
       
       if(
-           data.uuid
+           data
+        && data.uuid
         && data.type === 1
       )
         HTTPStateWebSocket.dispatchEvent(data.uuid, 'message', new TextDecoder().decode(data.value));

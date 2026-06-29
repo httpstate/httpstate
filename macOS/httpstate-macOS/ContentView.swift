@@ -119,7 +119,9 @@ struct ContentView: View {
         .background(Color(red: 152/255, green: 126/255, blue: 184/255))
         .contentShape(Rectangle())
         .onTapGesture {
-            NSApp.keyWindow?.makeFirstResponder(nil)
+            DispatchQueue.main.async {
+                NSApp.keyWindow?.makeFirstResponder(nil)
+            }
         }
         .onAppear {
             viewModel.reloadData()

@@ -26,7 +26,10 @@ export const get:(uuid:string, args?:undefined|HTTPStateGetArgsType) => Promise<
           ...args['Last-Modified'] && { 'Last-Modified':response.headers.get('Last-Modified') ?? undefined },
           data
         };
-    }
+    } else if(response.status === 401)
+      throw new Error('401 Unauthorized');
+    else if(response.status === 404)
+      throw new Error('404 Not Found');
     else if(response.status === 429)
       throw new Error('429 Too Many Requests: You can send up to 8 requests per second');
   } catch(e) {
@@ -96,6 +99,13 @@ export const set:(uuid:string, data?:undefined|string, args?:undefined|HTTPState
       method:'POST'
     });
 
+    if(response.status === 401)
+      throw new Error('401 Unauthorized');
+    else if(response.status === 404)
+      throw new Error('404 Not Found');
+    else if(response.status === 413)
+      throw new Error('413 Content Too Large');
+
     return response.status;
   } catch(e) {
     console.error(new Date().toISOString(), 'set.error', e);
@@ -119,6 +129,7 @@ export type HTTPStateGetReturnType = {
 export type HTTPStateSetArgsType = { Authorization?:undefined|string };
 
 export type HTTPStateType = {
+  authorization?:undefined|string;
   data?:undefined|string;
   et?:undefined|{ [type:string]:((data?:undefined|string) => void)[] };
   uid?:undefined|string;
@@ -145,20 +156,26 @@ export type HTTPStateType = {
   write(data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number>;
 };
 
+export type HTTPStateWebSocketOpenArgsType = { Authorization?:string };
+
 export type HTTPStateWebSocketType = {
-  _?:undefined|{ [uuid:string]:{ [uid:string]:{ [type:string]:((data?:undefined|string) => void)[] } } };
+  _?:undefined|{ [uuid:string]:{
+    authorization?:string,
+    uid?:{ [uid:string]:{ [type:string]:((data?:undefined|string) => void)[] } }
+  } };
   ws?:undefined|(WebSocket&{ pingInterval?:ReturnType<typeof setInterval> });
 
   addEventListener(uid:string, uuid:string, type:string, callback:(data?:undefined|string) => void):void;
   close(uid:string, uuid:string):void;
   delete():void;
   dispatchEvent(uuid:string, type:string, data?:undefined|string):void;
-  open(uid:string, uuid:string):HTTPStateWebSocketType;
+  open(uid:string, uuid:string, args?:HTTPStateWebSocketOpenArgsType):HTTPStateWebSocketType;
   new:(() => void)&{ timeout?:number };
 };
 
-export const HTTPState:(uuid:string) => HTTPStateType = (uuid:string):HTTPStateType => {
+export const HTTPState:(uuid:string, args?:{ Authorization?:string }) => HTTPStateType = (uuid:string, args?:{ Authorization?:string }):HTTPStateType => {
   const _:HTTPStateType = {
+    authorization:args?.Authorization,
     data:undefined,
     et:{},
     uid:UID(),
@@ -180,7 +197,7 @@ export const HTTPState:(uuid:string) => HTTPStateType = (uuid:string):HTTPStateT
              _.uid
           && _.uuid
         ) {
-          _.ws._ = HTTPStateWebSocket.open(_.uid, _.uuid);
+          _.ws._ = HTTPStateWebSocket.open(_.uid, _.uuid, { ..._.authorization && { Authorization:_.authorization } });
 
           _.ws._.addEventListener(_.uid, _.uuid, 'message', (data?:undefined|string):void => {
             _.data = data;
@@ -217,7 +234,7 @@ export const HTTPState:(uuid:string) => HTTPStateType = (uuid:string):HTTPStateT
     },
     get:async (args?:undefined|HTTPStateGetArgsType):Promise<undefined|string> => {
       if(_.uuid) {
-        const data:undefined|string|HTTPStateGetReturnType = await get(_.uuid);
+        const data:undefined|string|HTTPStateGetReturnType = await get(_.uuid, { ..._.authorization && { Authorization:_.authorization }, ...args });
 
         if(data !== _.data)
           setTimeout(() => _.emit('change', _.data), 0);
@@ -255,7 +272,7 @@ export const HTTPState:(uuid:string) => HTTPStateType = (uuid:string):HTTPStateT
     removeEventListener:(type:string, callback:(data?:undefined|string) => void):HTTPStateType => _.off(type, callback),
     set:async (data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => {
       if(_.uuid)
-        return set(_.uuid, data, args);
+        return set(_.uuid, data, { ..._.authorization && { Authorization:_.authorization }, ...args });
     },
     write:async (data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => _.set(data, args)
   };
@@ -292,25 +309,36 @@ export const HTTPStateWebSocket:HTTPStateWebSocketType = {
   ws:undefined,
 
   addEventListener:(uid:string, uuid:string, type:string, callback:(data?:undefined|string) => void):void => {
-    if(HTTPStateWebSocket._?.[uuid]?.[uid]) {
-      if(!HTTPStateWebSocket._[uuid][uid][type])
-        HTTPStateWebSocket._[uuid][uid][type] = [];
+    if(HTTPStateWebSocket._?.[uuid]?.uid?.[uid]) {
+      if(!HTTPStateWebSocket._[uuid].uid[uid][type])
+        HTTPStateWebSocket._[uuid].uid[uid][type] = [];
 
-      HTTPStateWebSocket._[uuid][uid][type].push(callback);
+      HTTPStateWebSocket._[uuid].uid[uid][type].push(callback);
     }
   },
   close:(uid:string, uuid:string):void => {
     console.log(new Date().toISOString(), 'HTTPStateWebSocket.close', uid, uuid);
 
-    if(HTTPStateWebSocket._?.[uuid]) {
-      delete HTTPStateWebSocket._[uuid][uid];
+    if(HTTPStateWebSocket._?.[uuid]?.uid?.[uid])
+      delete HTTPStateWebSocket._[uuid].uid[uid];
 
-      if(!Object.keys(HTTPStateWebSocket._[uuid]).length)
-        delete HTTPStateWebSocket._[uuid];
+    if(
+         HTTPStateWebSocket._?.[uuid]?.uid
+      && !Object.keys(HTTPStateWebSocket._[uuid].uid).length
+    )
+      delete HTTPStateWebSocket._[uuid].uid;
+    
+    if(
+         HTTPStateWebSocket._?.[uuid]
+      && !Object.keys(HTTPStateWebSocket._[uuid]).length
+    )
+      delete HTTPStateWebSocket._[uuid];
 
-      if(!Object.keys(HTTPStateWebSocket._).length)
-        delete HTTPStateWebSocket._;
-    }
+    if(
+         HTTPStateWebSocket._
+      && !Object.keys(HTTPStateWebSocket._).length
+    )
+      delete HTTPStateWebSocket._;
   },
   delete:():void => {
     console.log(new Date().toISOString(), 'HTTPStateWebSocket.delete');
@@ -326,10 +354,10 @@ export const HTTPStateWebSocket:HTTPStateWebSocketType = {
     }
   },
   dispatchEvent:(uuid:string, type:string, data?:undefined|string):void => {
-    if(HTTPStateWebSocket._?.[uuid])
-      for(const uid of Object.keys(HTTPStateWebSocket._[uuid]))
-        if(HTTPStateWebSocket._[uuid][uid]?.[type])
-          for(const callback of HTTPStateWebSocket._[uuid][uid][type])
+    if(HTTPStateWebSocket._?.[uuid]?.uid)
+      for(const uid of Object.keys(HTTPStateWebSocket._[uuid].uid))
+        if(HTTPStateWebSocket._[uuid].uid[uid]?.[type])
+          for(const callback of HTTPStateWebSocket._[uuid].uid[uid][type])
             callback(data);
   },
   new:():void => {
@@ -367,7 +395,10 @@ export const HTTPStateWebSocket:HTTPStateWebSocketType = {
       if(HTTPStateWebSocket.ws) {
         if(HTTPStateWebSocket._)
           for(const uuid of Object.keys(HTTPStateWebSocket._))
-            HTTPStateWebSocket.ws.send(JSON.stringify({ open:uuid }));
+            HTTPStateWebSocket.ws.send(JSON.stringify({
+              open:uuid,
+              ...HTTPStateWebSocket._[uuid]?.authorization && { Authorization:HTTPStateWebSocket._[uuid]?.authorization }
+            }));
 
         HTTPStateWebSocket.ws.pingInterval = setInterval(() => {
           if(HTTPStateWebSocket.ws) {
@@ -380,7 +411,7 @@ export const HTTPStateWebSocket:HTTPStateWebSocketType = {
       }
     }, { once:true });
   },
-  open:(uid:string, uuid:string):HTTPStateWebSocketType => {
+  open:(uid:string, uuid:string, args?:HTTPStateWebSocketOpenArgsType):HTTPStateWebSocketType => {
     console.log(new Date().toISOString(), 'HTTPStateWebSocket.open', uid, uuid);
 
     if(!HTTPStateWebSocket._)
@@ -388,9 +419,15 @@ export const HTTPStateWebSocket:HTTPStateWebSocketType = {
     
     if(!HTTPStateWebSocket._[uuid])
       HTTPStateWebSocket._[uuid] = {};
+
+    if(!HTTPStateWebSocket._[uuid].uid)
+      HTTPStateWebSocket._[uuid].uid = {};
     
-    if(!HTTPStateWebSocket._[uuid][uid])
-      HTTPStateWebSocket._[uuid][uid] = {};
+    if(!HTTPStateWebSocket._[uuid].uid[uid])
+      HTTPStateWebSocket._[uuid].uid[uid] = {};
+
+    if(args?.Authorization)
+      HTTPStateWebSocket._[uuid].authorization = args.Authorization;
 
     if(!HTTPStateWebSocket.ws)
       HTTPStateWebSocket.new();
@@ -410,7 +447,7 @@ export default Object.assign(HTTPState, {
   write
 });
 
-export const httpstate:(uuid:string) => HTTPStateType = HTTPState;
+export const httpstate:(uuid:string, args?:{ Authorization?:string }) => HTTPStateType = HTTPState;
 
 if(
      typeof document !== 'undefined'

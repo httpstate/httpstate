@@ -10,16 +10,20 @@ const UID:() => string = ():string => Date.now().toString(36) + Math.random().to
 
 export const get:(uuid:string, args?:undefined|HTTPStateGetArgsType) => Promise<undefined|string|HTTPStateGetReturnType> = async (uuid:string, args?:undefined|HTTPStateGetArgsType):Promise<undefined|string|HTTPStateGetReturnType> => {
   try {
-    const response:Response = await fetch('https://httpstate.com/' + uuid);
+    const response:Response = await fetch('https://httpstate.com/' + uuid, { ...args?.Authorization && { headers:{ Authorization:args.Authorization } } });
 
     if(response.status === 200) {
       const data = await response.text();
 
-      if(!args)
+      if(
+           !args?.ETag
+        && !args?.['Last-Modified']
+      )
         return data;
       else
         return {
-          ...args.etag && { etag:response.headers.get('ETag') ?? undefined },
+          ...args.ETag             && { ETag           :response.headers.get('ETag')          ?? undefined },
+          ...args['Last-Modified'] && { 'Last-Modified':response.headers.get('Last-Modified') ?? undefined },
           data
         };
     }
@@ -103,11 +107,13 @@ export const write:(uuid:string, data?:undefined|string, args?:undefined|HTTPSta
 
 // HTTPState
 export type HTTPStateGetArgsType = {
-  etag?:boolean,
-  data?:boolean
+  Authorization?:string,
+  ETag?:boolean,
+  'Last-Modified'?:boolean
 };
 export type HTTPStateGetReturnType = {
-  etag?:undefined|string,
+  ETag?:undefined|string,
+  'Last-Modified'?:undefined|string,
   data:undefined|string
 };
 export type HTTPStateSetArgsType = { Authorization?:undefined|string };

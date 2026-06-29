@@ -9,24 +9,29 @@
 import httpState, { set } from '@httpstate/typescript';
 import { useEffect, useState } from 'react';
 
-export const useHttpState:(uuid:string) => undefined|[undefined|string, (data:string) => Promise<number>] = (uuid:string):undefined|[undefined|string, (data:string) => Promise<number>] => {
+import type { HTTPStateSetArgsType, HTTPStateType } from '@httpstate/typescript';
+
+export const useHttpState:(uuid:string, args?:{ Authorization?:string }) => undefined|[undefined|string, (data:string, args?:HTTPStateSetArgsType) => Promise<undefined|number>] = (uuid:string, args?:{ Authorization?:string }):undefined|[undefined|string, (data:string, args?:HTTPStateSetArgsType) => Promise<undefined|number>] => {
   if(!uuid)
     return;
 
   const [state, setState]:[undefined|string, React.Dispatch<React.SetStateAction<undefined|string>>] = useState<undefined|string>(undefined);
 
   useEffect(() => {
+    let _:undefined|HTTPStateType;
+
     (async() => {
-      const _ = httpState(uuid)
+      _ = httpState(uuid, args)
         .on('change', (data?:undefined|string) => setState(data));
 
       _.emit('change', await _.get());
     })();
 
     return () => {
-      // ...
+      if(_)
+        _.delete();
     };
   }, []);
 
-  return [state, (data:string) => set(uuid, data)];
+  return [state, (data:string, args?:HTTPStateSetArgsType) => set(uuid, data, args)];
 };

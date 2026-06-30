@@ -7,6 +7,7 @@
 # version 3 of the License, or (at your option) any later version.
 
 import asyncio
+import datetime
 import struct
 import threading
 import urllib.error
@@ -15,17 +16,42 @@ import websockets
 
 from typing import Callable, Dict, List
 
-def get(uuid:str) -> None|str:
+def get(uuid:str, args:None|Dict = None) -> None|str|dict:
   try:
-    with urllib.request.urlopen(f'https://httpstate.com/{uuid}') as f:
-      if f.status == 200:
-        return f.read().decode('utf-8', 'replace')
+    req:urllib.request.Request = urllib.request.Request(f'https://httpstate.com/{uuid}')
 
-      return None
-  except urllib.error.HTTPError:
-    return None
-  except Exception:
-    return None
+    if args and args.get('Authorization'):
+      req.add_header('Authorization', args.get('Authorization'))
+
+    with urllib.request.urlopen(req) as f:
+      if f.status == 200:
+        data:str = f.read().decode('utf-8', 'replace')
+
+        if(
+             not args
+          or (
+                not args.get('ETag')
+            and not args.get('Last-Modified')
+          )
+        ):
+          return data
+        else:
+          return {
+          **({ 'ETag':f.headers.get('ETag') } if args.get('ETag') else {}),
+          **({ 'Last-Modified':f.headers.get('Last-Modified') } if args.get('Last-Modified') else {}),
+          'data':data
+        }
+  except urllib.error.HTTPError as e:
+    if e.code == 401:
+      raise Exception('401 Unauthorized')
+    elif e.code == 404:
+      raise Exception('404 Not Found')
+    elif e.code == 429:
+      raise Exception('429 Too Many Requests')
+  except Exception as e:
+    print(datetime.datetime.now().isoformat(), 'get.error', e)
+    
+    raise e
 
 class MessageType:
   def __init__(self, uuid:str, timestamp:int, type:int, value:bytes) -> None:
@@ -51,23 +77,28 @@ class Message:
 
 message:type = Message
 
-def post(uuid:str, data:None|str = None) -> None|int:
-  return set(uuid, data)
+def post(uuid:str, data:None|str = None, args:None|Dict = None) -> None|int:
+  return set(uuid, data, args)
 
-def put(uuid:str, data:None|str = None) -> None|int:
-  return set(uuid, data)
+def put(uuid:str, data:None|str = None, args:None|Dict = None) -> None|int:
+  return set(uuid, data, args)
 
-def read(uuid:str) -> None|str:
-  return get(uuid)
+def read(uuid:str, args:None|Dict = None) -> None|str|dict:
+  return get(uuid, args)
 
-def set(uuid:str, data:None|str = None) -> None|int:
+def set(uuid:str, data:None|str = None, args:None|Dict = None) -> None|int:
   if(data is None):
     data = ''
+
+  headers:Dict[str, str] = { 'Content-Type':'text/plain;charset=UTF-8' }
+
+  if args and args.get('Authorization'):
+    headers['Authorization'] = args.get('Authorization')
 
   req:urllib.request.Request = urllib.request.Request(
     f'https://httpstate.com/{uuid}',
     data=data.encode('utf-8'),
-    headers={ 'Content-Type':'text/plain;charset=UTF-8' },
+    headers=headers,
     method='POST'
   )
 
@@ -75,12 +106,19 @@ def set(uuid:str, data:None|str = None) -> None|int:
     with urllib.request.urlopen(req) as f:
       return f.status
   except urllib.error.HTTPError as e:
-    return e.code
-  except Exception:
-    return None
+    if e.code == 401:
+      raise Exception('401 Unauthorized')
+    elif e.code == 404:
+      raise Exception('404 Not Found')
+    elif e.code == 413:
+      raise Exception('413 Content Too Large')
 
-def write(uuid:str, data:None|str = None) -> None|int:
-  return set(uuid, data)
+    return e.code
+  except Exception as e:
+    print(datetime.datetime.now().isoformat(), 'set.error', e)
+
+def write(uuid:str, data:None|str = None, args:None|Dict = None) -> None|int:
+  return set(uuid, data, args)
 
 # HTTPState
 class HttpState:

@@ -8,6 +8,7 @@
 
 import asyncio
 import datetime
+import json
 import struct
 import threading
 import urllib.error
@@ -37,10 +38,10 @@ def get(uuid:str, args:None|Dict = None) -> None|str|dict:
           return data
         else:
           return {
-          **({ 'ETag':f.headers.get('ETag') } if args.get('ETag') else {}),
-          **({ 'Last-Modified':f.headers.get('Last-Modified') } if args.get('Last-Modified') else {}),
-          'data':data
-        }
+            **({ 'ETag':f.headers.get('ETag') } if args.get('ETag') else {}),
+            **({ 'Last-Modified':f.headers.get('Last-Modified') } if args.get('Last-Modified') else {}),
+            'data':data
+          }
   except urllib.error.HTTPError as e:
     if e.code == 401:
       raise Exception('401 Unauthorized')
@@ -122,12 +123,13 @@ def write(uuid:str, data:None|str = None, args:None|Dict = None) -> None|int:
 
 # HTTPState
 class HttpState:
-  def __init__(self, uuid:str) -> None:
+  def __init__(self, uuid:str, args:None|Dict = None) -> None:
+    self.authorization:None|str = args.get('Authorization') if args else None
     self.data:None|str = None
     self.el:None|asyncio.AbstractEventLoop = None
-    self.et:Dict[str, List[Callable[[None|str], None]]] = {}
-    self.lock:threading.Lock = threading.Lock()
-    self.uuid:str = uuid
+    self.et:None|Dict[str, List[Callable[[None|str], None]]] = {}
+    self.lock:None|threading.Lock = threading.Lock()
+    self.uuid:None|str = uuid
     self.ws:None|websockets.WebSocketClientProtocol = None
 
     threading.Thread(
@@ -152,12 +154,13 @@ class HttpState:
   async def _ws(self) -> None:
     self.ws:websockets.WebSocketClientProtocol = await websockets.connect(f"wss://httpstate.com/{self.uuid}")
 
-    await self.ws.send(f'{{"open":"{self.uuid}"}}')
+    await self.ws.send(json.dumps({ 'open':self.uuid, **({ 'Authorization':self.authorization } if self.authorization is not None else {}) }))
+
     self.emit('open')
 
     async def data() -> None:
       async for data in self.ws:
-        data:MessageType = message.unpack(data)
+        data:None|MessageType = message.unpack(data)
 
         if(
               data
@@ -185,19 +188,33 @@ class HttpState:
     await asyncio.Event().wait()
   
   def delete(self) -> None:
-    pass
+    if self.el is not None:
+      if self.ws is not None:
+        asyncio.run_coroutine_threadsafe(self.ws.close(), self.el)
+
+      self.el.call_soon_threadsafe(self.el.stop)
+
+    self.authorization = None
+    self.data = None
+    self.el = None
+    self.et = None
+    self.lock = None
+    self.uuid = None
+    self.ws = None
 
   def emit(self, type:str, data:None|str = None) -> "HttpState":
-    for callback in self.et.get(type, []):
-      if(data is None):
-        callback()
-      else:
-        callback(data)
+    if self.et is not None:
+      for callback in self.et.get(type, []):
+        if(data is None):
+          callback()
+        else:
+          callback(data)
 
     return self
 
   def get(self) -> None|str:
-    data:None|str = get(self.uuid)
+    args:None|Dict = { 'Authorization':self.authorization } if self.authorization is not None else None
+    data:None|str = get(self.uuid, args)
 
     with self.lock:
       if(data != self.data):
@@ -209,7 +226,7 @@ class HttpState:
     return self.data
 
   def off(self, type:str, callback:Callable[[None|str], None]) -> "HttpState":
-    if type in self.et:
+    if self.et is not None and type in self.et:
       try:
         self.et[type].remove(callback)
       except ValueError:
@@ -221,10 +238,11 @@ class HttpState:
     return self
 
   def on(self, type:str, callback:Callable[[None|str], None]) -> "HttpState":
-    if type not in self.et:
-      self.et[type] = []
+    if self.et is not None:
+      if type not in self.et:
+        self.et[type] = []
 
-    self.et[type].append(callback)
+      self.et[type].append(callback)
 
     return self
   
@@ -238,7 +256,8 @@ class HttpState:
     return self.get()
 
   def set(self, data:None|str = None) -> None|int:
-    return set(self.uuid, data)
+    args:None|Dict = { 'Authorization':self.authorization } if self.authorization is not None else None
+    return set(self.uuid, data, args)
 
   def write(self, data:None|str = None) -> None|int:
     return self.set(data)

@@ -134,7 +134,7 @@ export type HTTPStateType = {
   uid?:undefined|string;
   uuid?:undefined|string;
   visibilitychange?:undefined|((() => void)&{ now?:number });
-  ws:{
+  ws?:undefined|{
     _?:undefined|HTTPStateWebSocketType,
 
     delete():void,
@@ -179,22 +179,26 @@ export const HTTPState:(uuid:string, args?:{ Authorization?:string }) => HTTPSta
     et:{},
     uid:UID(),
     uuid,
+    visibilitychange:undefined,
     ws:{
       _:undefined,
       delete:():void => {
         if(
              _.uid
           && _.uuid
-          && _.ws._
-        )
-          _.ws._.close(_.uid, _.uuid);
+          && _.ws
+        ) {
+          if(_.ws._)
+            _.ws._.close(_.uid, _.uuid);
 
-        delete _.ws._;
+          delete _.ws._;
+        }
       },
       new:():void => {
         if(
              _.uid
           && _.uuid
+          && _.ws
         ) {
           _.ws._ = HTTPStateWebSocket.open(_.uid, _.uuid, { ..._.authorization && { Authorization:_.authorization } });
 
@@ -207,11 +211,12 @@ export const HTTPState:(uuid:string, args?:{ Authorization?:string }) => HTTPSta
       }
     },
 
-
     addEventListener:(type:string, callback:(data?:undefined|string) => void):HTTPStateType => _.on(type, callback),
     delete:():void => {
-      _.ws.delete();
+      if(_.ws)
+        _.ws.delete();
 
+      delete _.authorization;
       delete _.data;
       delete _.et;
       delete _.uid;
@@ -220,6 +225,8 @@ export const HTTPState:(uuid:string, args?:{ Authorization?:string }) => HTTPSta
       if(_.visibilitychange)
         document.removeEventListener('visibilitychange', _.visibilitychange);
       delete _.visibilitychange;
+
+      delete _.ws;
     },
     emit:(type:string, data?:undefined|string):HTTPStateType => {
       if(_.et?.[type])
@@ -276,7 +283,8 @@ export const HTTPState:(uuid:string, args?:{ Authorization?:string }) => HTTPSta
     write:async (data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => _.set(data, args)
   };
 
-  _.ws.new();
+  if(_.ws)
+    _.ws.new();
 
   setTimeout(_.get, 0);
   

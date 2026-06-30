@@ -66,17 +66,16 @@ export const message:{ unpack(ab:ArrayBuffer):undefined|MessageStateType } = { u
   const ui8a:Uint8Array = new Uint8Array(ab);
   const header:number = new DataView(ui8a.buffer, ui8a.byteOffset, 1).getUint8(0);
 
-  if(header)
-    return;
+  if(header === 0) {
+    const length:number = new DataView(ui8a.buffer, ui8a.byteOffset+1, 1).getUint8(0);
 
-  const length:number = new DataView(ui8a.buffer, ui8a.byteOffset+1, 1).getUint8(0);
-
-  return {
-    uuid:new TextDecoder().decode(ui8a.slice(2, 2+length)),
-    timestamp:Number(new DataView(ui8a.buffer, ui8a.byteOffset+2+length, 8).getBigUint64(0)),
-    type:new DataView(ui8a.buffer, ui8a.byteOffset+2+length+8, 1).getUint8(0),
-    value:ui8a.slice(2+length+8+1)
-  };
+    return {
+      uuid:new TextDecoder().decode(ui8a.slice(2, 2+length)),
+      timestamp:Number(new DataView(ui8a.buffer, ui8a.byteOffset+2+length, 8).getBigUint64(0)),
+      type:new DataView(ui8a.buffer, ui8a.byteOffset+2+length+8, 1).getUint8(0),
+      value:ui8a.slice(2+length+8+1)
+    };
+  }
 } };
 
 export const post:(uuid:string, data?:undefined|string, args?:undefined|HTTPStateSetArgsType) => Promise<undefined|number> = async (uuid:string, data?:undefined|string, args?:undefined|HTTPStateSetArgsType):Promise<undefined|number> => set(uuid, data, args);

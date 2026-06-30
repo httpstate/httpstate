@@ -36,15 +36,18 @@ class MessageType:
 
 class Message:
   @staticmethod
-  def unpack(b:bytes) -> MessageType:
-    length:int = b[0]
+  def unpack(b:bytes) -> None|MessageType:
+    header:int = b[0]
 
-    return MessageType(
-      uuid=b[1:1+length].decode('utf-8'),
-      timestamp=struct.unpack_from('>Q', b, 1+length)[0],
-      type=b[1+length+8],
-      value=b[1+length+9:],
-    )
+    if header == 0:
+      length:int = b[1]
+
+      return MessageType(
+        uuid=b[2:2+length].decode('utf-8'),
+        timestamp=struct.unpack_from('>Q', b, 2+length)[0],
+        type=b[2+length+8],
+        value=b[2+length+9:]
+      )
 
 message:type = Message
 

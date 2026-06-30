@@ -122,7 +122,7 @@ def write(uuid:str, data:None|str = None, args:None|Dict = None) -> None|int:
   return set(uuid, data, args)
 
 # HTTPState
-class HttpState:
+class HTTPState:
   def __init__(self, uuid:str, args:None|Dict = None) -> None:
     self.authorization:None|str = args.get('Authorization') if args else None
     self.data:None|str = None
@@ -202,7 +202,7 @@ class HttpState:
     self.uuid = None
     self.ws = None
 
-  def emit(self, type:str, data:None|str = None) -> "HttpState":
+  def emit(self, type:str, data:None|str = None) -> "HTTPState":
     if self.et is not None:
       for callback in self.et.get(type, []):
         if(data is None):
@@ -225,7 +225,7 @@ class HttpState:
 
     return self.data
 
-  def off(self, type:str, callback:Callable[[None|str], None]) -> "HttpState":
+  def off(self, type:str, callback:Callable[[None|str], None]) -> "HTTPState":
     if self.et is not None and type in self.et:
       try:
         self.et[type].remove(callback)
@@ -237,7 +237,7 @@ class HttpState:
 
     return self
 
-  def on(self, type:str, callback:Callable[[None|str], None]) -> "HttpState":
+  def on(self, type:str, callback:Callable[[None|str], None]) -> "HTTPState":
     if self.et is not None:
       if type not in self.et:
         self.et[type] = []

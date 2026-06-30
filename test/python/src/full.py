@@ -36,13 +36,13 @@ async def instance_load():
   f = running_loop.create_future()
   
   async def task():
-    _ = httpstate.HttpState(uuid)
+    _ = httpstate.HTTPState(uuid)
 
     def callback(__=None):
       if(_.data == data):
         print(datetime.datetime.now(datetime.UTC).isoformat(timespec="milliseconds"), '@httpstate/typescript', uuid, '(instance.load)  data', '✅')
 
-        _.destroy()
+        _.delete()
 
         running_loop.call_soon_threadsafe(lambda : f.set_result(None))
 
@@ -58,7 +58,7 @@ asyncio.run(instance_load())
 # {
 data = str(int(time.time()*1000))
 
-_ = httpstate.HttpState(uuid)
+_ = httpstate.HTTPState(uuid)
 _.set(data)
 if(_.get() == data):
   print(datetime.datetime.now(datetime.UTC).isoformat(timespec="milliseconds"), '@httpstate/typescript', uuid, '(instance)    get/set', '✅')
@@ -67,7 +67,7 @@ if(_.get() == data):
 # {
 data = str(int(time.time()*1000))
 
-_ = httpstate.HttpState(uuid)
+_ = httpstate.HTTPState(uuid)
 _.write(data)
 if(_.read() == data):
   print(datetime.datetime.now(datetime.UTC).isoformat(timespec="milliseconds"), '@httpstate/typescript', uuid, '(instance) read/write', '✅')
@@ -81,13 +81,13 @@ async def instance_change():
   f = running_loop.create_future()
   
   async def task():
-    _ = httpstate.HttpState(uuid)
+    _ = httpstate.HTTPState(uuid)
 
     def callback(__=None):
       if(_.data == data):
         print(datetime.datetime.now(datetime.UTC).isoformat(timespec="milliseconds"), '@httpstate/typescript', uuid, '(instance)     change', '✅')
 
-        _.destroy()
+        _.delete()
 
         running_loop.call_soon_threadsafe(lambda : f.set_result(None))
 

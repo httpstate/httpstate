@@ -14,7 +14,7 @@ from .httpstate import(
   read,
   set,
   write,
-  HttpState
+  HTTPState
 )
 
 __all__ = [
@@ -25,5 +25,5 @@ __all__ = [
   'read',
   'set',
   'write',
-  'HttpState'
+  'HTTPState'
 ]

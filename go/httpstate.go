@@ -164,7 +164,7 @@ type HttpState struct {
 	WS            *websocket.Conn
 }
 
-type HttpStateCallback func(data *string)
+type HttpStateCallback func(result *GetResult)
 
 type HttpStateMessageType struct {
 	UUID      string
@@ -173,12 +173,15 @@ type HttpStateMessageType struct {
 	Value     []byte
 }
 
-func New(uuid string, authorization string) *HttpState {
+func New(uuid string, args *GetArgs) *HttpState {
 	hs := &HttpState{
-		Authorization: authorization,
-		Data:          nil,
-		ET:            make(map[string][]HttpStateCallback),
-		UUID:          uuid,
+		Data: nil,
+		ET:   make(map[string][]HttpStateCallback),
+		UUID: uuid,
+	}
+
+	if args != nil {
+		hs.Authorization = args.Authorization
 	}
 
 	go hs.ws()
@@ -186,10 +189,10 @@ func New(uuid string, authorization string) *HttpState {
 	return hs
 }
 
-func (hs *HttpState) Emit(_type string, data *string) *HttpState {
+func (hs *HttpState) Emit(_type string, result *GetResult) *HttpState {
 	if callbacks, ok := hs.ET[_type]; ok {
 		for _, callback := range callbacks {
-			callback(data)
+			callback(result)
 		}
 	}
 
@@ -347,7 +350,13 @@ func (hs *HttpState) ws() {
 			var s string = string(data.Value)
 			hs.Data = &s
 
-			hs.Emit("change", hs.Data)
+			var result *GetResult = &GetResult{
+				Data:         s,
+				ETag:         fmt.Sprintf("%d", data.Timestamp),
+				LastModified: time.Unix(int64(data.Timestamp/1000), 0).UTC().Format(time.RFC1123),
+			}
+
+			hs.Emit("change", result)
 		}
 	}
 }

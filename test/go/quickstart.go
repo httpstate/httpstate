@@ -18,9 +18,9 @@ import (
 )
 
 func main() {
-  httpstate.New("58bff2fcbeb846958f36e7ae5b8a75b0").On("change", func(data *string) {
-		if data != nil {
-			fmt.Println(time.Now().UTC().Format(time.RFC3339), "data", *data)
+	httpstate.New("58bff2fcbeb846958f36e7ae5b8a75b0", nil).On("change", func(result *httpstate.GetResult) {
+		if result != nil {
+			fmt.Println(time.Now().UTC().Format(time.RFC3339), "data", result.Data)
 		}
 	})
 

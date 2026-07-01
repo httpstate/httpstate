@@ -35,7 +35,7 @@ jobs:
         working-directory: python
       
       - name: version patch
-        run: python3 ../../util/version.patch.py .
+        run: python3 util/version.patch.py .
         working-directory: python
       
       - name: build

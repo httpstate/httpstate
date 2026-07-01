@@ -19,26 +19,68 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func Get(uuid string) *string {
+type GetArgs struct {
+	Authorization string
+}
+
+type GetResult struct {
+	Data         string
+	ETag         string
+	LastModified string
+}
+
+type SetArgs struct {
+	Authorization string
+}
+
+func Get(uuid string, args *GetArgs) (*GetResult, error) {
 	url := fmt.Sprintf("https://httpstate.com/%s", uuid)
 
-	resp, err := http.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil
+		fmt.Println(time.Now().Format(time.RFC3339), "get.error", err)
+
+		return nil, err
+	}
+
+	if args != nil && args.Authorization != "" {
+		req.Header.Set("Authorization", args.Authorization)
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println(time.Now().Format(time.RFC3339), "get.error", err)
+
+		return nil, err
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil
+	switch resp.StatusCode {
+	case http.StatusOK:
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println(time.Now().Format(time.RFC3339), "get.error", err)
+
+			return nil, err
+		}
+
+		result := &GetResult{
+			Data:         string(body),
+			ETag:         resp.Header.Get("ETag"),
+			LastModified: resp.Header.Get("Last-Modified"),
+		}
+
+		return result, nil
+	case http.StatusUnauthorized:
+		return nil, fmt.Errorf("401 Unauthorized")
+	case http.StatusNotFound:
+		return nil, fmt.Errorf("404 Not Found")
+	case http.StatusTooManyRequests:
+		return nil, fmt.Errorf("429 Too Many Requests")
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil
-	}
-
-	s := string(body)
-	return &s
+	return nil, nil
 }
 
 var Message = struct {
@@ -60,33 +102,57 @@ var Message = struct {
 	return nil
 }}
 
-func Post(uuid string, data string) *int {
-	return Set(uuid, data)
+func Post(uuid string, data string, args *SetArgs) (int, error) {
+	return Set(uuid, data, args)
 }
 
-func Put(uuid string, data string) *int {
-	return Set(uuid, data)
+func Put(uuid string, data string, args *SetArgs) (int, error) {
+	return Set(uuid, data, args)
 }
 
-func Read(uuid string) *string {
-	return Get(uuid)
+func Read(uuid string, args *GetArgs) (*GetResult, error) {
+	return Get(uuid, args)
 }
 
-func Set(uuid string, data string) *int {
+func Set(uuid string, data string, args *SetArgs) (int, error) {
 	url := fmt.Sprintf("https://httpstate.com/%s", uuid)
 
-	resp, err := http.Post(url, "text/plain;charset=UTF-8", bytes.NewBufferString(data))
+	req, err := http.NewRequest("POST", url, bytes.NewBufferString(data))
 	if err != nil {
-		return nil
+		fmt.Println(time.Now().Format(time.RFC3339), "set.error", err)
+
+		return 0, err
+	}
+
+	req.Header.Set("Content-Type", "text/plain;charset=UTF-8")
+
+	if args != nil && args.Authorization != "" {
+		req.Header.Set("Authorization", args.Authorization)
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println(time.Now().Format(time.RFC3339), "set.error", err)
+
+		return 0, err
 	}
 	defer resp.Body.Close()
 
-	statusCode := resp.StatusCode
-	return &statusCode
+	switch resp.StatusCode {
+	case http.StatusUnauthorized:
+		return 0, fmt.Errorf("401 Unauthorized")
+	case http.StatusNotFound:
+		return 0, fmt.Errorf("404 Not Found")
+	case http.StatusRequestEntityTooLarge:
+		return 0, fmt.Errorf("413 Content Too Large")
+	}
+
+	return resp.StatusCode, nil
 }
 
-func Write(uuid string, data string) *int {
-	return Set(uuid, data)
+func Write(uuid string, data string, args *SetArgs) (int, error) {
+	return Set(uuid, data, args)
 }
 
 // HTTPState
@@ -128,8 +194,16 @@ func (hs *HttpState) Emit(_type string, data *string) *HttpState {
 	return hs
 }
 
-func (hs *HttpState) Get() *string {
-	return Get(hs.UUID)
+func (hs *HttpState) Get() *GetResult {
+	result, err := Get(hs.UUID, nil)
+
+	if err != nil || result == nil {
+		return nil
+	}
+
+	hs.Data = &result.Data
+
+	return result
 }
 
 func (hs *HttpState) Off(_type string, _callback HttpStateCallback) *HttpState {
@@ -164,12 +238,18 @@ func (hs *HttpState) Put(data string) *int {
 	return hs.Set(data)
 }
 
-func (hs *HttpState) Read() *string {
+func (hs *HttpState) Read() *GetResult {
 	return hs.Get()
 }
 
 func (hs *HttpState) Set(data string) *int {
-	return Set(hs.UUID, data)
+	statusCode, err := Set(hs.UUID, data, nil)
+
+	if err != nil {
+		return nil
+	}
+
+	return &statusCode
 }
 
 func (hs *HttpState) Write(data string) *int {

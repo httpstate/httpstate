@@ -9,8 +9,8 @@
 package httpstate
 
 import (
-	"encoding/binary"
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"net/http"
@@ -41,16 +41,24 @@ func Get(uuid string) *string {
 	return &s
 }
 
-var Message = struct { Unpack func(b []byte) HttpStateMessageType } { Unpack:func(b []byte) HttpStateMessageType {
-	var length int = int(b[0])
+var Message = struct {
+	Unpack func(b []byte) *HttpStateMessageType
+}{Unpack: func(b []byte) *HttpStateMessageType {
+	var header int = int(b[0])
 
-	return HttpStateMessageType {
-		UUID:string(b[1:1+length]),
-		Timestamp:binary.BigEndian.Uint64(b[1+length:1+length+8]),
-		Type:b[1+length+8],
-		Value:b[1+length+9:],
+	if header == 0 {
+		var length int = int(b[1])
+
+		return &HttpStateMessageType{
+			UUID:      string(b[2 : 2+length]),
+			Timestamp: binary.BigEndian.Uint64(b[2+length : 2+length+8]),
+			Type:      b[2+length+8],
+			Value:     b[2+length+9:],
+		}
 	}
-} }
+
+	return nil
+}}
 
 func Post(uuid string, data string) *int {
 	return Set(uuid, data)
@@ -100,9 +108,9 @@ type HttpStateMessageType struct {
 
 func New(uuid string) *HttpState {
 	hs := &HttpState{
-		Data:nil,
-		ET:make(map[string][]HttpStateCallback),
-		UUID:uuid,
+		Data: nil,
+		ET:   make(map[string][]HttpStateCallback),
+		UUID: uuid,
 	}
 
 	go hs.ws()
@@ -187,7 +195,7 @@ func (hs *HttpState) ws() {
 		return
 	}
 
-	ping := time.NewTicker(time.Second*30) // 30 SECONDS
+	ping := time.NewTicker(time.Second * 30) // 30 SECONDS
 	defer ping.Stop()
 
 	pingClose := make(chan struct{})
@@ -195,16 +203,16 @@ func (hs *HttpState) ws() {
 	go func() {
 		for {
 			select {
-				case <-ping.C:
-					if err := c.WriteMessage(websocket.PingMessage, nil); err != nil {
-						fmt.Println("err:", err)
+			case <-ping.C:
+				if err := c.WriteMessage(websocket.PingMessage, nil); err != nil {
+					fmt.Println("err:", err)
 
-						close(pingClose)
+					close(pingClose)
 
-						return
-					}
-				case <-pingClose:
 					return
+				}
+			case <-pingClose:
+				return
 			}
 		}
 	}()
@@ -219,11 +227,9 @@ func (hs *HttpState) ws() {
 			return
 		}
 
-		var data HttpStateMessageType = Message.Unpack(_data)
+		var data *HttpStateMessageType = Message.Unpack(_data)
 
-		if
-			data.UUID == hs.UUID &&
-			data.Type == 1 {
+		if data != nil && data.UUID == hs.UUID && data.Type == 1 {
 			var s string = string(data.Value)
 			hs.Data = &s
 

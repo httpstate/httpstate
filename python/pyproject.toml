@@ -8,7 +8,7 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3"
 ]
-dependencies = ["websockets>=15.0"]
+dependencies = ["websockets>=16.0"]
 description = "HTTPState, httpstate.com"
 keywords = ["httpstate"]
 license = "AGPL-3.0"

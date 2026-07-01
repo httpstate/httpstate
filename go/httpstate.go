@@ -157,10 +157,11 @@ func Write(uuid string, data string, args *SetArgs) (int, error) {
 
 // HTTPState
 type HttpState struct {
-	Data *string
-	ET   map[string][]HttpStateCallback
-	UUID string
-	WS   *websocket.Conn
+	Authorization string
+	Data          *string
+	ET            map[string][]HttpStateCallback
+	UUID          string
+	WS            *websocket.Conn
 }
 
 type HttpStateCallback func(data *string)
@@ -172,11 +173,12 @@ type HttpStateMessageType struct {
 	Value     []byte
 }
 
-func New(uuid string) *HttpState {
+func New(uuid string, authorization string) *HttpState {
 	hs := &HttpState{
-		Data: nil,
-		ET:   make(map[string][]HttpStateCallback),
-		UUID: uuid,
+		Authorization: authorization,
+		Data:          nil,
+		ET:            make(map[string][]HttpStateCallback),
+		UUID:          uuid,
 	}
 
 	go hs.ws()
@@ -194,8 +196,26 @@ func (hs *HttpState) Emit(_type string, data *string) *HttpState {
 	return hs
 }
 
+func (hs *HttpState) Delete() {
+	if hs.WS != nil {
+		hs.WS.Close()
+	}
+
+	hs.Authorization = ""
+	hs.Data = nil
+	hs.ET = nil
+	hs.UUID = ""
+	hs.WS = nil
+}
+
 func (hs *HttpState) Get() *GetResult {
-	result, err := Get(hs.UUID, nil)
+	var args *GetArgs
+
+	if hs.Authorization != "" {
+		args = &GetArgs{Authorization: hs.Authorization}
+	}
+
+	result, err := Get(hs.UUID, args)
 
 	if err != nil || result == nil {
 		return nil
@@ -243,7 +263,13 @@ func (hs *HttpState) Read() *GetResult {
 }
 
 func (hs *HttpState) Set(data string) *int {
-	statusCode, err := Set(hs.UUID, data, nil)
+	var args *SetArgs
+
+	if hs.Authorization != "" {
+		args = &SetArgs{Authorization: hs.Authorization}
+	}
+
+	statusCode, err := Set(hs.UUID, data, args)
 
 	if err != nil {
 		return nil
@@ -269,7 +295,15 @@ func (hs *HttpState) ws() {
 
 	hs.WS = c
 
-	if err := hs.WS.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf(`{"open":"%s"}`, hs.UUID))); err != nil {
+	var msg string
+
+	if hs.Authorization != "" {
+		msg = fmt.Sprintf(`{"open":"%s","Authorization":"%s"}`, hs.UUID, hs.Authorization)
+	} else {
+		msg = fmt.Sprintf(`{"open":"%s"}`, hs.UUID)
+	}
+
+	if err := hs.WS.WriteMessage(websocket.TextMessage, []byte(msg)); err != nil {
 		fmt.Println("err:", err)
 
 		return

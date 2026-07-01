@@ -1,0 +1,59 @@
+# HTTPState, https://httpstate.com/
+# Copyright (C) Alex Morales, 2026
+#
+# Unless otherwise stated in particular files or directories, this software is free software.
+# You can redistribute it and/or modify it under the terms of the GNU Affero
+# General Public License as published by the Free Software Foundation, either
+# version 3 of the License, or (at your option) any later version.
+
+name: go publish
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'go/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+
+      - name: setup-go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.25"
+
+      - name: git tag
+        run: |
+          TAG=$(git tag --list 'go/v*' --sort=-v:refname | head -1)
+          
+          if [ -z "$TAG" ]; then
+            NEW_TAG="go/v0.0.1"
+          else
+            VERSION="${TAG#go/}"
+            IFS='.' read -ra PARTS <<< "${VERSION#v}"
+            PATCH=$(( ${PARTS[2]} + 1 ))
+            NEW_TAG="go/v${PARTS[0]}.${PARTS[1]}.$PATCH"
+          fi
+
+          git tag "$NEW_TAG"
+
+      - name: build
+        run: go build ./...
+        working-directory: go
+
+      - name: git push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git push --tags
+
+permissions:
+  contents: write
+  id-token: write
+
